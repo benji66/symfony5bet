@@ -1,0 +1,136 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Pais index{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>Consulta</h1>
+
+
+    <div id="errores">
+        
+    </div>
+
+<!-- SEARCH FORM -->
+
+   {{ form_start(form, { attr: {novalidate: 'novalidate'}, 'method': 'GET' }) }}
+
+        <div class="form-group">
+                  {{ form_label(form.nombre,'Nombre:') }}
+
+                  <div class="input-group">
+                    
+                    {{ form_widget(form.nombre, {'attr': {'value': pai.nombre}}) }}
+
+
+                    <small>{{ form_help(form.nombre) }}</small>
+                  </div>
+                  <!-- /.input group -->
+                  <div class="form-error">
+                {{ form_errors(form.nombre) }}
+            </div>
+        </div>    
+
+        <button type="button" class="btn btn-primary" 
+         id="cargar">
+             <i class="fas fa-search"></i>{{ button_label|default('Buscar') }}
+        </button>
+
+        {{ form_widget(form._token) }} 
+    {{ form_end(form, {'render_rest': false}) }} 
+ <!-- //SEARCH FORM -->
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+
+    </table>
+
+    
+    </div>
+ </div>
+{% endblock %}
+
+{% block javascripts %}
+
+<!-- DataTables -->
+<script src="/bundles/fgimenezadminlte/plugins/datatables/jquery.dataTables.js"></script>
+
+<script>
+
+  $(function () {
+
+    $('#example2').DataTable({
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false,
+    });
+  });
+</script>
+
+
+ <script>
+
+    $( "#cargar" ).click(function() {
+
+      $.ajax({
+        url: "/pais/servicio/"+$('#pais_nombre').val(),
+        type:'GET'
+        
+      }).then(function(data, statusText, xhr) {     
+
+         $('#example2').html(' ');
+         $('#errores').html(' ');
+         alert(xhr.status);
+         switch(xhr.status){
+          case 200: 
+
+            $('#example2').append('<thead><tr><th>Nombre </th><th>Poblacion</th><th>Porcentaje</th></tr></thead>');
+            $('#example2').append('<tbody>');          
+           
+            $.each(data, function(i, item) {             
+              $('#example2').append('<tr><td>'+item.nombre+'</td><td>'+item.poblacion+'</td><td>'+item.porcentaje+'%</td></tr>');   
+            });
+           $('#example2').append('</tbody>');
+           $('#example2').append('<tfoot><tr><th>Nombre</th><th>Poblacion</th><th>Porcentaje</th></tr></tfoot>');
+
+          break;
+
+          case 204:  
+            $('#errores').append('<div class="alert alert-error alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><h5><i class="icon fas fa-check"></i> Alert!</h5>'+xhr.status+': Debe contener 3 caracteres</div>');
+          break;
+
+           case 201:  
+              $('#example2').append('<tbody>');                         
+              $('#example2').append('<tr><td>'+data.mensaje+'</td></tr>');              
+              $('#example2').append('</tbody>');
+          break;
+
+          default:
+             $('#errores').append('<div class="alert alert-error alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><h5><i class="icon fas fa-check"></i> Alert!</h5>'+xhr.status+': Error</div>');
+
+         }
+        
+      });
+    });
+
+
+  </script>
+
+{% endblock %}
+
+
+
+

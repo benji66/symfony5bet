@@ -1,0 +1,13 @@
+controllers:
+    resource: ../../src/Controller/
+    type: annotation
+ 
+
+
+fgimenez_pdf:
+    resource: ../../src/Fgimenez/PdfBundle/Controller/
+    type: annotation  
+
+kernel:
+    resource: ../../src/Kernel.php
+    type: annotation

@@ -1,0 +1,8 @@
+# Read the documentation: https://github.com/1up-lab/OneupUploaderBundle/blob/master/Resources/doc/index.md
+oneup_uploader:
+    mappings:
+        gallery:          
+            frontend: fineuploader # or any uploader you use in the frontend
+            storage:
+                directory: "%kernel.project_dir%/../data/uploads/"
+

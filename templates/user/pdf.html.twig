@@ -1,0 +1,56 @@
+{% block title %}User index{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>User index FRAN</h1>
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>              
+                <th>Email</th>
+                <th>Roles</th>          
+             
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>               
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>         
+               
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Email</th>
+                <th>Roles</th>               
+            </tr>
+        </tfoot>
+    </table>
+
+
+    
+    </div>
+
+{% endblock %}
+
+
+
+
+
+
+

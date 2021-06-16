@@ -1,0 +1,6 @@
+index:
+    path: /
+    controller: App\Controller\ProfileController::show
+
+api_login_check:
+    path: /api/login_check    
