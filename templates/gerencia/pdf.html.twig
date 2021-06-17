@@ -1,0 +1,63 @@
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>Gerencia index FRAN</h1>
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>CreatedBy</th>
+                <th>UpdatedBy</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for gerencium in gerencias %}
+            <tr>
+                <td>{{ gerencium.id }}</td>
+                <td>{{ gerencium.nombre }}</td>
+                <td>{{ gerencium.createdBy }}</td>
+                <td>{{ gerencium.updatedBy }}</td>
+                <td>{{ gerencium.createdAt ? gerencium.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ gerencium.updatedAt ? gerencium.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>CreatedBy</th>
+                <th>UpdatedBy</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+               
+            </tr>
+        </tfoot>
+    </table>
+
+  
+    </div>
+
+{% endblock %}

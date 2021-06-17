@@ -35,6 +35,8 @@ class UserFixtures extends Fixture
          $perfil = new Perfil();
          $perfil->setNombre('admin');
          $perfil->setApellido('admin');
+         $perfil->setNickname('fran66');
+
          
          $user = new User();
          $user->setPerfil($perfil);

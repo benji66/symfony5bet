@@ -10,6 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 class PerfilType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -18,6 +20,8 @@ class PerfilType extends AbstractType
             ->add('nombre')
             ->add('apellido')
             ->add('telefono')
+            ->add('nickname')
+
             
            
             //->add('user_id')
@@ -28,6 +32,9 @@ class PerfilType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Perfil::class,
+             'constraints' => [
+                new UniqueEntity(['fields' => ['nickname']]),
+            ],
         ]);
     }
 }

@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 //behaviors
@@ -23,6 +24,10 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 /**
  * @ApiResource(normalizationContext={"groups"={"read"}})
  * @ORM\Entity(repositoryClass="App\Repository\PerfilRepository")
+ * @UniqueEntity(
+ *     fields={"nickname"}, 
+ *     message="Este nickname ya esta siendo usado por otra persona."
+ * )
  */
 class Perfil
 {
@@ -71,6 +76,18 @@ class Perfil
      * @Groups({"read"})
      */
     private $user_id;
+
+    /**
+     * @ORM\Column(type="string", length=25, nullable=false, unique=false)
+     * @Groups({"read"})
+     */
+    private $nickname;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read"})
+     */
+    private $saldo;
 
 
 
@@ -128,6 +145,30 @@ class Perfil
     public function setUserId(?User $user_id): self
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getNickname(): ?string
+    {
+        return $this->nickname;
+    }
+
+    public function setNickname(?string $nickname): self
+    {
+        $this->nickname = $nickname;
+
+        return $this;
+    }
+
+    public function getSaldo(): ?int
+    {
+        return $this->saldo;
+    }
+
+    public function setSaldo(?int $saldo): self
+    {
+        $this->saldo = $saldo;
 
         return $this;
     }

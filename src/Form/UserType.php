@@ -62,8 +62,7 @@ exit;*/
         $resolver->setDefaults([
             'data_class' => User::class,
             'validation_groups' => function (FormInterface $form) {
-                    $data = $form->getData();  
-                                     
+                    $data = $form->getData();                                      
 
                     if ($data->getId()) {
                         return ['edit'];
