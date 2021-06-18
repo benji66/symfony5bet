@@ -30,7 +30,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_COORDINADOR') %}
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -59,7 +59,9 @@
                       </p>
                     </a>
                   </li>
-
+               {% endif %}  
+                  
+               {% if is_granted('ROLE_GERENCIA') %}
                    <li class="nav-item">
                     <a href="{{ path('user_index') }}" class="nav-link">
                       <i class="nav-icon fas fa-th"></i>

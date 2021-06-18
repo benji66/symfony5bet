@@ -5,6 +5,7 @@ namespace App\Form;
 use App\FormPerfilType;
 
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -30,19 +31,10 @@ class UserType extends AbstractType
 exit;*/
         $builder
             ->add('email', EmailType::class)
-            ->add('roles', ChoiceType::class, [
-                'multiple' => true,
-                'expanded' => true,
-                'choices'  => [
-                    //'ROLE_OTRO' => 'ROLE_OTRO',
-                    'ROLE_ADMIN' => 'ROLE_ADMIN',
-                    'ROLE_GERENCIA' => 'ROLE_GERENCIA',
-                    'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',
-
-
-                   
-                ],
-            ])
+            ->add('nombre')
+            ->add('apellido')
+            
+            
             ->add('password', RepeatedType::class, array(
                 'required' => false, 
                 'empty_data' => '',
@@ -54,7 +46,7 @@ exit;*/
                 'second_options' => array('label' => 'Confirmar clave:'),
             ));
 
-            $builder->add('perfil', PerfilType::class);
+            
     }
 
     public function configureOptions(OptionsResolver $resolver)

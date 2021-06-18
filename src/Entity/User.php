@@ -13,6 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 //behaviors
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -59,9 +60,31 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read"})
      */
-    private $roles = [];
+    private $nombre;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read"})
+     */
+
+    private $apellido;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read"})
+     */
+    private $telefono;
+
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $roles = [];    
+
+
 
     /**
      * @var string The hashed password
@@ -86,15 +109,17 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Perfil", mappedBy="user_id", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity=Perfil::class, mappedBy="usuario", cascade={"persist", "remove"})
      */
-    private $perfil;
+    private $perfils;
+
+
 
 
 
     public function __construct()
     {
-        $this->jornadas = new ArrayCollection();
+        $this->perfils = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +149,44 @@ class User implements UserInterface
         return (string) $this->email;
     }
 
+
+    public function getNombre(): ?string
+    {
+        return $this->nombre;
+    }
+
+    public function setNombre(string $nombre): self
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    public function getApellido(): ?string
+    {
+        return $this->apellido;
+    }
+
+    public function setApellido(string $apellido): self
+    {
+        $this->apellido = $apellido;
+
+        return $this;
+    }
+
+
+    public function getTelefono(): ?string
+    {
+        return $this->telefono;
+    }
+
+    public function setTelefono(string $telefono): self
+    {
+        $this->apellido = $telefono;
+
+        return $this;
+    }    
+    
     /**
      * @see UserInterface
      */
@@ -175,20 +238,32 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getPerfil(): ?Perfil
+    /**
+     * @return Collection|Perfil[]
+     */
+    public function getPerfils(): Collection
     {
-        return $this->perfil;
+        return $this->perfils;
     }
 
-    public function setPerfil(?Perfil $perfil): self
+    public function addPerfil(Perfil $perfil): self
     {
-        $this->perfil = $perfil;
+        if (!$this->perfils->contains($perfil)) {
+            $this->perfils[] = $perfil;
+            $perfil->setUsuario($this);
+        }
 
-        // set (or unset) the owning side of the relation if necessary
-        $newUser_id = null === $perfil ? null : $this;
-        if ($perfil->getUserId() !== $newUser_id) {
-            $perfil->setUserId($newUser_id);
-        }        
+        return $this;
+    }
+
+    public function removePerfil(Perfil $perfil): self
+    {
+        if ($this->perfils->removeElement($perfil)) {
+            // set the owning side to null (unless already changed)
+            if ($perfil->getUsuario() === $this) {
+                $perfil->setUsuario(null);
+            }
+        }
 
         return $this;
     }

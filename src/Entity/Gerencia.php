@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GerenciaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 //behaviors
@@ -50,6 +52,17 @@ class Gerencia
      */
     private $nombre;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Perfil::class, mappedBy="gerencia", cascade={"persist", "remove"})
+     */
+    private $perfils;
+
+
+    public function __construct()
+    {
+        $this->perfils = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -66,4 +79,36 @@ class Gerencia
 
         return $this;
     }
+
+    /**
+     * @return Collection|Perfil[]
+     */
+    public function getPerfils(): Collection
+    {
+        return $this->perfils;
+    }
+
+    public function addPerfil(Perfil $perfil): self
+    {
+        if (!$this->perfils->contains($perfil)) {
+            $this->perfils[] = $perfil;
+            $perfil->setGerencia($this);
+        }
+
+        return $this;
+    }
+
+    public function removePerfil(Perfil $perfil): self
+    {
+        if ($this->perfils->removeElement($perfil)) {
+            // set the owning side to null (unless already changed)
+            if ($perfil->getGerencia() === $this) {
+                $perfil->setGerencia(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

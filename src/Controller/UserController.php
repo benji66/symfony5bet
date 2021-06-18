@@ -25,7 +25,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 /**
  * Require ROLE_ADMIN for *every* controller method in this class.
  *
- * @IsGranted("ROLE_ADMIN")
+ * @IsGranted("ROLE_COORDINADOR")
  * @Route("/user")
  */
 class UserController extends AbstractController
@@ -36,15 +36,20 @@ class UserController extends AbstractController
     public function index(UserRepository $userRepository, PaginatorInterface $paginator,  Request $request): Response
     {    
         
-        //searchForm
+
+      //$this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');        //searchForm
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         
-        
+        /*$logged_user = $this->getUser();
+        echo  $logged_user->getGerenciaPermiso()->getId().'--------//-----';
+        exit;*/
+
         $allRowsQuery = $userRepository->createQueryBuilder('a')
             //->where('p.status != :status')
             //->setParameter('status', 'canceled')
             ; 
+
 
         if ($request->query->get("user")) {
             $val = $request->query->get("user");

@@ -33,14 +33,14 @@ class UserFixtures extends Fixture
         
 
          $perfil = new Perfil();
-         $perfil->setNombre('admin');
-         $perfil->setApellido('admin');
          $perfil->setNickname('fran66');
 
          
          $user = new User();
-         $user->setPerfil($perfil);
+         $user->addPerfil($perfil);         
          $user->setEmail('admin@admin.com');
+         $user->setNombre('admin');
+         $user->setApellido('admin');
          $user->setPassword($this->passwordEncoder->encodePassword(
              $user,
              'admin'

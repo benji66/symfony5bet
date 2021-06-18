@@ -52,31 +52,12 @@ class Perfil
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read"})
-     */
-    private $nombre;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read"})
+     * @ORM\Column(type="json")
      */
-
-    private $apellido;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read"})
-     */
-    private $telefono;
-
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User", inversedBy="perfil", cascade={"persist", "remove"})
-     * @Groups({"read"})
-     */
-    private $user_id;
-
+    private $roles = [];
+    
     /**
      * @ORM\Column(type="string", length=25, nullable=false, unique=false)
      * @Groups({"read"})
@@ -88,6 +69,17 @@ class Perfil
      * @Groups({"read"})
      */
     private $saldo;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Gerencia::class, inversedBy="perfils")
+     */
+    private $gerencia;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="perfils")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $usuario;
 
 
 
@@ -137,17 +129,6 @@ class Perfil
         return $this;
     }
 
-    public function getUserId(): ?User
-    {
-        return $this->user_id;
-    }
-
-    public function setUserId(?User $user_id): self
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
 
     public function getNickname(): ?string
     {
@@ -173,6 +154,47 @@ class Perfil
         return $this;
     }
 
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
 
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getGerencia(): ?Gerencia
+    {
+        return $this->gerencia;
+    }
+
+    public function setGerencia(?Gerencia $gerencia): self
+    {
+        $this->gerencia = $gerencia;
+
+        return $this;
+    }
+
+    public function getUsuario(): ?User
+    {
+        return $this->usuario;
+    }
+
+    public function setUsuario(?User $usuario): self
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
  
 }

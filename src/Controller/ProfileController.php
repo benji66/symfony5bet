@@ -41,7 +41,7 @@ class ProfileController extends AbstractController
         // For example, if you added a getFirstName() method, you can use that.
         //return new Response('Well hi there '.$user->getPerfil()->getNombre());
         return $this->render('profile/show.html.twig', [
-            'perfil' => $user->getPerfil(),
+            'user' => $user,
            
         ]);
     }
