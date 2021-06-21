@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-
 use App\Entity\Perfil;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-class PerfilType extends AbstractType
+class ProfileType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -34,21 +33,6 @@ class PerfilType extends AbstractType
             
 
             ->add('nickname')
-
-            ->add('roles', ChoiceType::class, [
-                'multiple' => true,
-                'expanded' => true,
-                'choices'  => [
-                    //'ROLE_OTRO' => 'ROLE_OTRO',
-                    'ROLE_ADMIN' => 'ROLE_ADMIN',
-                    'ROLE_GERENCIA' => 'ROLE_GERENCIA',
-                    'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',
-
-
-                   
-                ],
-            ])
-            ->add('activo')
         ;
     }
 
@@ -56,9 +40,9 @@ class PerfilType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Perfil::class,
-             'constraints' => [
+             /*'constraints' => [
                 new UniqueEntity(['fields' => ['nickname']]),
-            ],
+            ],*/
         ]);
     }
 }

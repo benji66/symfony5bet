@@ -1,0 +1,64 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block body %}
+    <h1>Perfil</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ perfil.id }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Nickname</th>
+                <td>{{ perfil.nickname }}</td>
+            </tr>
+            <tr>
+                <th>Saldo</th>
+                <td>{{ perfil.saldo }}</td>
+            </tr>
+            <tr>
+                <th>Activo</th>
+                <td>{{ perfil.activo ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>CreatedBy</th>
+                <td>{{ perfil.createdBy }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedBy</th>
+                <td>{{ perfil.updatedBy }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ perfil.createdAt ? perfil.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ perfil.updatedAt ? perfil.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('perfil_index') }}">
+
+        <i class="fas fa-arrow-left"></i>
+        back to list
+
+    </a>
+
+    <a href="{{ path('perfil_edit', {'id': perfil.id}) }}">
+        
+         <i class="fas fa-edit"></i>
+        edit
+
+    </a>
+
+    {{ include('perfil/_delete_form.html.twig') }}
+{% endblock %}

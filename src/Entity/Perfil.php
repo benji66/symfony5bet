@@ -25,8 +25,15 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ApiResource(normalizationContext={"groups"={"read"}})
  * @ORM\Entity(repositoryClass="App\Repository\PerfilRepository")
  * @UniqueEntity(
- *     fields={"nickname"}, 
- *     message="Este nickname ya esta siendo usado por otra persona."
+ *     fields={"gerencia", "nickname"},
+ *     errorPath="nickname", 
+ *     message="Este nickname ya esta siendo usado por otra persona en esta gerencia."
+ * )
+
+ * @UniqueEntity(
+ *     fields={"gerencia", "usuario"},
+ *     errorPath="gerencia", 
+ *     message="Esta gerencia ya esta siendo usada por el usuario."
  * )
  */
 class Perfil
@@ -76,10 +83,15 @@ class Perfil
     private $gerencia;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="perfils")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="perfils", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $usuario;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $activo;
 
 
 
@@ -193,6 +205,18 @@ class Perfil
     public function setUsuario(?User $usuario): self
     {
         $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    public function getActivo(): ?bool
+    {
+        return $this->activo;
+    }
+
+    public function setActivo(bool $activo): self
+    {
+        $this->activo = $activo;
 
         return $this;
     }

@@ -115,6 +115,22 @@ class User implements UserInterface
 
 
 
+    /**
+     * @ORM\Column(type="string", length=25, nullable=true)
+     */
+    private $nickname;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $saldo;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Gerencia::class)
+     */
+    private $gerencia;
+
+
 
 
     public function __construct()
@@ -264,6 +280,43 @@ class User implements UserInterface
                 $perfil->setUsuario(null);
             }
         }
+
+        return $this;
+    }
+
+
+    public function getNickname(): ?string
+    {
+        return $this->nickname;
+    }
+
+    public function setNickname(?string $nickname): self
+    {
+        $this->nickname = $nickname;
+
+        return $this;
+    }
+
+    public function getSaldo(): ?int
+    {
+        return $this->saldo;
+    }
+
+    public function setSaldo(?int $saldo): self
+    {
+        $this->saldo = $saldo;
+
+        return $this;
+    }
+
+    public function getGerencia(): ?Gerencia
+    {
+        return $this->gerencia;
+    }
+
+    public function setGerencia(?Gerencia $gerencia): self
+    {
+        $this->gerencia = $gerencia;
 
         return $this;
     }
