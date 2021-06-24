@@ -71,6 +71,15 @@
                     </a>
                   </li>
 
+                   <li class="nav-item">
+                    <a href="{{ path('metodo_pago_index') }}" class="nav-link">
+                      <i class="nav-icon fas fa-th"></i>
+                      <p>
+                        Metodos de pago               
+                      </p>
+                    </a>
+                  </li>
+
               {% endif %}  
             </ul>
           </li>
@@ -97,7 +106,18 @@
             </a>
           </li>         
  
-
+      {% if is_granted('ROLE_GERENCIA') %}
+                   
+           <li class="nav-item">
+            <a href="{{ path('adjunto_pago_index') }}" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Registro de Pagos
+              </p>
+            </a>
+           </li>  
+  
+        {% endif %}  
 
 
           <li class="nav-header">LABELS</li>

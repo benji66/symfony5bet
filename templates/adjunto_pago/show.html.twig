@@ -1,0 +1,68 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}AdjuntoPago{% endblock %}
+
+{% block body %}
+    <h1>AdjuntoPago</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ adjunto_pago.id }}</td>
+            </tr>
+            <tr>
+                <th>Ruta</th>
+                <td>{{ adjunto_pago.ruta }}</td>
+            </tr>
+            <tr>
+                <th>Monto</th>
+                <td>{{ adjunto_pago.monto }}</td>
+            </tr>
+            <tr>
+                <th>Validado_by</th>
+                <td>{{ adjunto_pago.validadoBy }}</td>
+            </tr>
+            <tr>
+                <th>Numero_referencia</th>
+                <td>{{ adjunto_pago.numeroReferencia }}</td>
+            </tr>
+            <tr>
+                <th>Observacion</th>
+                <td>{{ adjunto_pago.observacion }}</td>
+            </tr>
+            <tr>
+                <th>CreatedBy</th>
+                <td>{{ adjunto_pago.createdBy }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedBy</th>
+                <td>{{ adjunto_pago.updatedBy }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ adjunto_pago.updatedAt ? adjunto_pago.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('adjunto_pago_index') }}">
+
+        <i class="fas fa-arrow-left"></i>
+        back to list
+
+    </a>
+
+    <a href="{{ path('adjunto_pago_edit', {'id': adjunto_pago.id}) }}">
+        
+         <i class="fas fa-edit"></i>
+        edit
+
+    </a>
+
+    {{ include('adjunto_pago/_delete_form.html.twig') }}
+{% endblock %}

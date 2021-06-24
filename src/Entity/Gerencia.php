@@ -57,10 +57,22 @@ class Gerencia
      */
     private $perfils;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AdjuntoPago::class, mappedBy="gerencia")
+     */
+    private $adjuntoPagos;
+
+    /**
+     * @ORM\OneToMany(targetEntity=MetodoPago::class, mappedBy="gerencia")
+     */
+    private $metodoPagos;
+
 
     public function __construct()
     {
         $this->perfils = new ArrayCollection();
+        $this->adjuntoPagos = new ArrayCollection();
+        $this->metodoPagos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -104,6 +116,66 @@ class Gerencia
             // set the owning side to null (unless already changed)
             if ($perfil->getGerencia() === $this) {
                 $perfil->setGerencia(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AdjuntoPago[]
+     */
+    public function getAdjuntoPagos(): Collection
+    {
+        return $this->adjuntoPagos;
+    }
+
+    public function addAdjuntoPago(AdjuntoPago $adjuntoPago): self
+    {
+        if (!$this->adjuntoPagos->contains($adjuntoPago)) {
+            $this->adjuntoPagos[] = $adjuntoPago;
+            $adjuntoPago->setGerencia($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdjuntoPago(AdjuntoPago $adjuntoPago): self
+    {
+        if ($this->adjuntoPagos->removeElement($adjuntoPago)) {
+            // set the owning side to null (unless already changed)
+            if ($adjuntoPago->getGerencia() === $this) {
+                $adjuntoPago->setGerencia(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MetodoPago[]
+     */
+    public function getMetodoPagos(): Collection
+    {
+        return $this->metodoPagos;
+    }
+
+    public function addMetodoPago(MetodoPago $metodoPago): self
+    {
+        if (!$this->metodoPagos->contains($metodoPago)) {
+            $this->metodoPagos[] = $metodoPago;
+            $metodoPago->setGerencia($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMetodoPago(MetodoPago $metodoPago): self
+    {
+        if ($this->metodoPagos->removeElement($metodoPago)) {
+            // set the owning side to null (unless already changed)
+            if ($metodoPago->getGerencia() === $this) {
+                $metodoPago->setGerencia(null);
             }
         }
 

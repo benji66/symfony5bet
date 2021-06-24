@@ -93,11 +93,16 @@ class Perfil
      */
     private $activo;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AdjuntoPago::class, mappedBy="perfil", orphanRemoval=true)
+     */
+    private $adjuntoPagos;
+
 
 
     public function __construct()
     {
-
+        $this->adjuntoPagos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -217,6 +222,36 @@ class Perfil
     public function setActivo(bool $activo): self
     {
         $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AdjuntoPago[]
+     */
+    public function getAdjuntoPagos(): Collection
+    {
+        return $this->adjuntoPagos;
+    }
+
+    public function addAdjuntoPago(AdjuntoPago $adjuntoPago): self
+    {
+        if (!$this->adjuntoPagos->contains($adjuntoPago)) {
+            $this->adjuntoPagos[] = $adjuntoPago;
+            $adjuntoPago->setPerfil($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdjuntoPago(AdjuntoPago $adjuntoPago): self
+    {
+        if ($this->adjuntoPagos->removeElement($adjuntoPago)) {
+            // set the owning side to null (unless already changed)
+            if ($adjuntoPago->getPerfil() === $this) {
+                $adjuntoPago->setPerfil(null);
+            }
+        }
 
         return $this;
     }
