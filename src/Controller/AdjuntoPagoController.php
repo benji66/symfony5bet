@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\AdjuntoPago;
+use App\Entity\Perfil;
+
 use App\Form\AdjuntoPagoType;
 use App\Repository\AdjuntoPagoRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +19,9 @@ use Knp\Component\Pager\PaginatorInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+//JTW
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+
 /**
  * @Route("/adjunto/pago")
  */
@@ -30,9 +35,7 @@ class AdjuntoPagoController extends AbstractController
         
         //searchForm
         $adjuntoPago = new AdjuntoPago();
-        $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);
-        
-        
+        $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);       
         $allRowsQuery = $adjuntoPagoRepository->createQueryBuilder('a')
             //->where('a.status != :status')
             //->setParameter('status', 'canceled')
@@ -76,13 +79,48 @@ class AdjuntoPagoController extends AbstractController
     /**
      * @Route("/new", name="adjunto_pago_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, JWTTokenManagerInterface $JWTManager): Response
     {
+        
+        
         $adjuntoPago = new AdjuntoPago();
         $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+             $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);
+
+             $ruta_relativa = '/../data/uploads/'; 
+              //ruta absoluta para manupilar el archivo
+             $ruta = $this->getParameter('kernel.project_dir').$ruta_relativa;                  
+                     
+                    if($request->get("archivo")){
+                        @mkdir($ruta.'../'.$perfil->getId().'/');
+
+                        foreach ($request->get("archivo") as $archivo) {      
+                            $nueva_ruta = $ruta.'../'.$perfil->getId().'/'.$archivo;
+                            $nueva_ruta_relativa = $ruta_relativa.'../'.$perfil->getId().'/'.$archivo;           
+                            $adjuntoPago->setRuta($nueva_ruta_relativa);
+                            rename ($ruta.$archivo, $nueva_ruta);
+                        }
+                    } 
+
+                $user = $this->getUser(); 
+                if ($this->isGranted('ROLE_COORDINADOR')) {
+                    $adjuntoPago->setValidado(true);  
+                    $adjuntoPago->setValidadoBy($user->getUsername());                
+                }else{
+                    $adjuntoPago->setValidado(null);    
+                }       
+       
+
+            $perfil->setSaldo($perfil->getSaldo() + $adjuntoPago->getMonto());
+
+            $adjuntoPago->setGerencia($perfil->getGerencia());
+
+            $adjuntoPago->setPerfil($perfil);
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($adjuntoPago);
             $entityManager->flush();
@@ -94,10 +132,12 @@ class AdjuntoPagoController extends AbstractController
 
             return $this->redirectToRoute('adjunto_pago_index');
         }
+        $user = $this->getUser(); 
 
         return $this->render('adjunto_pago/new.html.twig', [
             'adjunto_pago' => $adjuntoPago,
             'form' => $form->createView(),
+            'token' => $JWTManager->create($user)
         ]);
     }
 

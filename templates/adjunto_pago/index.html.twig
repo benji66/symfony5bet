@@ -72,7 +72,9 @@
      <table id="example2" class="table table-bordered table-hover">
         <thead>
             <tr>  
+                <th>User</th>
                 <th>Monto</th>
+                <th>Validado</th>
                 <th>Validado_by</th>
                 <th>Numero_referencia</th>
                 <th>CreatedBy</th>
@@ -83,8 +85,9 @@
         <tbody>
         {% for adjunto_pago in adjunto_pagos %}
             <tr>
-              
+                <td>{{ adjunto_pago.Perfil.Usuario.username }}</td>
                 <td>{{ adjunto_pago.monto }}</td>
+                <td>{{ adjunto_pago.validado }}</td>
                 <td>{{ adjunto_pago.validadoBy }}</td>
                 <td>{{ adjunto_pago.numeroReferencia }}</td>
                 <td>{{ adjunto_pago.createdBy }}</td>
@@ -103,7 +106,9 @@
 
         <tfoot>
             <tr>
+                <th>User</th>
                 <th>Monto</th>
+                <th>Validado</th>
                 <th>Validado_by</th>
                 <th>Numero_referencia</th>
                 <th>CreatedBy</th>

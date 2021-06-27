@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 /**
  * Require ROLE_USER for *every* controller method in this class.
  *
@@ -87,9 +89,7 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
 
-            $perfil->setActivo(true);
-
-            
+            $perfil->setActivo(true);            
 
             $entityManager->persist($perfil);
             $entityManager->flush();
@@ -114,8 +114,7 @@ class ProfileController extends AbstractController
     public function change(Request $request, Perfil $perfil): Response
     {
 
-            $entityManager = $this->getDoctrine()->getManager();
-            
+            $entityManager = $this->getDoctrine()->getManager();            
             
             $perfil->getUsuario()->setGerencia($perfil->getGerencia()); 
             $perfil->getUsuario()->setSaldo($perfil->getSaldo());
@@ -134,6 +133,47 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_logout');
        
     }
+
+    /**
+     * @Route("/api/ProfileSearch", name="profile_search", methods={"GET","POST"})
+     */
+    public function apiSearch(Request $request): Response
+    {
+
+          $user = $this->getUser(); 
+          $perfiles = array();
+          
+          //echo '---66------'.$request->get("phrase").$user->getGerencia()->getId();
+
+			
+	          $perfils = $this->getDoctrine()->getRepository(Perfil::class)->findByGerencia($user->getGerencia()->getId());
+
+	          $i = 0;
+	          foreach($perfils as $perfil){
+	          	$perfiles[$i]['id'] = $perfil->getId();
+	          	$perfiles[$i]['nickname'] = $perfil->getNickname();
+	          	$perfiles[$i]['saldo'] = $perfil->getSaldo();
+
+	          	$perfiles[$i]['nombre'] = $perfil->getUsuario()->getNombre();
+	          	$perfiles[$i]['apellido'] = $perfil->getUsuario()->getApellido();
+	          	$i++;
+	          }
+	      	
+	      /*  echo '<pre>';
+	        	print_r($perfiles);
+	        echo '</pre>';	         
+          exit;*/
+          
+
+
+          $response = new JsonResponse();
+		  $response->setData($perfiles);
+
+          //$response->setData([0=>['nombre' =>  $user->getNombre(), 'message' => 'status_comlpetado_200', 'code' => Response::HTTP_OK]]);
+
+        return $response;   
+
+    }    
 
 
 }

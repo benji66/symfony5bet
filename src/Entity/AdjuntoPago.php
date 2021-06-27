@@ -78,6 +78,11 @@ class AdjuntoPago
      */
     private $metodo_pago;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $validado;
+
 
 
     public function getId(): ?int
@@ -177,6 +182,18 @@ class AdjuntoPago
     public function setMetodoPago(?MetodoPago $metodo_pago): self
     {
         $this->metodo_pago = $metodo_pago;
+
+        return $this;
+    }
+
+    public function getValidado(): ?bool
+    {
+        return $this->validado;
+    }
+
+    public function setValidado(?bool $validado): self
+    {
+        $this->validado = $validado;
 
         return $this;
     }

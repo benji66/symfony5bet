@@ -22,19 +22,20 @@ class PerfilRepository extends ServiceEntityRepository
     // /**
     //  * @return Perfil[] Returns an array of Perfil objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function findByGerencia($value)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
+            ->andWhere('p.gerencia = :val')
+            ->andWhere('p.activo = true')
             ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+            ->orderBy('p.nickname', 'ASC')
+            //->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Perfil

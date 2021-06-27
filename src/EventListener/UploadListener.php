@@ -26,7 +26,7 @@ class UploadListener
         $file = $event->getFile();
        
 
-/*
+      /*
         $archivo = new Archivo();
         $archivo->setRuta($file->getFileName());
         $archivo->setQquuid($request->get('qquuid'));        
@@ -44,6 +44,11 @@ class UploadListener
         $response['filename'] = $file->getFileName();
 
         $response['qquuid'] = $request->get('qquuid');
+
+       /* echo '<pre>';
+        print($response);
+        echo '</pre>';
+        exit;*/
         return $response;
     }
 }
