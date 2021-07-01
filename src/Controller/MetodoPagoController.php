@@ -31,7 +31,7 @@ class MetodoPagoController extends AbstractController
     public function index(MetodoPagoRepository $metodoPagoRepository, PaginatorInterface $paginator, Request $request): Response
     {
         
-
+//
         $user = $this->getUser();
 
         $rows = $user->getPerfil()->getGerencia()->getMetodoPagos();       
