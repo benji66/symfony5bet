@@ -87,14 +87,30 @@
             <tr>
                 <td>{{ adjunto_pago.Perfil.Usuario.username }}</td>
                 <td>{{ adjunto_pago.monto }}</td>
-                <td>{{ adjunto_pago.validado }}</td>
-                <td>{{ adjunto_pago.validadoBy }}</td>
+                <td>
+                    {% if adjunto_pago.validado=='1' %}
+                        aprobado
+                  
+
+                    {% elseif adjunto_pago.validado=='0' %}
+                        rechazado
+                
+
+                    {% elseif adjunto_pago.validado==null %}
+                        pendiente
+                    {% endif %}
+
+
+                </td>
+                <td>{{ adjunto_pago.validadoBy ? adjunto_pago.validadoBy : 'en proceso' }}</td>
                 <td>{{ adjunto_pago.numeroReferencia }}</td>
                 <td>{{ adjunto_pago.createdBy }}</td>
                 <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('adjunto_pago_show', {'id': adjunto_pago.id}) }}"><i class="far fa-eye">show</i></a>
+                    {% if (is_granted('ROLE_COORDINADOR') and adjunto_pago.validado==null)  %}
                     <a href="{{ path('adjunto_pago_edit', {'id': adjunto_pago.id}) }}"><i class="fas fa-edit">edit</i></a>
+                    {% endif %} 
                 </td>
             </tr>
         {% else %}
@@ -121,10 +137,16 @@
    <div class="navigation float-right">
             {{ knp_pagination_render(adjunto_pagos) }}
         </div>
-    <a href="{{ path('adjunto_pago_new') }}">
-        <i class="fas fa-plus"></i>Create new
-    </a>
-    
+    {% if is_granted('ROLE_COORDINADOR') %}
+        <a href="{{ path('adjunto_pago_new') }}">
+            <i class="fas fa-plus"></i>Create new g
+        </a>
+    {% else %}
+        <a href="{{ path('adjunto_pago_new') }}">
+            <i class="fas fa-plus"></i>Create new -
+        </a>
+    {% endif %}    
+        
     </div>
  </div>
 {% endblock %}

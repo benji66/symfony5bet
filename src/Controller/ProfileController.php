@@ -114,11 +114,10 @@ class ProfileController extends AbstractController
     public function change(Request $request, Perfil $perfil): Response
     {
 
-            $entityManager = $this->getDoctrine()->getManager();            
+            $entityManager = $this->getDoctrine()->getManager();        
             
-            $perfil->getUsuario()->setGerencia($perfil->getGerencia()); 
-            $perfil->getUsuario()->setSaldo($perfil->getSaldo());
-            $perfil->getUsuario()->setNickname($perfil->getNickname()); 
+          
+            $perfil->getUsuario()->setPerfil($perfil); 
             $perfil->getUsuario()->setRoles($perfil->getRoles());
 
             //$perfil->getUsuario();

@@ -34,12 +34,11 @@ class MetodoPagoController extends AbstractController
 
         $user = $this->getUser();
 
-        $rows = $user->getGerencia()->getMetodoPagos();       
+        $rows = $user->getPerfil()->getGerencia()->getMetodoPagos();       
         // Render the twig view
         return $this->render('metodo_pago/index.html.twig', [
             'metodo_pagos' => $rows,
-            //'metodo_pago' => $metodoPago,
-            
+            //'metodo_pago' => $metodoPago,            
         ]);
 
 

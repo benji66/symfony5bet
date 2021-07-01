@@ -6,6 +6,8 @@ use App\Entity\AdjuntoPago;
 use App\Entity\Perfil;
 
 use App\Form\AdjuntoPagoType;
+use App\Form\AdjuntoPagoEditType;
+use App\Form\AdjuntoPagoUserType;
 use App\Repository\AdjuntoPagoRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,12 +36,24 @@ class AdjuntoPagoController extends AbstractController
     {
         
         //searchForm
+            $user = $this->getUser(); 
+               
+
         $adjuntoPago = new AdjuntoPago();
         $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);       
         $allRowsQuery = $adjuntoPagoRepository->createQueryBuilder('a')
             //->where('a.status != :status')
             //->setParameter('status', 'canceled')
-            ; 
+            ;
+
+             if (!$this->isGranted('ROLE_COORDINADOR')) { 
+
+                /*echo $user->getPerfil()->getId().'-----------';
+                exit;*/
+                   $allRowsQuery = $allRowsQuery
+                    ->andWhere('a.perfil = :perfil_id')
+                    ->setParameter('perfil_id', $user->getPerfil()->getId());              
+             }  
 
         //example filter code, you must uncomment and modify    
 
@@ -80,16 +94,30 @@ class AdjuntoPagoController extends AbstractController
      * @Route("/new", name="adjunto_pago_new", methods={"GET","POST"})
      */
     public function new(Request $request, JWTTokenManagerInterface $JWTManager): Response
-    {
-        
-        
+    {     
+         $user = $this->getUser(); 
         $adjuntoPago = new AdjuntoPago();
-        $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);
+
+        if ($this->isGranted('ROLE_COORDINADOR')) {
+            $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);
+             $adjuntoPago->setValidado(true);  
+             $adjuntoPago->setValidadoBy($user->getUsername());
+             $perfil_id = null;   
+        }else{
+            $form = $this->createForm(AdjuntoPagoUserType::class, $adjuntoPago);            
+            $adjuntoPago->setValidadoBy(null);
+            $perfil_id = $user->getPerfil()->getId();  
+        } 
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-             $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);
+             if ($this->isGranted('ROLE_COORDINADOR')) {
+                 $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);
+             }else{ 
+                $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago_user")['perfil_id']);
+              }    
 
              $ruta_relativa = '/../data/uploads/'; 
               //ruta absoluta para manupilar el archivo
@@ -97,28 +125,18 @@ class AdjuntoPagoController extends AbstractController
                      
                     if($request->get("archivo")){
                         @mkdir($ruta.'../'.$perfil->getId().'/');
-
                         foreach ($request->get("archivo") as $archivo) {      
                             $nueva_ruta = $ruta.'../'.$perfil->getId().'/'.$archivo;
                             $nueva_ruta_relativa = $ruta_relativa.'../'.$perfil->getId().'/'.$archivo;           
                             $adjuntoPago->setRuta($nueva_ruta_relativa);
                             rename ($ruta.$archivo, $nueva_ruta);
                         }
-                    } 
-
-                $user = $this->getUser(); 
-                if ($this->isGranted('ROLE_COORDINADOR')) {
-                    $adjuntoPago->setValidado(true);  
-                    $adjuntoPago->setValidadoBy($user->getUsername());                
-                }else{
-                    $adjuntoPago->setValidado(null);    
-                }       
+                    }     
        
 
             $perfil->setSaldo($perfil->getSaldo() + $adjuntoPago->getMonto());
 
             $adjuntoPago->setGerencia($perfil->getGerencia());
-
             $adjuntoPago->setPerfil($perfil);
 
             $entityManager = $this->getDoctrine()->getManager();
@@ -132,12 +150,13 @@ class AdjuntoPagoController extends AbstractController
 
             return $this->redirectToRoute('adjunto_pago_index');
         }
-        $user = $this->getUser(); 
+
 
         return $this->render('adjunto_pago/new.html.twig', [
             'adjunto_pago' => $adjuntoPago,
             'form' => $form->createView(),
-            'token' => $JWTManager->create($user)
+            'token' => $JWTManager->create($user),
+            'perfil_id' => $perfil_id
         ]);
     }
 
@@ -156,10 +175,14 @@ class AdjuntoPagoController extends AbstractController
      */
     public function edit(Request $request, AdjuntoPago $adjuntoPago): Response
     {
-        $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);
+        $form = $this->createForm(AdjuntoPagoEditType::class, $adjuntoPago);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $user = $this->getUser();
+            
+            $adjuntoPago->setValidadoBy($user->getUsername());
             $this->getDoctrine()->getManager()->flush();
 
            $this->addFlash(

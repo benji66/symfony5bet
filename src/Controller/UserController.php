@@ -140,11 +140,8 @@ class UserController extends AbstractController
      */
     public function edit(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder): Response
     {
-
       
-        $userOld['password'] = $user->getPassword();
-       
-    
+        $userOld['password'] = $user->getPassword();   
 
         $form = $this->createForm(UserType::class, $user);
     

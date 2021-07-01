@@ -3,7 +3,7 @@
 {% block title %}New Adjunto_pago{% endblock %}
 
 {% block body %}
-    <h1>Create new Adjunto_pago {#{token}#}</h1>
+    <h1>Create new Adjunto_pago {#{token}#} </h1>
 
        <div class="row">
          <!-- left column -->
@@ -240,7 +240,7 @@ $("#adjunto_pago_busca_perfil").easyAutocomplete(options);
 
                     if (response.success) {
                         // alert('response success del event listener '+id + name);
-                         $("#adjunto_pago").append('<input type="text" id="archivo_'+id+'" value="'+response.filename+'" name="archivo['+id+']">');                          
+                         $("#form_append").append('<input type="text" id="archivo_'+id+'" value="'+response.filename+'" name="archivo['+id+']">');                          
                     }
                 }
             },
@@ -258,7 +258,13 @@ $("#adjunto_pago_busca_perfil").easyAutocomplete(options);
             $('#fine-uploader-manual-trigger').fineUploader('uploadStoredFiles');             
         });
 
-  
+    {% if (perfil_id) %}
+        //alert({{perfil_id}});
+        $("#adjunto_pago_user_perfil_id").val({{perfil_id}});
+        //alert($("#adjunto_pago_user_perfil_id").val());
+    {% endif %}  
     </script>
+
+  
 
  {% endblock %}
