@@ -1,6 +1,6 @@
 {% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
 
-{% block title %}AdjuntoPago index{% endblock %}
+{% block title %}Carrera index{% endblock %}
 
 {% block stylesheets %}
  <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
@@ -8,7 +8,7 @@
 
 
 {% block body %}
-    <h1>AdjuntoPago index FRAN</h1>
+    <h1>Carrera index FRAN</h1>
 
 {# read and display all flash messages #}
 {% for label, messages in app.flashes %}
@@ -33,7 +33,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-at"></i></span>
                     </div>
-                    {{ form_widget(form.email, {'attr': {'value': adjunto_pago.email}}) }}
+                    {{ form_widget(form.email, {'attr': {'value': carrera.email}}) }}
 
 
                     <small>{{ form_help(form.email) }}</small>
@@ -56,7 +56,7 @@
              <i class="far fa-file-pdf"></i>{{ button_label|default('PDF') }}
         </button>
 
-        <a href="{{ path('adjunto_pago_index') }}">Limpiar</a>
+        <a href="{{ path('carrera_index') }}">Limpiar</a>
 
         {{ form_widget(form._token) }} 
     {{ form_end(form, {'render_rest': false}) }#} 
@@ -71,47 +71,44 @@
             <div class="card-body">
      <table id="example2" class="table table-bordered table-hover">
         <thead>
-            <tr>  
-                <th>User</th>
-                <th>Monto</th>
-                <th>Validado</th>
-                <th>Validado_by</th>
-                <th>Numero_referencia</th>
-                <th>CreatedBy</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
+            <tr>
+                <th>Numero_carrera</th>
+                <th>Fecha</th>
+                <th>Cantidad_caballos</th>                
+                <th>Status</th>                
+                 <th>actions</th>              
             </tr>
         </thead>
         <tbody>
-        {% for adjunto_pago in adjunto_pagos %}
-            <tr>
-                <td>{{ adjunto_pago.Perfil.Usuario.username }}</td>
-                <td>{{ adjunto_pago.monto }}</td>
+        {% for carrera in carreras %}
+            <tr>               
+                <td>{{ carrera.numeroCarrera }}</td>
+                <td>{{ carrera.fecha ? carrera.fecha|date('Y-m-d') : '' }}</td>
+                <td>{{ carrera.cantidadCaballos }}</td>                
+                <td>{{ carrera.status }}</td>
+               
+                            
                 <td>
-                    {% if adjunto_pago.validado=='1' %}
-                        aprobado
-                  
+                    <a href="{{ path('carrera_show', {'id': carrera.id}) }}"><i class="far fa-eye">show</i></a>                    
+                    
 
-                    {% elseif adjunto_pago.validado=='0' %}
-                        rechazado
-                
+                    {% if (carrera.status=='PENDIENTE') %}
+                        <a href="{{ path('carrera_edit', {'id': carrera.id}) }}"><i class="fas fa-edit">edit</i></a>
+                        {{ include('carrera/_delete_form.html.twig') }}
 
-                    {% elseif adjunto_pago.validado==null %}
-                        pendiente
+                       <a href="{{ path('carrera_abrir', {'id': carrera.id}) }}"><i class="fas fa-edit">abrir</i></a>
                     {% endif %}
 
+                    {% if (carrera.status=='ABIERTO') %}
+                          <a href="{{ path('carrera_cerrar', {'id': carrera.id}) }}"><i class="fas fa-edit">cerrar</i></a>
+                          {# % if not(carrera.apuesta) %}
+                            {{ include('carrera/_delete_form.html.twig') }}
+                          {% endif % #}
+                    {% endif %}
 
-                </td>
-                <td>{{ adjunto_pago.validadoBy ? adjunto_pago.validadoBy : 'en proceso' }}</td>
-                <td>{{ adjunto_pago.numeroReferencia }}</td>
-                <td>{{ adjunto_pago.createdBy }}</td>
-                <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('adjunto_pago_show', {'id': adjunto_pago.id}) }}"><i class="far fa-eye">show</i></a>
-                    
-                    {% if (is_granted('ROLE_COORDINADOR') and (adjunto_pago.validado is same as null) )  %}
-                    <a href="{{ path('adjunto_pago_edit', {'id': adjunto_pago.id}) }}"><i class="fas fa-edit">edit</i></a>
-                    {% endif %} 
+                    {% if (carrera.status == 'CERRADO') %}
+                          <a href="{{ path('carrera_finalizar', {'id': carrera.id}) }}"><i class="fas fa-edit">finalizar</i></a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -123,31 +120,23 @@
 
         <tfoot>
             <tr>
-                <th>User</th>
-                <th>Monto</th>
-                <th>Validado</th>
-                <th>Validado_by</th>
-                <th>Numero_referencia</th>
-                <th>CreatedBy</th>
-                <th>CreatedAt</th>
+                <th>Numero_carrera</th>
+                <th>Fecha</th>
+                <th>Cantidad_caballos</th>
+                <th>Status</th>               
+            
                 <th>actions</th>
             </tr>
         </tfoot>
     </table>
 
    <div class="navigation float-right">
-            {{ knp_pagination_render(adjunto_pagos) }}
+            {{ knp_pagination_render(carreras) }}
         </div>
-    {% if is_granted('ROLE_COORDINADOR') %}
-        <a href="{{ path('adjunto_pago_new') }}">
-            <i class="fas fa-plus"></i>Create new g
-        </a>
-    {% else %}
-        <a href="{{ path('adjunto_pago_new') }}">
-            <i class="fas fa-plus"></i>Create new -
-        </a>
-    {% endif %}    
-        
+    <a href="{{ path('carrera_new') }}">
+        <i class="fas fa-plus"></i>Create new
+    </a>
+    
     </div>
  </div>
 {% endblock %}
@@ -161,13 +150,13 @@
 
 function descargaPDF(form){
     $(form).attr('target', '_blank');
-    $(form).attr('action', "{{ path('adjunto_pago_pdf') }}");   
+    $(form).attr('action', "{{ path('carrera_pdf') }}");   
     $(form).submit();
 }
 
 function buscar(form){
     $(form).attr('target', ' ');
-    $(form).attr('action', "{{ path('adjunto_pago_index') }}");   
+    $(form).attr('action', "{{ path('carrera_index') }}");   
     $(form).submit();
 } 
 

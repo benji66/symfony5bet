@@ -115,6 +115,11 @@ class AdjuntoPagoController extends AbstractController
 
              if ($this->isGranted('ROLE_COORDINADOR')) {
                  $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);
+
+                    if($request->get("adjunto_pago")['validado']=='1'){
+                      $perfil->setSaldo($perfil->getSaldo() + $adjuntoPago->getMonto());
+                    }
+
              }else{ 
                 $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago_user")['perfil_id']);
               }    
@@ -134,7 +139,7 @@ class AdjuntoPagoController extends AbstractController
                     }     
        
 
-            $perfil->setSaldo($perfil->getSaldo() + $adjuntoPago->getMonto());
+            
 
             $adjuntoPago->setGerencia($perfil->getGerencia());
             $adjuntoPago->setPerfil($perfil);

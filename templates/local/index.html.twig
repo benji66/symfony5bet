@@ -1,6 +1,6 @@
 {% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
 
-{% block title %}AdjuntoPago index{% endblock %}
+{% block title %}Local index{% endblock %}
 
 {% block stylesheets %}
  <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
@@ -8,7 +8,7 @@
 
 
 {% block body %}
-    <h1>AdjuntoPago index FRAN</h1>
+    <h1>Local index FRAN</h1>
 
 {# read and display all flash messages #}
 {% for label, messages in app.flashes %}
@@ -33,7 +33,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-at"></i></span>
                     </div>
-                    {{ form_widget(form.email, {'attr': {'value': adjunto_pago.email}}) }}
+                    {{ form_widget(form.email, {'attr': {'value': local.email}}) }}
 
 
                     <small>{{ form_help(form.email) }}</small>
@@ -56,7 +56,7 @@
              <i class="far fa-file-pdf"></i>{{ button_label|default('PDF') }}
         </button>
 
-        <a href="{{ path('adjunto_pago_index') }}">Limpiar</a>
+        <a href="{{ path('local_index') }}">Limpiar</a>
 
         {{ form_widget(form._token) }} 
     {{ form_end(form, {'render_rest': false}) }#} 
@@ -71,83 +71,45 @@
             <div class="card-body">
      <table id="example2" class="table table-bordered table-hover">
         <thead>
-            <tr>  
-                <th>User</th>
-                <th>Monto</th>
-                <th>Validado</th>
-                <th>Validado_by</th>
-                <th>Numero_referencia</th>
-                <th>CreatedBy</th>
-                <th>CreatedAt</th>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for adjunto_pago in adjunto_pagos %}
+        {% for local in locals %}
             <tr>
-                <td>{{ adjunto_pago.Perfil.Usuario.username }}</td>
-                <td>{{ adjunto_pago.monto }}</td>
+                <td>{{ local.id }}</td>
+                <td>{{ local.nombre }}</td>
                 <td>
-                    {% if adjunto_pago.validado=='1' %}
-                        aprobado
-                  
-
-                    {% elseif adjunto_pago.validado=='0' %}
-                        rechazado
-                
-
-                    {% elseif adjunto_pago.validado==null %}
-                        pendiente
-                    {% endif %}
-
-
-                </td>
-                <td>{{ adjunto_pago.validadoBy ? adjunto_pago.validadoBy : 'en proceso' }}</td>
-                <td>{{ adjunto_pago.numeroReferencia }}</td>
-                <td>{{ adjunto_pago.createdBy }}</td>
-                <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('adjunto_pago_show', {'id': adjunto_pago.id}) }}"><i class="far fa-eye">show</i></a>
-                    
-                    {% if (is_granted('ROLE_COORDINADOR') and (adjunto_pago.validado is same as null) )  %}
-                    <a href="{{ path('adjunto_pago_edit', {'id': adjunto_pago.id}) }}"><i class="fas fa-edit">edit</i></a>
-                    {% endif %} 
+                    <a href="{{ path('local_show', {'id': local.id}) }}"><i class="far fa-eye">show</i></a>
+                    <a href="{{ path('local_edit', {'id': local.id}) }}"><i class="fas fa-edit">edit</i></a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="11">no records found</td>
+                <td colspan="8">no records found</td>
             </tr>
         {% endfor %}
         </tbody>
 
         <tfoot>
             <tr>
-                <th>User</th>
-                <th>Monto</th>
-                <th>Validado</th>
-                <th>Validado_by</th>
-                <th>Numero_referencia</th>
-                <th>CreatedBy</th>
-                <th>CreatedAt</th>
+                <th>Id</th>
+                <th>Nombre</th>
                 <th>actions</th>
             </tr>
         </tfoot>
     </table>
 
    <div class="navigation float-right">
-            {{ knp_pagination_render(adjunto_pagos) }}
+            {{ knp_pagination_render(locals) }}
         </div>
-    {% if is_granted('ROLE_COORDINADOR') %}
-        <a href="{{ path('adjunto_pago_new') }}">
-            <i class="fas fa-plus"></i>Create new g
-        </a>
-    {% else %}
-        <a href="{{ path('adjunto_pago_new') }}">
-            <i class="fas fa-plus"></i>Create new -
-        </a>
-    {% endif %}    
-        
+    <a href="{{ path('local_new') }}">
+        <i class="fas fa-plus"></i>Create new
+    </a>
+    
     </div>
  </div>
 {% endblock %}
@@ -161,13 +123,13 @@
 
 function descargaPDF(form){
     $(form).attr('target', '_blank');
-    $(form).attr('action', "{{ path('adjunto_pago_pdf') }}");   
+    $(form).attr('action', "{{ path('local_pdf') }}");   
     $(form).submit();
 }
 
 function buscar(form){
     $(form).attr('target', ' ');
-    $(form).attr('action', "{{ path('adjunto_pago_index') }}");   
+    $(form).attr('action', "{{ path('local_index') }}");   
     $(form).submit();
 } 
 

@@ -67,12 +67,18 @@ class Gerencia
      */
     private $metodoPagos;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Carrera::class, mappedBy="gerencia")
+     */
+    private $carreras;
+
 
     public function __construct()
     {
         $this->perfils = new ArrayCollection();
         $this->adjuntoPagos = new ArrayCollection();
         $this->metodoPagos = new ArrayCollection();
+        $this->carreras = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,6 +182,36 @@ class Gerencia
             // set the owning side to null (unless already changed)
             if ($metodoPago->getGerencia() === $this) {
                 $metodoPago->setGerencia(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Carrera[]
+     */
+    public function getCarreras(): Collection
+    {
+        return $this->carreras;
+    }
+
+    public function addCarrera(Carrera $carrera): self
+    {
+        if (!$this->carreras->contains($carrera)) {
+            $this->carreras[] = $carrera;
+            $carrera->setGerencia($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarrera(Carrera $carrera): self
+    {
+        if ($this->carreras->removeElement($carrera)) {
+            // set the owning side to null (unless already changed)
+            if ($carrera->getGerencia() === $this) {
+                $carrera->setGerencia(null);
             }
         }
 

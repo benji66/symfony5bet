@@ -1,0 +1,60 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Edit Carrera{% endblock %}
+
+{% block body %}
+     <h1>Finalizar Carrera</h1>
+
+
+		<div class="row">
+          <!-- left column -->
+          <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-secondary">
+              <div class="card-header">
+                <h3 class="card-title">Orden Final</h3>
+              </div>
+              <!-- /.card-header -->
+
+              <!-- form start -->   
+              <form name="metodo_pago" method="post">         
+                    <div class="card-body">
+                       
+                       {% for i in 1..carrera.cantidadCaballos %}
+                            <div class="form-group">
+                              <label>Posicion * {{ i }}</label>
+                              <input type="text" name="pos[]"> 
+                            </div>
+                       {% endfor %}
+
+                       <div class="card-footer">
+                           <button type="submit" class="btn btn-primary">
+                             {{ button_label|default('Save') }}
+                           </button>
+                       </div>
+                    </div>
+              </form>
+              <!-- /.card-body -->               
+             
+            </div>
+            <!-- /.card -->
+
+            <a href="{{ path('carrera_index') }}">
+            	<i class="fas fa-arrow-left"></i>
+            	back to list
+            	
+            </a>
+
+             
+		 </div>
+		</div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<!-- InputMask -->
+<script src="/bundles/fgimenezadminlte/plugins/moment/moment.min.js"></script>
+<script src="/bundles/fgimenezadminlte/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+
+{% endblock %}
