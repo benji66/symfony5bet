@@ -8,61 +8,100 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ carrera.id }}</td>
-            </tr>
-            <tr>
                 <th>Fecha</th>
                 <td>{{ carrera.fecha ? carrera.fecha|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Cantidad_caballos</th>
-                <td>{{ carrera.cantidadCaballos }}</td>
-            </tr>
-            <tr>
+                <th>Numero_carrera</th>
+                <td>{{ carrera.numeroCarrera }}</td>                
                 <th>Status</th>
                 <td>{{ carrera.status }}</td>
             </tr>
-            <tr>
-                <th>Numero_carrera</th>
-                <td>{{ carrera.numeroCarrera }}</td>
-            </tr>
-            <tr>
+            <tr>                
+                <th>Total Pagado</th>
+                <td>{{ carrera.totalPagado }}</td>
+                <th>Total Ganancia</th>
+                <td>{{ carrera.totalGanancia }}</td>
                 <th>Orden_oficial</th>
                 <td>{{ carrera.ordenOficial ? carrera.ordenOficial|json_encode : '' }}</td>
             </tr>
             <tr>
-                <th>CreatedBy</th>
-                <td>{{ carrera.createdBy }}</td>
+                <th>Creado por</th>
+                <td>{{ carrera.createdBy }} {{ carrera.createdAt ? carrera.createdAt|date('Y-m-d H:i:s') : '' }}</td>          
+                <th>Cerrado por</th>
+                <td>{{ carrera.cerradoBy }}</td>
+                <th>Pagado por</th>
+                <td>{{ carrera.pagadoBy }}</td>
             </tr>
-            <tr>
-                <th>UpdatedBy</th>
-                <td>{{ carrera.updatedBy }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ carrera.createdAt ? carrera.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ carrera.updatedAt ? carrera.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+      
+          
         </tbody>
     </table>
 
-    <a href="{{ path('carrera_index') }}">
 
+<h1>Apuestas Realizadas</h1>
+
+    <div class="row">
+    {% for apuesta in carrera.Apuestas %}
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-text-width"></i>
+                  Ganador: {{ apuesta.Ganador.nickname|default('-') }} [{{ apuesta.Cuenta.SaldoGanador|default('-') }}]
+                </h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <dl>
+                  <dt>Monto</dt>
+                  <dd>{{ apuesta.monto }}</dd>
+                  <dt>Tipo de Apuesta</dt>
+                  <dd>{{ apuesta.Tipo.nombre }}</dd>
+                  <dd>
+                        <div class="card card-primary collapsed-card">
+                          <div class="card-header">
+                            <h3 class="card-title">Clientes involucrados:</h3>
+
+                            <div class="card-tools">
+                              <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                              </button>
+                            </div>
+                            <!-- /.card-tools -->
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <table class="table"  class="table table-bordered table-striped">
+                                    <tbody>
+                                       <tr>
+                                        <th>Cliente</th>
+                                        <th>Caballos</th>
+                                       </tr> 
+                                    {% for detalle in apuesta.ApuestaDetalles %}    
+                                        <tr>
+                                            <td>{{ detalle.Perfil.nickname }}</td>
+                                            <td>{{ detalle.caballos ? detalle.caballos|json_encode : '' }}</td>
+                                        </tr>   
+                                    {% endfor %}
+                                    </tbody>
+                                </table>      
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                  </dd>                  
+                </dl>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->            
+        </div>
+      <!-- ./col -->    
+       {% endfor %}  
+    </div>        
+    <a href="{{ path('carrera_index') }}">
         <i class="fas fa-arrow-left"></i>
         back to list
-
     </a>
 
-    <a href="{{ path('carrera_edit', {'id': carrera.id}) }}">
-        
-         <i class="fas fa-edit"></i>
-        edit
 
-    </a>
 
-    {{ include('carrera/_delete_form.html.twig') }}
 {% endblock %}

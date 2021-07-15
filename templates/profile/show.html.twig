@@ -11,7 +11,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Profile</h1>
+            <h1>{{ user.Perfil.nickname }}</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -41,15 +41,15 @@
 
         <div class="row">
           <div class="col-md-3">
-
             <!-- Profile Image -->
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
-                <div class="text-center">
+                 <div class="text-center">
                   <img class="profile-user-img img-fluid img-circle"
                        src="/bundles/fgimenezadminlte/dist/img/user4-128x128.jpg"
                        alt="User profile picture">
-                </div>
+                       imagen grupo
+                </div> 
 
                 <h3 class="profile-username text-center">{{ user.nombre }} {{ user.apellido }}</h3>
 
@@ -64,7 +64,7 @@
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
-                    <b>Followers</b> <a class="float-right">1,322</a>
+                    <b>Saldo:</b> <a class="float-right">{{ user.Perfil.saldo }}</a>
                   </li>
                   <li class="list-group-item">
                     <b>Following</b> <a class="float-right">543</a>
@@ -322,22 +322,21 @@
                       </div>
                       <!-- /.timeline-label -->
                       <!-- timeline item -->
+                      {% for item in times %}
                       <div>
-                        <i class="fas fa-camera bg-purple"></i>
+                        <i class="{{ item.iclass }}"></i>
 
                         <div class="timeline-item">
                           <span class="time"><i class="far fa-clock"></i> 2 days ago</span>
 
-                          <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
+                          <h3 class="timeline-header">{{ item.mensaje }}</h3>
 
                           <div class="timeline-body">
-                            <img src="http://placehold.it/150x100" alt="...">
-                            <img src="http://placehold.it/150x100" alt="...">
-                            <img src="http://placehold.it/150x100" alt="...">
-                            <img src="http://placehold.it/150x100" alt="...">
+                            {{ item.observacion }}
                           </div>
                         </div>
                       </div>
+                      {% endfor %}
                       <!-- END timeline item -->
                       <div>
                         <i class="far fa-clock bg-gray"></i>

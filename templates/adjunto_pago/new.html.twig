@@ -240,7 +240,7 @@ $("#adjunto_pago_busca_perfil").easyAutocomplete(options);
 
                     if (response.success) {
                         // alert('response success del event listener '+id + name);
-                         $("#form_append").append('<input type="text" id="archivo_'+id+'" value="'+response.filename+'" name="archivo['+id+']">');                          
+                         $("#form_append").append('<input type="hidden" id="archivo_'+id+'" value="'+response.filename+'" name="archivo['+id+']">');                          
                     }
                 }
             },

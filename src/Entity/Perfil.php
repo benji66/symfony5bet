@@ -99,10 +99,26 @@ class Perfil
     private $adjuntoPagos;
 
 
+    /**
+     * @ORM\OneToMany(targetEntity=Apuesta::class, mappedBy="ganador")
+     */
+    private $ganadores;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $saldo_ilimitado;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ApuestaDetalle::class, mappedBy="perfil", cascade={"persist"})
+     */
+    private $apuestaDetalles;    
 
     public function __construct()
     {
         $this->adjuntoPagos = new ArrayCollection();
+        $this->ganadores = new ArrayCollection();
+        $this->apuestaDetalles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -250,6 +266,57 @@ class Perfil
             // set the owning side to null (unless already changed)
             if ($adjuntoPago->getPerfil() === $this) {
                 $adjuntoPago->setPerfil(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection|Apuesta[]
+     */
+    public function getGanadores(): Collection
+    {
+        return $this->ganadores;
+    }
+
+    public function getSaldoIlimitado(): ?bool
+    {
+        return $this->saldo_ilimitado;
+    }
+
+    public function setSaldoIlimitado(?bool $saldo_ilimitado): self
+    {
+        $this->saldo_ilimitado = $saldo_ilimitado;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ApuestaDetalle[]
+     */
+    public function getApuestaDetalles(): Collection
+    {
+        return $this->apuestaDetalles;
+    }
+
+    public function addApuestaDetalle(ApuestaDetalle $apuestaDetalle): self
+    {
+        if (!$this->apuestaDetalles->contains($apuestaDetalle)) {
+            $this->apuestaDetalles[] = $apuestaDetalle;
+            $apuestaDetalle->setPerfil($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApuestaDetalle(ApuestaDetalle $apuestaDetalle): self
+    {
+        if ($this->apuestaDetalles->removeElement($apuestaDetalle)) {
+            // set the owning side to null (unless already changed)
+            if ($apuestaDetalle->getPerfil() === $this) {
+                $apuestaDetalle->setPerfil(null);
             }
         }
 

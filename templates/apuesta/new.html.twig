@@ -1,0 +1,218 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}New Apuesta{% endblock %}
+
+{% block body %}
+
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+    <h1>Create new Apuesta</h1>
+
+       <div class="row">
+          <!-- left column -->
+          <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">New</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->            
+                <div class="card-body">
+                   {{ include('apuesta/_form.html.twig') }}
+                </div>
+                <!-- /.card-body -->               
+             
+            </div>
+            <!-- /.card -->
+
+              <a href="{{ path('apuesta_index') }}">
+            	<i class="fas fa-arrow-left"></i>
+            	back to list
+            	
+            </a>
+
+            <a href="{{ path('carrera_cerrar', {'id': carrera.id}) }}"><i class="fas fa-edit">cerrar carrera</i></a>
+		  </div>
+
+      <div class="col-md-6">
+            <input type="hidden" id="datos_perfil_select_id"/>
+            <input type="hidden" id="datos_perfil_select_item"/>          
+      </div> 
+		</div>
+
+
+    <h1>APUESTAS CARGADAS</h1>
+         <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Clientes</th>
+                <th>Monto</th>
+                <th>Tipo</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for apuesta in apuestas %}
+            <tr>                
+                 <td>
+                    <table>                      
+                      {% for row in apuesta.ApuestaDetalles %}
+                      <tr>
+                          <td>{{ row.Perfil.nickname }}</td>
+                          <td>{{ row.caballos ? row.caballos|json_encode : '' }}</td> 
+                      </tr>
+                      {% endfor %}
+                    </table>     
+                </td>
+                <td>{{ apuesta.monto }}</td>
+                <td>{{ apuesta.Tipo.nombre }}</td>   
+                <td>
+                    <a href="{{ path('apuesta_show', {'id': apuesta.id}) }}"><i class="far fa-eye">show</i></a>
+                      {{ include('apuesta/_delete_form.html.twig') }}                
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Clientes</th>
+                <th>Monto</th>
+                <th>Tipo</th>
+                <th>actions</th>
+            </tr>
+        </tfoot>
+    </table>
+            
+{% endblock %}
+
+
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/bundles/fgimenezadminlte/custom/EasyAutocomplete-1.3.5/easy-autocomplete.css">
+
+    <link rel="stylesheet" href="/bundles/fgimenezadminlte/custom/EasyAutocomplete-1.3.5/easy-autocomplete.themes.css">  
+
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+
+<script src="/bundles/fgimenezadminlte/custom/EasyAutocomplete-1.3.5/jquery.easy-autocomplete.min.js"></script>
+
+ <script>
+
+var options = {
+
+  url: function(phrase) {
+    return "{{ path('profile_search') }}";
+  },
+
+  getValue: function(element) {
+    return element.nickname + ' - '+ element.nombre + ' ' +element.apellido;
+  },
+
+  ajaxSettings: {
+    dataType: "json",
+    method: "GET",
+    data: {
+      dataType: "json"
+    },
+    headers: {"Authorization" : "Bearer {# { token } #}", "Content-Type" : "application/json"  }
+  },
+
+  preparePostData: function(data) {
+    data.phrase = $("#apuesta_busca_perfil").val();
+    return data;
+  },
+
+  list: {
+        onSelectItemEvent: function() {
+
+            var datos_perfil_name = $("#apuesta_busca_perfil").getSelectedItemData().nombre+' '+$("#apuesta_busca_perfil").getSelectedItemData().apellido+' '+$("#apuesta_busca_perfil").getSelectedItemData().saldo+' '+$("#apuesta_busca_perfil").getSelectedItemData().nickname;
+
+            var datos_perfil_id = $("#apuesta_busca_perfil").getSelectedItemData().id;
+            //console.log('---77--'+datos_perfil_id);
+
+            $("#datos_perfil_select_item").val(datos_perfil_name);
+
+            $("#datos_perfil_select_id").val(datos_perfil_id);
+
+           
+        },
+        onHideListEvent: function() {
+          var datos_perfil_id = $("#datos_perfil_select_id").val();
+
+          var datos_perfil_name = $("#datos_perfil_select_item").val();                
+
+            if(!$("#datos_perfil_id_"+datos_perfil_id).val() && datos_perfil_id!=''){
+
+                $("#datos_perfil").append('<li id="datos_perfil_texto_'+datos_perfil_id+'"> <a onclick="$(\'#datos_perfil_texto_'+datos_perfil_id+'\').remove()" href="#"><i class="far fa-circle nav-icon">X</i></a>  '+ datos_perfil_name+' <input type="hidden" id="datos_perfil_id_'+ datos_perfil_id+'"  name="datos_perfil['+ datos_perfil_id+'][perfil_id]" value="'+ datos_perfil_id+'"><br/><label>Caballos</label><div class="input-group input-group-sm"><input type="number" id="caballos_texto_'+datos_perfil_id+'" class="form-control"><span class="input-group-append"><button type="button" class="btn btn-info btn-flat" id="caballos_boton_'+datos_perfil_id+'" perfil_id="'+datos_perfil_id+'">agregar</button></span></div><ul id="datos_caballos_'+datos_perfil_id+'"></ul></li>');               
+            }
+            $("#apuesta_busca_perfil").val('');
+          
+        }
+    },
+
+  requestDelay: 400
+};
+
+$("#apuesta_busca_perfil").easyAutocomplete(options);
+ 
+ $("#apuesta_enviar").click(function() {
+
+  //alert($('#datos_perfil li').length);
+    
+    if($('#datos_perfil li').length < 2){
+        alert('Debe agregar dos clientes minimo');
+        return false;
+    }
+
+  
+    
+    $('form[name=apuesta]').submit();
+
+
+}); 
+
+
+
+
+
+    $('#datos_perfil').on('click', 'button', function(){
+
+            var datos_caballos_id =$('#caballos_texto_'+$(this).attr('perfil_id')).val();           
+
+           //alert(datos_caballos_id+'--');
+           // alert($("#datos_caballos_id_"+datos_caballos_id).val());
+
+            if(!$("#datos_caballos_id_"+datos_caballos_id).val() && datos_caballos_id!=''){
+                
+                $("#datos_caballos_"+$(this).attr('perfil_id')).append('<li id="datos_caballos_texto_'+datos_caballos_id+'"> <a onclick="$(\'#datos_caballos_texto_'+datos_caballos_id+'\').remove()" href="#"><i class="far fa-circle nav-icon">X</i></a>  '+ datos_caballos_id +' <input type="hidden" id="datos_caballos_id_'+ datos_caballos_id +'" name="datos_perfil['+ $(this).attr('perfil_id')+'][caballos][]" value="'+ datos_caballos_id+'"></li>');               
+            }            
+
+           $('#caballos_texto_'+$(this).attr('perfil_id')).val('');        
+
+    });
+
+ </script>    
+  
+
+ {% endblock %}

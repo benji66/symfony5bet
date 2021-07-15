@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Carrera;
+use App\Entity\Cuenta;
 use App\Form\CarreraType;
 use App\Repository\CarreraRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +38,8 @@ class CarreraController extends AbstractController
         
         $allRowsQuery = $carreraRepository->createQueryBuilder('a')
             //->where('a.status != :status')
+            ->orderBy('a.fecha', 'DESC')
+           
             //->setParameter('status', 'canceled')
             ; 
 
@@ -166,17 +169,9 @@ class CarreraController extends AbstractController
      * @Route("/{id}/finalizar", name="carrera_finalizar", methods={"GET","POST"})
      */
     public function finalizar(Request $request, Carrera $carrera): Response
-    {       
-       
-
-         
+    {               
                     if($request->get("pos")){
                         
-                        /*foreach ($request->get("pos") as $pos) {      
-                           echo $pos.',';
-                        }
-                        exit;*/
-
                            $carrera->setOrdenOficial($request->get("pos"));
                            $carrera->setStatus('ORDEN');
 
@@ -188,10 +183,9 @@ class CarreraController extends AbstractController
                             );
 
                             return $this->redirectToRoute('carrera_index');
-                    }     
-     
+                    }        
 
-        return $this->render('carrera/finalizar.html.twig', [
+            return $this->render('carrera/finalizar.html.twig', [
             'carrera' => $carrera,
            
         ]);      
@@ -202,7 +196,9 @@ class CarreraController extends AbstractController
      */
     public function cerrar(Request $request, Carrera $carrera): Response
     {       
+            $user = $this->getUser(); 
             $carrera->setStatus("CERRADO");  
+            $carrera->setCerradoBy($user->getUsername());
             $this->getDoctrine()->getManager()->flush();
 
            $this->addFlash(
@@ -212,6 +208,90 @@ class CarreraController extends AbstractController
 
             return $this->redirectToRoute('carrera_index');       
     }
+
+    /**
+     * @Route("/{id}/pagar", name="carrera_pagar", methods={"GET","POST"})
+     */
+    public function pagar(Request $request, Carrera $carrera): Response
+    {       
+            $entityManager = $this->getDoctrine()->getManager();
+            $user = $this->getUser(); 
+            $carrera->setStatus("PAGADO");
+            $carrera->setPagadoBy($user->getUsername());
+            $apuestas = $carrera->getApuestas();
+            $orden = $carrera->getOrdenOficial();
+            //print_r($orden);        
+
+            $totalPagado = 0;
+            $totalGanancia = 0;
+            foreach ($apuestas as $apuesta) {
+                $ganador = null;
+                $detalles = $apuesta->getApuestaDetalles();
+
+                foreach ($detalles as $detalle) {
+                    $perfil = $detalle->getPerfil();
+
+                     // echo $perfil->getNickname().'<br/>';
+                      $caballos = $detalle->getCaballos();
+                      
+                      /*$array = $detalle->getCaballos();                      
+                      foreach ($array as $clave => $valor) {
+                            echo "{$clave} => {$valor} </br>"; 
+
+                       }*/
+                       for($i=0; $i < $apuesta->getTipo()->getId(); $i++){
+                           if( in_array($orden[$i], $caballos)){                                
+                                $ganador = $perfil;
+                                $ganador_o = $ganador->getNickname();
+                           }
+                       }
+
+                }
+                
+                if($ganador){
+                        //echo '********'.$ganador_o.'******distribuir ganancia*****';
+                        
+                        $ganador->setSaldo($ganador->getSaldo() + $apuesta->getMonto() +($apuesta->getMonto() * 0.95));
+                        $apuesta->setGanador($ganador);
+
+                        $cuenta = new Cuenta();
+                        $cuenta->setGerencia($user->getPerfil()->getGerencia());
+                        $cuenta->setSaldoCasa($apuesta->getMonto() * 0.05);
+                        $cuenta->setSaldoGanador($apuesta->getMonto() * 0.95);
+                        $cuenta->setSaldoSistema($apuesta->getMonto() * 0.05);
+
+                        $apuesta->setCuenta($cuenta);
+                        $entityManager->persist($apuesta);
+
+                        $totalPagado += ($apuesta->getMonto() * 0.95);
+                        $totalGanancia += ($apuesta->getMonto() * 0.05);
+                        //echo 'apuesta monto'.$apuesta->getMonto().' saldo antes: '.$ganador->getSaldo().' saldo ganador: '.$ganador->getNickname().' '.($ganador->getSaldo() + $apuesta->getMonto() +($apuesta->getMonto() * 0.95)).'***saldo casa:'.($apuesta->getMonto() * 0.05).'**ganancia ganador:'.($apuesta->getMonto() * 0.95);
+                }else{
+                    //echo '*******sin ganador, restaurar fondos*******';
+                   
+                    foreach ($detalles as $detalle) {
+                        $perfil = $detalle->getPerfil();
+                        $perfil->setSaldo($perfil->getSaldo() + $apuesta->getMonto());
+                        //echo '///--'.$detalle->getPerfil()->getNickname();
+                         $entityManager->persist($perfil);
+                    }    
+                }
+               
+
+                //echo '*************************************<br/>';
+            }
+             
+           $carrera->setTotalPagado($totalPagado);
+           $carrera->setTotalGanancia($totalGanancia);
+           $entityManager->flush();
+
+           $this->addFlash(
+            'success',
+            'Your changes were saved!'
+            );
+            return $this->redirectToRoute('carrera_index');       
+    }
+
     /**
      * @Route("/{id}", name="carrera_delete", methods={"DELETE"})
      */

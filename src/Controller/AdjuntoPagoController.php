@@ -36,12 +36,13 @@ class AdjuntoPagoController extends AbstractController
     {
         
         //searchForm
-            $user = $this->getUser(); 
+        $user = $this->getUser(); 
                
 
         $adjuntoPago = new AdjuntoPago();
         $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);       
         $allRowsQuery = $adjuntoPagoRepository->createQueryBuilder('a')
+            ->orderBy('a.id', 'DESC')
             //->where('a.status != :status')
             //->setParameter('status', 'canceled')
             ;
@@ -77,7 +78,7 @@ class AdjuntoPagoController extends AbstractController
             // Define the page parameter
             $request->query->getInt('page', 1),
             // Items per page
-            2
+            20
         );
         
         // Render the twig view
@@ -124,9 +125,9 @@ class AdjuntoPagoController extends AbstractController
                 $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago_user")['perfil_id']);
               }    
 
-             $ruta_relativa = '/../data/uploads/'; 
+             $ruta_relativa = '/data/uploads/'; 
               //ruta absoluta para manupilar el archivo
-             $ruta = $this->getParameter('kernel.project_dir').$ruta_relativa;                  
+             $ruta = $this->getParameter('kernel.project_dir').'/public'.$ruta_relativa;                  
                      
                     if($request->get("archivo")){
                         @mkdir($ruta.'../'.$perfil->getId().'/');
@@ -188,6 +189,14 @@ class AdjuntoPagoController extends AbstractController
             $user = $this->getUser();
             
             $adjuntoPago->setValidadoBy($user->getUsername());
+            
+           
+
+                if($adjuntoPago->getValidado()=='1'){
+                  $adjuntoPago->getPerfil()->setSaldo($adjuntoPago->getPerfil()->getSaldo() + $adjuntoPago->getMonto());
+                }
+
+            $this->getDoctrine()->getManager()->persist($adjuntoPago);
             $this->getDoctrine()->getManager()->flush();
 
            $this->addFlash(

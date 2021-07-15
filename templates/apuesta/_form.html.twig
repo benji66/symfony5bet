@@ -1,0 +1,20 @@
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    
+	 <div class="form-group">
+     	<label>Clientes</label>
+     		
+     		<ul id="datos_perfil"></ul>
+			
+     </div>
+   
+  
+     <div class="card-footer">
+                <button type="button" class="btn btn-primary" id="apuesta_enviar">
+                  {{ button_label|default('Save') }}
+              </button>
+     </div>
+     
+		<div id="form_append"></div>
+
+{{ form_end(form) }}

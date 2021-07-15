@@ -58,7 +58,7 @@ class MetodoPago
     private $gerencia;
 
     /**
-     * @ORM\OneToMany(targetEntity=AdjuntoPago::class, mappedBy="metodo_pago", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=AdjuntoPago::class, mappedBy="metodo_pago")
      */
     private $adjuntoPagos;
 

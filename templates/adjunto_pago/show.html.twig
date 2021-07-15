@@ -7,24 +7,20 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ adjunto_pago.id }}</td>
-            </tr>
-            <tr>
-                <th>Ruta</th>
-                <td>{{ adjunto_pago.ruta }}</td>
+             <tr>
+                <th>Comprobante</th>
+                <td><img src="{{ adjunto_pago.ruta }}" width="800"></td>
             </tr>
             <tr>
                 <th>Monto</th>
                 <td>{{ adjunto_pago.monto }}</td>
             </tr>
             <tr>
-                <th>Validado_by</th>
+                <th>Validado por</th>
                 <td>{{ adjunto_pago.validadoBy }}</td>
             </tr>
             <tr>
-                <th>Numero_referencia</th>
+                <th>Numero  de referencia</th>
                 <td>{{ adjunto_pago.numeroReferencia }}</td>
             </tr>
             <tr>
@@ -32,21 +28,14 @@
                 <td>{{ adjunto_pago.observacion }}</td>
             </tr>
             <tr>
-                <th>CreatedBy</th>
-                <td>{{ adjunto_pago.createdBy }}</td>
+                <th>Creado por</th>
+                <td>{{ adjunto_pago.createdBy }} {{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }} </td>
             </tr>
             <tr>
-                <th>UpdatedBy</th>
-                <td>{{ adjunto_pago.updatedBy }}</td>
+                <th>Actualizado por</th>
+                <td>{{ adjunto_pago.updatedBy }} {{ adjunto_pago.updatedAt ? adjunto_pago.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ adjunto_pago.updatedAt ? adjunto_pago.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+       
         </tbody>
     </table>
 
@@ -57,12 +46,6 @@
 
     </a>
 
-    <a href="{{ path('adjunto_pago_edit', {'id': adjunto_pago.id}) }}">
-        
-         <i class="fas fa-edit"></i>
-        edit
-
-    </a>
 
     {{ include('adjunto_pago/_delete_form.html.twig') }}
 {% endblock %}

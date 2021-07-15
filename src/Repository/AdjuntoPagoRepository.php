@@ -47,4 +47,17 @@ class AdjuntoPagoRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findById15Dias($perfil_id)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.perfil = :perfil_id')
+            ->andWhere('a.validado is not null')
+            ->setParameter('perfil_id', $perfil_id)
+            ->orderBy('a.updatedAt', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

@@ -75,10 +75,9 @@
                 <th>User</th>
                 <th>Monto</th>
                 <th>Validado</th>
-                <th>Validado_by</th>
-                <th>Numero_referencia</th>
-                <th>CreatedBy</th>
-                <th>CreatedAt</th>
+                <th>Validado por</th>
+                <th>Numero_referencia</th>             
+                <th>Fecha de Carga</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -97,14 +96,14 @@
                 
 
                     {% elseif adjunto_pago.validado==null %}
-                        pendiente
+                        en proceso
                     {% endif %}
 
 
                 </td>
                 <td>{{ adjunto_pago.validadoBy ? adjunto_pago.validadoBy : 'en proceso' }}</td>
                 <td>{{ adjunto_pago.numeroReferencia }}</td>
-                <td>{{ adjunto_pago.createdBy }}</td>
+              
                 <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('adjunto_pago_show', {'id': adjunto_pago.id}) }}"><i class="far fa-eye">show</i></a>
@@ -126,10 +125,9 @@
                 <th>User</th>
                 <th>Monto</th>
                 <th>Validado</th>
-                <th>Validado_by</th>
-                <th>Numero_referencia</th>
-                <th>CreatedBy</th>
-                <th>CreatedAt</th>
+                <th>Validado por</th>
+                <th>Numero_referencia</th>                
+                <th>Fecha de Carga</th>
                 <th>actions</th>
             </tr>
         </tfoot>

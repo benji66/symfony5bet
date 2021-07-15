@@ -20,10 +20,11 @@
               <form name="metodo_pago" method="post">         
                     <div class="card-body">
                        
-                       {% for i in 1..carrera.cantidadCaballos %}
+                       {# % for i in 1..carrera.cantidadCaballos % #}
+                       {% for i in 1..5 %}
                             <div class="form-group">
                               <label>Posicion * {{ i }}</label>
-                              <input type="text" name="pos[]"> 
+                              <input type="text" name="pos[]" > 
                             </div>
                        {% endfor %}
 

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CarreraRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -72,6 +74,41 @@ class Carrera
      * @ORM\JoinColumn(nullable=false)
      */
     private $gerencia;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Apuesta::class, mappedBy="carrera")
+     */
+    private $apuestas;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $corre_lista;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $pagado_by;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $total_pagado;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $total_ganancia;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $cerrado_by;    
+
+    public function __construct()
+    {
+        $this->apuestas = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -161,4 +198,94 @@ class Carrera
 
         return $this;
     }
+
+    /**
+     * @return Collection|Apuesta[]
+     */
+    public function getApuestas(): Collection
+    {
+        return $this->apuestas;
+    }
+
+    public function addApuesta(Apuesta $apuesta): self
+    {
+        if (!$this->apuestas->contains($apuesta)) {
+            $this->apuestas[] = $apuesta;
+            $apuesta->setCarrera($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApuesta(Apuesta $apuesta): self
+    {
+        if ($this->apuestas->removeElement($apuesta)) {
+            // set the owning side to null (unless already changed)
+            if ($apuesta->getCarrera() === $this) {
+                $apuesta->setCarrera(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    public function getCorreLista(): ?bool
+    {
+        return $this->corre_lista;
+    }
+
+    public function setCorreLista(bool $corre_lista): self
+    {
+        $this->corre_lista = $corre_lista;
+        return $this;
+    }
+
+
+    public function getPagadoBy(): ?string
+    {
+        return $this->pagado_by;
+    }
+
+    public function setPagadoBy(?string $pagado_by): self
+    {
+        $this->pagado_by = $pagado_by;
+        return $this;
+    }
+
+    public function getTotalPagado(): ?int
+    {
+        return $this->total_pagado;
+    }
+
+    public function setTotalPagado(?int $total_pagado): self
+    {
+        $this->total_pagado = $total_pagado;
+
+        return $this;
+    }
+
+    public function getTotalGanancia(): ?int
+    {
+        return $this->total_ganancia;
+    }
+
+    public function setTotalGanancia(?int $total_ganancia): self
+    {
+        $this->total_ganancia = $total_ganancia;
+
+        return $this;
+    }
+
+    public function getCerradoBy(): ?string
+    {
+        return $this->cerrado_by;
+    }
+
+    public function setCerradoBy(?string $cerrado_by): self
+    {
+        $this->cerrado_by = $cerrado_by;
+
+        return $this;
+    }    
 }

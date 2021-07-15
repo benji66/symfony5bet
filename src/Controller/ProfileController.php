@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Perfil;
+use App\Entity\AdjuntoPago;
+use App\Entity\ApuestaDetalle;
+
 use App\Form\UserType;
 use App\Form\ProfileType;
 use App\Repository\UserRepository;
@@ -33,18 +36,40 @@ class ProfileController extends AbstractController
        // usually you'll want to make sure the user is authenticated first
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // returns your User object, or null if the user is not authenticated
-        // use inline documentation to tell your editor your exact User class
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser(); 
+        $user = $this->getUser();
+        //$user->getPerfil()->getAdjuntoPagos();
 
-      
-        // Call whatever methods you've added to your User class
-        // For example, if you added a getFirstName() method, you can use that.
-        //return new Response('Well hi there '.$user->getPerfil()->getNombre());
+        $pagos = $this->getDoctrine()->getRepository(AdjuntoPago::class)->findById15Dias($user->getPerfil()->getId());
+
+        $i=0;
+        $time=array();
+        foreach ($pagos as $row) {
+            $time[$i]['tipo'] = 'pago';
+            
+            if($row->getValidado()){
+                $time[$i]['verdadero'] = true;
+                $time[$i]['validado'] = 'Aprobado';
+            }else{
+                $time[$i]['verdadero'] = false;
+                $time[$i]['validado'] = 'Rechazado';
+            }
+
+            $time[$i]['iclass'] = 'fas fa-dollar-sign bg-green';
+
+            $time[$i]['fecha'] = $row->getUpdatedBy();
+            $time[$i]['mensaje'] = 'Su pago con el numero de referencia '.$row->getNumeroReferencia().' ha sido '.$time[$i]['validado'];
+            $time[$i]['observacion'] = $row->getObservacion();
+            $i++;  
+        }
+
+        
+        //$apuestas = $this->getDoctrine()->getRepository(ApuestaDetalle::class)->findById15Dias($this->getUser()->getPerfil()->getId());
+
+
+
         return $this->render('profile/show.html.twig', [
             'user' => $user,
-           
+            'times' => $time,                     
         ]);
     }
 
@@ -145,7 +170,7 @@ class ProfileController extends AbstractController
           //echo '---66------'.$request->get("phrase").$user->getGerencia()->getId();
 
 			
-	          $perfils = $this->getDoctrine()->getRepository(Perfil::class)->findByGerencia($user->getGerencia()->getId());
+	          $perfils = $this->getDoctrine()->getRepository(Perfil::class)->findByGerencia($user->getPerfil()->getGerencia()->getId());
 
 	          $i = 0;
 	          foreach($perfils as $perfil){
@@ -165,13 +190,12 @@ class ProfileController extends AbstractController
           
 
 
-          $response = new JsonResponse();
-		  $response->setData($perfiles);
+        $response = new JsonResponse();
+		    $response->setData($perfiles);
 
           //$response->setData([0=>['nombre' =>  $user->getNombre(), 'message' => 'status_comlpetado_200', 'code' => Response::HTTP_OK]]);
 
-        return $response;   
-
+        return $response;
     }    
 
 

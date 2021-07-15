@@ -2,32 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\LocalRepository;
+use App\Repository\ApuestaTipoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-//behaviors
-use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Blameable\Traits\BlameableEntity;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+
 
 /**
- * @ORM\Entity(repositoryClass=LocalRepository::class)
+ * @ORM\Entity(repositoryClass=ApuestaTipoRepository::class)
  */
-class Local
+class ApuestaTipo
 {
 
-    /**
-     * Hook blameable behavior
-     * updates createdBy, updatedBy fields
-     */
-    use BlameableEntity;
-    /**
-     * Hook timestampable behavior
-     * updates createdAt, updatedAt fields
-     */
-    use TimestampableEntity;
 
     /**
      * @ORM\Id
@@ -47,13 +34,13 @@ class Local
     private $descripcion;
 
     /**
-     * @ORM\OneToMany(targetEntity=Carrera::class, mappedBy="hipodromo")
+     * @ORM\OneToMany(targetEntity=Apuesta::class, mappedBy="tipo")
      */
-    private $carreras;
+    private $apuestas;
 
     public function __construct()
     {
-        $this->carreras = new ArrayCollection();
+        $this->apuestas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -86,29 +73,29 @@ class Local
     }
 
     /**
-     * @return Collection|Carrera[]
+     * @return Collection|Apuesta[]
      */
-    public function getCarreras(): Collection
+    public function getApuestas(): Collection
     {
-        return $this->carreras;
+        return $this->apuestas;
     }
 
-    public function addCarrera(Carrera $carrera): self
+    public function addApuesta(Apuesta $apuesta): self
     {
-        if (!$this->carreras->contains($carrera)) {
-            $this->carreras[] = $carrera;
-            $carrera->setHipodromo($this);
+        if (!$this->apuestas->contains($apuesta)) {
+            $this->apuestas[] = $apuesta;
+            $apuesta->setTipo($this);
         }
 
         return $this;
     }
 
-    public function removeCarrera(Carrera $carrera): self
+    public function removeApuesta(Apuesta $apuesta): self
     {
-        if ($this->carreras->removeElement($carrera)) {
+        if ($this->apuestas->removeElement($apuesta)) {
             // set the owning side to null (unless already changed)
-            if ($carrera->getHipodromo() === $this) {
-                $carrera->setHipodromo(null);
+            if ($apuesta->getTipo() === $this) {
+                $apuesta->setTipo(null);
             }
         }
 

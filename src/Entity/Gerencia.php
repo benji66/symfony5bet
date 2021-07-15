@@ -72,6 +72,11 @@ class Gerencia
      */
     private $carreras;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Cuenta::class, mappedBy="gerencia", orphanRemoval=true)
+     */
+    private $cuentas;
+
 
     public function __construct()
     {
@@ -79,6 +84,7 @@ class Gerencia
         $this->adjuntoPagos = new ArrayCollection();
         $this->metodoPagos = new ArrayCollection();
         $this->carreras = new ArrayCollection();
+        $this->cuentas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -212,6 +218,36 @@ class Gerencia
             // set the owning side to null (unless already changed)
             if ($carrera->getGerencia() === $this) {
                 $carrera->setGerencia(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cuenta[]
+     */
+    public function getCuentas(): Collection
+    {
+        return $this->cuentas;
+    }
+
+    public function addCuenta(Cuenta $cuenta): self
+    {
+        if (!$this->cuentas->contains($cuenta)) {
+            $this->cuentas[] = $cuenta;
+            $cuenta->setGerencia($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCuenta(Cuenta $cuenta): self
+    {
+        if ($this->cuentas->removeElement($cuenta)) {
+            // set the owning side to null (unless already changed)
+            if ($cuenta->getGerencia() === $this) {
+                $cuenta->setGerencia(null);
             }
         }
 

@@ -1,0 +1,60 @@
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>Apuesta index FRAN</h1>
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Monto</th>
+                <th>Corre_lista</th>
+                <th>Validado</th>
+                <th>Validado_by</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for apuestum in apuestas %}
+            <tr>
+                <td>{{ apuestum.id }}</td>
+                <td>{{ apuestum.monto }}</td>
+                <td>{{ apuestum.correLista ? 'Yes' : 'No' }}</td>
+                <td>{{ apuestum.validado ? 'Yes' : 'No' }}</td>
+                <td>{{ apuestum.validadoBy }}</td>
+                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Monto</th>
+                <th>Corre_lista</th>
+                <th>Validado</th>
+                <th>Validado_by</th>
+               
+            </tr>
+        </tfoot>
+    </table>
+
+  
+    </div>
+
+{% endblock %}
