@@ -81,7 +81,7 @@
                 <td>{{ pai.nombre }}</td>
                 <td>{{ pai.poblacion }}</td>
                 <td>
-                    <a href="{{ path('pais_show', {'id': pai.id}) }}"><i class="far fa-eye">show</i></a>
+                    <a href="{{ path('pais_show', {'id': pai.id}) }}"><i class="far fa-eye">mostrar</i></a>
                     <a href="{{ path('pais_edit', {'id': pai.id}) }}"><i class="fas fa-edit">edit</i></a>
                 </td>
             </tr>
@@ -106,7 +106,7 @@
             {{ knp_pagination_render(pais) }}
         </div>
     <a href="{{ path('pais_new') }}">
-        <i class="fas fa-plus"></i>Create new
+        <i class="fas fa-plus"></i>Nuevo
     </a>
     
     </div>

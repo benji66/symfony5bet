@@ -7,11 +7,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+//behaviors
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Blameable\Traits\BlameableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+
 /**
  * @ORM\Entity(repositoryClass=ApuestaRepository::class)
  */
 class Apuesta
 {
+    /**
+     * Hook blameable behavior
+     * updates createdBy, updatedBy fields
+     */
+    use BlameableEntity;
+    /**
+     * Hook timestampable behavior
+     * updates createdAt, updatedAt fields
+     */
+    use TimestampableEntity;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -51,6 +67,11 @@ class Apuesta
      */
     private $cuenta;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Correccion::class, mappedBy="apuesta")
+     */
+    private $correccions;
+
 
 
 
@@ -58,6 +79,7 @@ class Apuesta
     {
         $this->apuestaDetalles = new ArrayCollection();
         $this->cuentas = new ArrayCollection();
+        $this->correccions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,6 +181,36 @@ class Apuesta
         }
 
         $this->cuenta = $cuenta;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Correccion[]
+     */
+    public function getCorreccions(): Collection
+    {
+        return $this->correccions;
+    }
+
+    public function addCorreccion(Correccion $correccion): self
+    {
+        if (!$this->correccions->contains($correccion)) {
+            $this->correccions[] = $correccion;
+            $correccion->setApuesta($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCorreccion(Correccion $correccion): self
+    {
+        if ($this->correccions->removeElement($correccion)) {
+            // set the owning side to null (unless already changed)
+            if ($correccion->getApuesta() === $this) {
+                $correccion->setApuesta(null);
+            }
+        }
 
         return $this;
     }

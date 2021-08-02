@@ -35,7 +35,7 @@ class UploadController extends AbstractController
 
         //return true;
 
-        $archivo = $this->getParameter('kernel.project_dir').'/../data/uploads/'.$request->get('filename');
+        $archivo = $this->getParameter('kernel.project_dir').'/public/data/uploads/'.$request->get('filename');
         //echo $archivo;
         @unlink($archivo);
 

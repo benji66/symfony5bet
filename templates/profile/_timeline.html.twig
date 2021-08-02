@@ -1,0 +1,39 @@
+ <!-- The timeline -->
+                    <div class="timeline timeline-inverse">
+                 
+                      {% set fecha2 = null %} 
+                      {% for item in times %}
+                       <!-- timeline time label -->
+                      {% set fecha = item.fecha|date('d-m-Y') %} 
+                     
+                      {% if fecha!=fecha2 %}
+                      <div class="time-label">                   
+                        <span class="bg-success">                        
+                           {{fecha}}
+                        </span>
+                      </div>
+                        {% set fecha2 = fecha %}  
+                      {% endif %}
+
+                      
+                      <!-- /.timeline-label -->
+                      <!-- timeline item -->
+                      <div>
+                        <i class="{{ item.iclass }}"></i>
+
+                        <div class="timeline-item">
+                          <span class="time">
+                              {{ item.status ? item.status : '-' }}
+                          </span>
+                          <h3 class="timeline-header">{{ item.mensaje }}</h3>
+                          <div class="timeline-body">
+                            {{ item.observacion }}
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                      <!-- END timeline item -->
+                      <div>
+                        <i class="far fa-clock bg-gray"></i>
+                      </div>
+                    </div>

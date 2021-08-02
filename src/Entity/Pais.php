@@ -15,7 +15,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
  * @Gedmo\Loggable 
  * @ORM\Entity(repositoryClass=PaisRepository::class)
  */

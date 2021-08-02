@@ -11,7 +11,6 @@ use Gedmo\Blameable\Traits\BlameableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\AdjuntoPagoRepository")
  */
 class AdjuntoPago

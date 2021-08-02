@@ -40,8 +40,8 @@ class PerfilType extends AbstractType
                 'expanded' => true,
                 'choices'  => [
                     //'ROLE_OTRO' => 'ROLE_OTRO',
-                    'ROLE_ADMIN' => 'ROLE_ADMIN',
-                    'ROLE_GERENCIA' => 'ROLE_GERENCIA',
+                    //'ROLE_ADMIN' => 'ROLE_ADMIN',
+                    //'ROLE_GERENCIA' => 'ROLE_GERENCIA',
                     'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',
 
 
@@ -49,6 +49,7 @@ class PerfilType extends AbstractType
                 ],
             ])
             ->add('activo')
+            ->add('saldo_ilimitado')
         ;
     }
 

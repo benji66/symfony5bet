@@ -78,9 +78,10 @@ class Perfil
     private $saldo;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Gerencia::class, inversedBy="perfils")
+     * @ORM\ManyToOne(targetEntity=Gerencia::class, inversedBy="perfils", cascade={"persist"})
      */
     private $gerencia;
+
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="perfils", cascade={"persist"})
@@ -112,13 +113,19 @@ class Perfil
     /**
      * @ORM\OneToMany(targetEntity=ApuestaDetalle::class, mappedBy="perfil", cascade={"persist"})
      */
-    private $apuestaDetalles;    
+    private $apuestaDetalles;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ApuestaPropuesta::class, mappedBy="jugador")
+     */
+    private $apuestaPropuestas;    
 
     public function __construct()
     {
         $this->adjuntoPagos = new ArrayCollection();
         $this->ganadores = new ArrayCollection();
         $this->apuestaDetalles = new ArrayCollection();
+        $this->apuestaPropuestas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -317,6 +324,36 @@ class Perfil
             // set the owning side to null (unless already changed)
             if ($apuestaDetalle->getPerfil() === $this) {
                 $apuestaDetalle->setPerfil(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ApuestaPropuesta[]
+     */
+    public function getApuestaPropuestas(): Collection
+    {
+        return $this->apuestaPropuestas;
+    }
+
+    public function addApuestaPropuesta(ApuestaPropuesta $apuestaPropuesta): self
+    {
+        if (!$this->apuestaPropuestas->contains($apuestaPropuesta)) {
+            $this->apuestaPropuestas[] = $apuestaPropuesta;
+            $apuestaPropuesta->setJugador($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApuestaPropuesta(ApuestaPropuesta $apuestaPropuesta): self
+    {
+        if ($this->apuestaPropuestas->removeElement($apuestaPropuesta)) {
+            // set the owning side to null (unless already changed)
+            if ($apuestaPropuesta->getJugador() === $this) {
+                $apuestaPropuesta->setJugador(null);
             }
         }
 

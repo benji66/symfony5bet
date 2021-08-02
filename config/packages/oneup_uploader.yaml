@@ -4,5 +4,5 @@ oneup_uploader:
         gallery:          
             frontend: fineuploader # or any uploader you use in the frontend
             storage:
-                directory: "%kernel.project_dir%/../data/uploads/"
+                directory: "%kernel.project_dir%/public/data/uploads/"
 

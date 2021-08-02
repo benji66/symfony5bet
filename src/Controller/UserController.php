@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Gerencia;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,8 +24,6 @@ use Dompdf\Options;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * Require ROLE_ADMIN for *every* controller method in this class.
- *
  * @IsGranted("ROLE_COORDINADOR")
  * @Route("/user")
  */
@@ -34,55 +33,20 @@ class UserController extends AbstractController
      * @Route("/", name="user_index", methods={"GET"})
      */
     public function index(UserRepository $userRepository, PaginatorInterface $paginator,  Request $request): Response
-    {    
-        
+    {           
 
-      //$this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');        //searchForm
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+      $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA');          
         
         /*$logged_user = $this->getUser();
         echo  $logged_user->getGerenciaPermiso()->getId().'--------//-----';
         exit;*/
 
-        $allRowsQuery = $userRepository->createQueryBuilder('a')
-            //->where('p.status != :status')
-            //->setParameter('status', 'canceled')
-            ; 
-
-
-        if ($request->query->get("user")) {
-            $val = $request->query->get("user");
-
-            $user->setEmail($val['email']);
-            $allRowsQuery = $allRowsQuery
-            ->andWhere('a.email LIKE :email')
-            ->setParameter('email', '%'.$val['email'].'%');
-        }
-
-        // Find all the data, filter your query as you need
-         $allRowsQuery = $allRowsQuery->getQuery(); 
-
-
-      
-         
-        
-        // Paginate the results of the query
-        $rows = $paginator->paginate(
-            // Doctrine Query, not results
-            $allRowsQuery,
-            // Define the page parameter
-            $request->query->getInt('page', 1),
-            // Items per page
-            30
-        );
- 
+        $user = $this->getUser();
 
         // Render the twig view
         return $this->render('user/index.html.twig', [
-            'users' => $rows,
-            'user' => $user,
-            'form' => $form->createView(),
+            'perfils' => $user->getPerfil()->getGerencia()->getPerfils(),          
+           
         ]);
 
 
@@ -92,28 +56,46 @@ class UserController extends AbstractController
      * @Route("/new", name="user_new", methods={"GET","POST"})
      */
     public function new(Request $request,  UserPasswordEncoderInterface $passwordEncoder): Response
-    {
+    {        
+
         $user = new User();
+        $user_logueado = $this->getUser();
+        //echo $user_logueado->getPerfil()->getGerencia();
+        //exit;        
+
+         /*$repository = $this->getDoctrine()->getRepository(Gerencia::class);
+         $gerencia = $repository->find($user_logueado->getPerfil()->getGerencia()->getId());*/       
+       
         $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        $form->handleRequest($request);       
 
 
+        if ($form->isSubmitted() && $form->isValid()) { 
 
-        if ($form->isSubmitted() && $form->isValid()) {
+          //echo $user->getPerfil()->getNickname();
+          //exit;   
+             $user->getPerfil()->setGerencia($user_logueado->getPerfil()->getGerencia());
+             $user->getPerfil()->setUsuario($user);
 
-           
+          /*$repository = $this->getDoctrine()->getRepository(User::class);
+          $usuario = $repository->findOneByEmail($user->getEmail());
+
+          if($usuario){
+
+            $usuario
+          }*/       
 
             $entityManager = $this->getDoctrine()->getManager();
 
             $password = $passwordEncoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
+            $user->setPassword($password);    
 
             $entityManager->persist($user);
             $entityManager->flush();
 
              $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('user_index');
@@ -165,7 +147,7 @@ class UserController extends AbstractController
 
             $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('user_index');
@@ -189,64 +171,11 @@ class UserController extends AbstractController
 
             $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 
         return $this->redirectToRoute('user_index');
     }
 
-     /**
-     * @Route("/pdf", name="user_pdf", methods={"GET"})
-     */
-     public function getPdf(UserRepository $userRepository, Request $request)
-     {        // Configure Dompdf according to your needs
-     
-             //searchForm   
-        
-        
-        $allRowsQuery = $userRepository->createQueryBuilder('a')
-            //->where('p.status != :status')
-            //->setParameter('status', 'canceled')
-            ; 
-
-        if ($request->query->get("user")) {
-
-            $val = $request->query->get("user");
-
-            $allRowsQuery = $allRowsQuery
-            ->andWhere('a.email LIKE :email')
-            ->setParameter('email', '%'.$val['email'].'%');
-        }
-
-        // Find all the data, filter your query as you need
-         $allRowsQuery = $allRowsQuery->getQuery()->getResult(); 
-       
-        $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Arial');
-        
-        // Instantiate Dompdf with our options
-        $dompdf = new Dompdf($pdfOptions);
-
-        // Retrieve the HTML generated in our twig file
-        //$html = $this->renderView($vista, $registros);
-
-        $html = $this->renderView('user/pdf.html.twig', [
-            'users' => $allRowsQuery
-        ]);
-        
-        // Load HTML to Dompdf
-        $dompdf->loadHtml($html);
-        
-        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Render the HTML as PDF
-        $dompdf->render();
-
-        // Output the generated PDF to Browser (force download)
-        $dompdf->stream("mypdf.pdf", [
-            "Attachment" => true
-        ]);        
-    }
 }

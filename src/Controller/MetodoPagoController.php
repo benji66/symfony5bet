@@ -65,7 +65,7 @@ class MetodoPagoController extends AbstractController
 
              $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('metodo_pago_index');
@@ -100,7 +100,7 @@ class MetodoPagoController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('metodo_pago_index');
@@ -124,7 +124,7 @@ class MetodoPagoController extends AbstractController
          
          $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 

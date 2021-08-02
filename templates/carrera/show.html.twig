@@ -3,15 +3,25 @@
 {% block title %}Carrera{% endblock %}
 
 {% block body %}
-    <h1>Carrera</h1>
-
+    <h1>Carrera {{ carrera.numeroCarrera }}</h1>
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
     <table class="table">
         <tbody>
             <tr>
                 <th>Fecha</th>
-                <td>{{ carrera.fecha ? carrera.fecha|date('Y-m-d') : '' }}</td>
-                <th>Numero_carrera</th>
-                <td>{{ carrera.numeroCarrera }}</td>                
+                <td>{{ carrera.fecha ? carrera.fecha|date('d-m-Y') : '' }}</td>
+                <th>Hipodromo</th>
+                <td>{{ carrera.Hipodromo.nombre }}</td>                
                 <th>Status</th>
                 <td>{{ carrera.status }}</td>
             </tr>
@@ -46,12 +56,13 @@
               <div class="card-header">
                 <h3 class="card-title">
                   <i class="fas fa-text-width"></i>
-                  Ganador: {{ apuesta.Ganador.nickname|default('-') }} [{{ apuesta.Cuenta.SaldoGanador|default('-') }}]
+                  Ganador: {{ apuesta.Ganador.nickname|default('-') }} [{{ apuesta.Cuenta.SaldoGanador|default('-') }}] 
                 </h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <dl>
+                  <dd><a href="{{ path('correccion_new', {'id': apuesta.id}) }}"><i class="fas fa-edit">corregir</i></a></dd>
                   <dt>Monto</dt>
                   <dd>{{ apuesta.monto }}</dd>
                   <dt>Tipo de Apuesta</dt>
@@ -59,7 +70,7 @@
                   <dd>
                         <div class="card card-primary collapsed-card">
                           <div class="card-header">
-                            <h3 class="card-title">Clientes involucrados:</h3>
+                            <h3 class="card-title">Detalles</h3>
 
                             <div class="card-tools">
                               <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -82,7 +93,15 @@
                                         </tr>   
                                     {% endfor %}
                                     </tbody>
-                                </table>      
+                                </table>  
+
+                              <table class="table"  class="table table-bordered table-striped">
+                                  {% for correccion in apuesta.Correccions %} 
+                                      <tr><td>{{ correccion.observacion }}</td></tr>
+                                      <tr><td>{{ correccion.observacionSistema }}</td></tr>
+                                      <tr><td>{{ correccion.createdBy }}</td></tr>
+                                  {% endfor %}  
+                               </table        
                           </div>
                           <!-- /.card-body -->
                         </div>
@@ -99,7 +118,7 @@
     </div>        
     <a href="{{ path('carrera_index') }}">
         <i class="fas fa-arrow-left"></i>
-        back to list
+        volver
     </a>
 
 

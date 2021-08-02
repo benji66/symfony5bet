@@ -15,8 +15,22 @@
                 <h3 class="card-title">Edit</h3>
               </div>
               <!-- /.card-header -->
+
+
               <!-- form start -->            
                 <div class="card-body">
+                       <div class="form-group">
+                          <label>Email:</label>
+                          {{ perfil.Usuario.email }} 
+                       </div>
+                       <div class="form-group">
+                          <label>Nombre:</label>
+                          {{ perfil.Usuario.nombre }} {{ perfil.Usuario.apellido }}
+                       </div>
+                       <div class="form-group">
+                          <label>Telefono:</label>
+                          {{ perfil.Usuario.telefono }} 
+                       </div>
                        {{ include('perfil/_form.html.twig', {'button_label': 'Update'}) }}
                 </div>
                 <!-- /.card-body -->               
@@ -24,13 +38,13 @@
             </div>
             <!-- /.card -->
 
-            <a href="{{ path('perfil_index') }}">
+            <a href="{{ path('user_index') }}">
             	<i class="fas fa-arrow-left"></i>
-            	back to list
+            	volver
             	
             </a>
 
-             {{ include('perfil/_delete_form.html.twig') }}
+             {# { include('perfil/_delete_form.html.twig') } #}
 		 </div>
 		</div>
 

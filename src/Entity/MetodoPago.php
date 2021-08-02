@@ -52,7 +52,7 @@ class MetodoPago
     private $activo;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Gerencia::class, inversedBy="metodoPagos")
+     * @ORM\ManyToOne(targetEntity=Gerencia::class, inversedBy="metodoPagos", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $gerencia;

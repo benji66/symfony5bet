@@ -17,7 +17,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ApiResource()
  * @Gedmo\Loggable 
  * @ORM\Entity(repositoryClass=GerenciaRepository::class)
  * @UniqueEntity(
@@ -63,12 +62,12 @@ class Gerencia
     private $adjuntoPagos;
 
     /**
-     * @ORM\OneToMany(targetEntity=MetodoPago::class, mappedBy="gerencia")
+     * @ORM\OneToMany(targetEntity=MetodoPago::class, mappedBy="gerencia", cascade={"persist"})
      */
     private $metodoPagos;
 
     /**
-     * @ORM\OneToMany(targetEntity=Carrera::class, mappedBy="gerencia")
+     * @ORM\OneToMany(targetEntity=Carrera::class, mappedBy="gerencia", cascade={"persist"})
      */
     private $carreras;
 
@@ -76,6 +75,26 @@ class Gerencia
      * @ORM\OneToMany(targetEntity=Cuenta::class, mappedBy="gerencia", orphanRemoval=true)
      */
     private $cuentas;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $saldo_acumulado;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $reiniciado_by;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $reiniciado_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $imagen;
 
 
     public function __construct()
@@ -250,6 +269,54 @@ class Gerencia
                 $cuenta->setGerencia(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSaldoAcumulado(): ?int
+    {
+        return $this->saldo_acumulado;
+    }
+
+    public function setSaldoAcumulado(?int $saldo_acumulado): self
+    {
+        $this->saldo_acumulado = $saldo_acumulado;
+
+        return $this;
+    }
+
+    public function getReiniciadoBy(): ?string
+    {
+        return $this->reiniciado_by;
+    }
+
+    public function setReiniciadoBy(?string $reiniciado_by): self
+    {
+        $this->reiniciado_by = $reiniciado_by;
+
+        return $this;
+    }
+
+    public function getReiniciadoAt(): ?\DateTimeInterface
+    {
+        return $this->reiniciado_at;
+    }
+
+    public function setReiniciadoAt(?\DateTimeInterface $reiniciado_at): self
+    {
+        $this->reiniciado_at = $reiniciado_at;
+
+        return $this;
+    }
+
+    public function getImagen(): ?string
+    {
+        return $this->imagen;
+    }
+
+    public function setImagen(?string $imagen): self
+    {
+        $this->imagen = $imagen;
 
         return $this;
     }

@@ -89,7 +89,7 @@ class GerenciaController extends AbstractController
 
              $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('gerencia_index');
@@ -124,7 +124,7 @@ class GerenciaController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('gerencia_index');
@@ -148,7 +148,7 @@ class GerenciaController extends AbstractController
          
          $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 

@@ -87,17 +87,10 @@ class ApuestaController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-
-
             $apuestum->setCarrera($carrera);
             
             $perfiles = $request->get("datos_perfil");
-           
-            /*echo '<pre>';
-            print_r($perfiles);
-            echo '</pre>';
-            exit;*/
-            
+
             $faltaSaldo=false;
             foreach ($perfiles as $row ) {                
                  $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($row['perfil_id']);
@@ -114,7 +107,7 @@ class ApuestaController extends AbstractController
 
                  }else{                    
                      $this->addFlash(
-                        'error',
+                        'danger',
                         $perfil->getNickname().' no posee saldo suficiente ('.$perfil->getSaldo().')'
                         );
                       $faltaSaldo=true;
@@ -129,7 +122,7 @@ class ApuestaController extends AbstractController
 
                      $this->addFlash(
                     'success',
-                    'Your changes were saved-!'
+                    'Los cambios fueron realizados-!'
                     );
               }
 
@@ -171,7 +164,7 @@ class ApuestaController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('apuesta_index');
@@ -203,7 +196,7 @@ class ApuestaController extends AbstractController
          
          $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 

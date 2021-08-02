@@ -26,7 +26,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository") 
  * @UniqueEntity(
  *     fields={"email"}, 
- *     message="Este email ya esta siendo usado por otra entidad."
+ *     message="Este email ya esta siendo usado."
  * )
  */
 class User implements UserInterface
@@ -114,7 +114,7 @@ class User implements UserInterface
     private $perfils;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Perfil::class)
+     * @ORM\ManyToOne(targetEntity=Perfil::class, cascade={"persist", "remove"})
      */
     private $perfil;
 
@@ -161,7 +161,7 @@ class User implements UserInterface
 
     public function setNombre(string $nombre): self
     {
-        $this->nombre = $nombre;
+        $this->nombre = strtoupper($nombre);
 
         return $this;
     }
@@ -173,7 +173,7 @@ class User implements UserInterface
 
     public function setApellido(string $apellido): self
     {
-        $this->apellido = $apellido;
+        $this->apellido = strtoupper($apellido);
 
         return $this;
     }
@@ -186,7 +186,7 @@ class User implements UserInterface
 
     public function setTelefono(string $telefono): self
     {
-        $this->apellido = $telefono;
+        $this->telefono = $telefono;
 
         return $this;
     }    

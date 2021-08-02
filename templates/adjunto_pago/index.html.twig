@@ -106,7 +106,7 @@
               
                 <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('adjunto_pago_show', {'id': adjunto_pago.id}) }}"><i class="far fa-eye">show</i></a>
+                    <a href="{{ path('adjunto_pago_show', {'id': adjunto_pago.id}) }}"><i class="far fa-eye">mostrar</i></a>
                     
                     {% if (is_granted('ROLE_COORDINADOR') and (adjunto_pago.validado is same as null) )  %}
                     <a href="{{ path('adjunto_pago_edit', {'id': adjunto_pago.id}) }}"><i class="fas fa-edit">edit</i></a>
@@ -138,11 +138,11 @@
         </div>
     {% if is_granted('ROLE_COORDINADOR') %}
         <a href="{{ path('adjunto_pago_new') }}">
-            <i class="fas fa-plus"></i>Create new g
+            <i class="fas fa-plus"></i>Nuevo g
         </a>
     {% else %}
         <a href="{{ path('adjunto_pago_new') }}">
-            <i class="fas fa-plus"></i>Create new -
+            <i class="fas fa-plus"></i>Nuevo -
         </a>
     {% endif %}    
         

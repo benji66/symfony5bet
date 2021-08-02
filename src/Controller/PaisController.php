@@ -149,7 +149,7 @@ class PaisController extends AbstractController
 
              $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('pais_index');
@@ -184,7 +184,7 @@ class PaisController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('pais_index');
@@ -208,7 +208,7 @@ class PaisController extends AbstractController
          
          $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 

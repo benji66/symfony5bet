@@ -103,11 +103,19 @@ class Carrera
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $cerrado_by;    
+    private $cerrado_by;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ApuestaPropuesta::class, mappedBy="carrera")
+     */
+    private $apuestaPropuestas;
+
+   
 
     public function __construct()
     {
         $this->apuestas = new ArrayCollection();
+        $this->apuestaPropuestas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -287,5 +295,45 @@ class Carrera
         $this->cerrado_by = $cerrado_by;
 
         return $this;
-    }    
+    }
+
+    /**
+     * @return Collection|Propuesta[]
+     */
+    public function getPropuestas(): Collection
+    {
+        return $this->propuestas;
+    }
+
+    /**
+     * @return Collection|ApuestaPropuesta[]
+     */
+    public function getApuestaPropuestas(): Collection
+    {
+        return $this->apuestaPropuestas;
+    }
+
+    public function addApuestaPropuesta(ApuestaPropuesta $apuestaPropuesta): self
+    {
+        if (!$this->apuestaPropuestas->contains($apuestaPropuesta)) {
+            $this->apuestaPropuestas[] = $apuestaPropuesta;
+            $apuestaPropuesta->setCarrera($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApuestaPropuesta(ApuestaPropuesta $apuestaPropuesta): self
+    {
+        if ($this->apuestaPropuestas->removeElement($apuestaPropuesta)) {
+            // set the owning side to null (unless already changed)
+            if ($apuestaPropuesta->getCarrera() === $this) {
+                $apuestaPropuesta->setCarrera(null);
+            }
+        }
+
+        return $this;
+    }
+
+ 
 }

@@ -7,6 +7,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
+use Symfony\Component\HttpFoundation\Request;
+use App\Entity\User;
+use App\Form\UserRegisterType;
+
 class SecurityController extends AbstractController
 {
     /**
@@ -15,7 +21,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
          if ($this->getUser()) {
-             return $this->redirectToRoute('user_index');
+             return $this->redirectToRoute('profile_show');
          }
 
         // get the login error if there is one
@@ -24,6 +30,46 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    }
+
+
+    /**
+     * @Route("/register", name="app_register")
+     */
+    public function register(Request $request,  UserPasswordEncoderInterface $passwordEncoder): Response
+    {
+         if ($this->getUser()) {
+             return $this->redirectToRoute('profile_show');
+         }
+      
+        $user = new User();      
+      
+        $form = $this->createForm(UserRegisterType::class, $user);
+        $form->handleRequest($request);       
+
+
+        if ($form->isSubmitted() && $form->isValid()) {    
+
+            $entityManager = $this->getDoctrine()->getManager();
+
+            $password = $passwordEncoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($password);    
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+             $this->addFlash(
+            'success',
+            'Los cambios fueron realizados!'
+            );
+
+            return $this->redirectToRoute('app_login');
+        }
+    
+        return $this->render('security/register.html.twig',  [
+            
+            'form' => $form->createView(),
+        ]);
     }
 
     /**

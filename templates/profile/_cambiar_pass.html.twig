@@ -1,0 +1,27 @@
+
+
+{{ form_start(form) }}
+
+
+                <div class="form-group">
+                  <div class="input-group">                    
+                    {{ form_widget(form.password) }}
+                    
+    				<small>{{ form_help(form.password) }}</small>
+                  </div>
+                  <!-- /.input group -->
+                  <div class="form-error">				    
+				    </div>
+                </div>
+     
+     {{ form_rest(form) }}
+
+
+
+
+     <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                  {{ button_label|default('Cambiar clave') }}
+              </button>
+     </div>
+{{ form_end(form) }}

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Perfil;
 use App\Form\PerfilType;
+use App\Form\PerfilGerenciaType;
 use App\Repository\PerfilRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -89,7 +90,7 @@ class PerfilController extends AbstractController
 
              $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('perfil_index');
@@ -116,7 +117,7 @@ class PerfilController extends AbstractController
      */
     public function edit(Request $request, Perfil $perfil): Response
     {
-        $form = $this->createForm(PerfilType::class, $perfil);
+        $form = $this->createForm(PerfilGerenciaType::class, $perfil);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -124,10 +125,10 @@ class PerfilController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
-            return $this->redirectToRoute('perfil_index');
+            return $this->redirectToRoute('user_index');
         }
 
         return $this->render('perfil/edit.html.twig', [
@@ -148,11 +149,11 @@ class PerfilController extends AbstractController
          
          $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 
-        return $this->redirectToRoute('perfil_index');
+        return $this->redirectToRoute('user_index');
     }
 
      /**

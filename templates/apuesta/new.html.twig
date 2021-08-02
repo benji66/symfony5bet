@@ -1,6 +1,6 @@
 {% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
 
-{% block title %}New Apuesta{% endblock %}
+{% block title %}Nueva apuesta en {{carrera.Hipodromo.nombre}}  - carrera {{carrera.numeroCarrera}}{% endblock %}
 
 {% block body %}
 
@@ -16,7 +16,7 @@
     {% endfor %}
 {% endfor %}
 
-    <h1>Create new Apuesta</h1>
+    <h1>Nueva apuesta en {{carrera.Hipodromo.nombre}}  - carrera {{carrera.numeroCarrera}}</h1>
 
        <div class="row">
           <!-- left column -->
@@ -36,9 +36,9 @@
             </div>
             <!-- /.card -->
 
-              <a href="{{ path('apuesta_index') }}">
+              <a href="{{ path('carrera_index') }}">
             	<i class="fas fa-arrow-left"></i>
-            	back to list
+            	volver
             	
             </a>
 
@@ -78,7 +78,7 @@
                 <td>{{ apuesta.monto }}</td>
                 <td>{{ apuesta.Tipo.nombre }}</td>   
                 <td>
-                    <a href="{{ path('apuesta_show', {'id': apuesta.id}) }}"><i class="far fa-eye">show</i></a>
+                    
                       {{ include('apuesta/_delete_form.html.twig') }}                
                 </td>
             </tr>
@@ -193,9 +193,6 @@ $("#apuesta_busca_perfil").easyAutocomplete(options);
 }); 
 
 
-
-
-
     $('#datos_perfil').on('click', 'button', function(){
 
             var datos_caballos_id =$('#caballos_texto_'+$(this).attr('perfil_id')).val();           
@@ -208,7 +205,7 @@ $("#apuesta_busca_perfil").easyAutocomplete(options);
                 $("#datos_caballos_"+$(this).attr('perfil_id')).append('<li id="datos_caballos_texto_'+datos_caballos_id+'"> <a onclick="$(\'#datos_caballos_texto_'+datos_caballos_id+'\').remove()" href="#"><i class="far fa-circle nav-icon">X</i></a>  '+ datos_caballos_id +' <input type="hidden" id="datos_caballos_id_'+ datos_caballos_id +'" name="datos_perfil['+ $(this).attr('perfil_id')+'][caballos][]" value="'+ datos_caballos_id+'"></li>');               
             }            
 
-           $('#caballos_texto_'+$(this).attr('perfil_id')).val('');        
+            $('#caballos_texto_'+$(this).attr('perfil_id')).val('');        
 
     });
 

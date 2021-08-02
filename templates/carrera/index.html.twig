@@ -8,7 +8,7 @@
 
 
 {% block body %}
-    <h1>Carrera index FRAN</h1>
+    <h1>Carreras</h1>
 
 {# read and display all flash messages #}
 {% for label, messages in app.flashes %}
@@ -28,7 +28,6 @@
 
         <div class="form-group">
                   {{ form_label(form.email,'Correo:') }}
-
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-at"></i></span>
@@ -71,10 +70,11 @@
      <table id="example2" class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Fecha</th>
-                <th>Numero_carrera</th>                
+                <th>fecha</th>
+                <th>carrera</th>
+                <th>hipodromo</th>                 
                 <th>orden oficial</th>                
-                <th>Status</th>                
+                <th>status</th>                
                  <th>actions</th>              
             </tr>
         </thead>
@@ -82,14 +82,13 @@
         {% for carrera in carreras %}
             <tr>               
                 <td>{{ carrera.fecha ? carrera.fecha|date('Y-m-d') : '' }}</td>
-                <td>{{ carrera.numeroCarrera }}</td>                
+                <td>{{ carrera.numeroCarrera }}</td>  
+                <td>{{ carrera.Hipodromo.nombre }}</td>                             
                 <td>{{ carrera.ordenOficial ? carrera.ordenOficial|json_encode : '' }}</td>             
-                <td>{{ carrera.status }}</td>
-               
+                <td>{{ carrera.status }}</td>            
                             
                 <td>
-                    <a href="{{ path('carrera_show', {'id': carrera.id}) }}"><i class="far fa-eye">show</i></a>                    
-                    
+                    <a href="{{ path('carrera_show', {'id': carrera.id}) }}"><i class="far fa-eye">mostrar</i></a>            
 
                     {% if (carrera.status=='PENDIENTE') %}
                         <a href="{{ path('carrera_edit', {'id': carrera.id}) }}"><i class="fas fa-edit">edit</i></a>
@@ -109,10 +108,14 @@
 
                     {% if (carrera.status == 'CERRADO') %}
                           <a href="{{ path('carrera_finalizar', {'id': carrera.id}) }}"><i class="fas fa-edit">finalizar</i></a>
+
+                           <a href="{{ path('apuesta_new', {'id': carrera.id}) }}"><i class="fas fa-edit">apuestas</i></a>
                     {% endif %}
 
                     {% if (carrera.status == 'ORDEN') %}
-                          <a href="{{ path('carrera_finalizar', {'id': carrera.id}) }}"><i class="fas fa-edit">editar orden</i></a>
+                          <a href="{{ path('carrera_finalizar', {'id': carrera.id}) }}"><i class="fas fa-edit">editar orden</i></a> 
+
+                           <a href="{{ path('apuesta_new', {'id': carrera.id}) }}"><i class="fas fa-edit">apuestas</i></a>
 
                           <a href="{{ path('carrera_pagar', {'id': carrera.id}) }}"><i class="fas fa-edit">correr lista</i></a>
                     {% endif %}
@@ -129,6 +132,7 @@
             <tr>                
                 <th>Fecha</th>
                 <th>Numero_carrera</th>
+                <th>Hipodromo</th> 
                 <th>orden oficial</th> 
                 <th>Status</th>              
                 <th>actions</th>
@@ -140,7 +144,7 @@
             {{ knp_pagination_render(carreras) }}
         </div>
     <a href="{{ path('carrera_new') }}">
-        <i class="fas fa-plus"></i>Create new
+        <i class="fas fa-plus"></i>Nuevo
     </a>
     
     </div>

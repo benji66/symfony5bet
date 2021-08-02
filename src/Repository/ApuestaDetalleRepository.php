@@ -47,4 +47,18 @@ class ApuestaDetalleRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findById15Dias($perfil_id)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.perfil = :perfil_id')            
+            //->andWhere('a.updatedAt > :fecha')
+            ->setParameter('perfil_id', $perfil_id)
+            //->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'-1 week' )))
+            ->orderBy('a.updatedAt', 'DESC')
+            
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

@@ -1,0 +1,38 @@
+{{ form_start(form) }} 
+ 				{% for detalle in apuesta.ApuestaDetalles %} 
+                   <div class="form-group">
+                        <label>{{ detalle.Perfil.nickname }}</label>
+
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                          </div>              
+
+                              <input type="number" name="clientes[{{ detalle.Perfil.id }}][monto]"  />
+                                             
+                        </div>
+                        <!-- /.input group -->                    
+                   </div>
+                {% endfor %} 
+
+                 <div class="form-group">
+                        <label>Casa</label>
+
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                          </div>              
+
+                              <input type="number" name="casa_monto"  />
+                                             
+                        </div>
+                        <!-- /.input group -->                    
+                   </div> 
+
+    {{ form_widget(form) }}
+     <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                  {{ button_label|default('Save') }}
+              </button>
+     </div>
+{{ form_end(form) }}

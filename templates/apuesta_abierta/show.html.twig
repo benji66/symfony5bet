@@ -1,0 +1,97 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Carrera{% endblock %}
+
+{% block body %}
+    <h1>Carrera {{ carrera.numeroCarrera }}</h1>
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Fecha</th>
+                <td>{{ carrera.fecha ? carrera.fecha|date('d-m-Y') : '' }}</td>
+                <th>Hipodromo</th>
+                <td>{{ carrera.Hipodromo.nombre }}</td>                
+                <th>Status</th>
+                <td>{{ carrera.status }}</td>
+            </tr>           
+        </tbody>
+    </table>
+
+
+<h1>Propuestas</h1>
+    <div class="row">
+    {% for propuesta in carrera.ApuestaPropuestas %}
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-text-width"></i>
+                  Disponible: {{ propuesta.monto }} Jugador: {{ propuesta.Jugador.nickname }} 
+                </h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <dl>                
+                  <dt>Tipo de Apuesta</dt>
+                  <dd>{{ propuesta.Tipo.nombre }}</dd>
+                  <dt>Caballos</dt>
+                  <dd>{{ propuesta.caballos|json_encode }}</dd>
+                  {% if propuesta.Jugador != app.user.Perfil %}
+                  <dd>
+                      <form id="form_apuesta"> 
+                          <div class="form-group">
+                            <label>Monto:</label>
+                            <div class="input-group input-group-sm">
+                            <input type="number" id="apuesta_monto" class="form-control">
+                              <span class="input-group-append">
+                                <button type="button" class="btn btn-info btn-flat" id="apuesta_boton">Jugar</button>
+                              </span>
+                            </div>
+                          </div>
+                      </form> 
+                  </dd>
+                  {% endif %}                  
+                </dl>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->            
+        </div>
+      <!-- ./col -->    
+       {% endfor %}  
+    </div>        
+    <a href="{{ path('carrera_abierta_index') }}">
+        <i class="fas fa-arrow-left"></i>
+        volver
+    </a>
+      <a href="{{ path('carrera_abierta_new', {'id': carrera.id}) }}">
+        <i class="fas fa-plus"></i>
+        Nueva propuesta
+    </a>
+{% endblock %}
+
+{% block javascripts %}
+
+<script>
+    $('#form_apuesta').on('click', 'button', function(){
+
+            //$(this).attr('perfil_id') 
+           alert($(this).('#apuesta_monto').val());
+                 
+
+    });
+
+ </script>    
+  
+
+ {% endblock %}

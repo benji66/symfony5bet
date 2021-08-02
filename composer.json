@@ -34,6 +34,7 @@
         "symfony/security-bundle": "5.2.*",
         "symfony/serializer-pack": "*",
         "symfony/string": "5.2.*",
+        "symfony/telegram-notifier": "5.2.*",
         "symfony/translation": "5.2.*",
         "symfony/twig-pack": "^1.0",
         "symfony/validator": "5.2.*",
@@ -53,6 +54,9 @@
     "config": {
         "preferred-install": {
             "*": "dist"
+        },
+        "platform": {
+            "php": "7.4.2"
         },
         "sort-packages": true
     },

@@ -1,0 +1,69 @@
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>Correccion index FRAN</h1>
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Monto</th>
+                <th>Observacion</th>
+                <th>Observacion_sistema</th>
+                <th>CreatedBy</th>
+                <th>UpdatedBy</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for correccion in correccions %}
+            <tr>
+                <td>{{ correccion.id }}</td>
+                <td>{{ correccion.monto }}</td>
+                <td>{{ correccion.observacion }}</td>
+                <td>{{ correccion.observacionSistema }}</td>
+                <td>{{ correccion.createdBy }}</td>
+                <td>{{ correccion.updatedBy }}</td>
+                <td>{{ correccion.createdAt ? correccion.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ correccion.updatedAt ? correccion.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Monto</th>
+                <th>Observacion</th>
+                <th>Observacion_sistema</th>
+                <th>CreatedBy</th>
+                <th>UpdatedBy</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+               
+            </tr>
+        </tfoot>
+    </table>
+
+  
+    </div>
+
+{% endblock %}

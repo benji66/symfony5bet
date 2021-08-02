@@ -38,9 +38,15 @@ class ApuestaTipo
      */
     private $apuestas;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ApuestaPropuesta::class, mappedBy="tipo")
+     */
+    private $apuestaPropuestas;
+
     public function __construct()
     {
         $this->apuestas = new ArrayCollection();
+        $this->apuestaPropuestas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,6 +102,36 @@ class ApuestaTipo
             // set the owning side to null (unless already changed)
             if ($apuesta->getTipo() === $this) {
                 $apuesta->setTipo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ApuestaPropuesta[]
+     */
+    public function getApuestaPropuestas(): Collection
+    {
+        return $this->apuestaPropuestas;
+    }
+
+    public function addApuestaPropuesta(ApuestaPropuesta $apuestaPropuesta): self
+    {
+        if (!$this->apuestaPropuestas->contains($apuestaPropuesta)) {
+            $this->apuestaPropuestas[] = $apuestaPropuesta;
+            $apuestaPropuesta->setTipo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApuestaPropuesta(ApuestaPropuesta $apuestaPropuesta): self
+    {
+        if ($this->apuestaPropuestas->removeElement($apuestaPropuesta)) {
+            // set the owning side to null (unless already changed)
+            if ($apuestaPropuesta->getTipo() === $this) {
+                $apuestaPropuesta->setTipo(null);
             }
         }
 

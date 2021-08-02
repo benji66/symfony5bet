@@ -1,0 +1,63 @@
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>ApuestaPropuesta index FRAN</h1>
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Monto</th>
+                <th>CreatedBy</th>
+                <th>UpdatedBy</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for apuesta_propuestum in apuesta_propuestas %}
+            <tr>
+                <td>{{ apuesta_propuestum.id }}</td>
+                <td>{{ apuesta_propuestum.monto }}</td>
+                <td>{{ apuesta_propuestum.createdBy }}</td>
+                <td>{{ apuesta_propuestum.updatedBy }}</td>
+                <td>{{ apuesta_propuestum.createdAt ? apuesta_propuestum.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ apuesta_propuestum.updatedAt ? apuesta_propuestum.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Monto</th>
+                <th>CreatedBy</th>
+                <th>UpdatedBy</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+               
+            </tr>
+        </tfoot>
+    </table>
+
+  
+    </div>
+
+{% endblock %}

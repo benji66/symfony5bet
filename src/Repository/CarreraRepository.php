@@ -47,4 +47,33 @@ class CarreraRepository extends ServiceEntityRepository
         ;
     }
     */
+
+        public function findByGerenciaWeeks($gerencia_id)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.gerencia = :gerencia_id')            
+            ->andWhere('a.fecha > :fecha')
+            ->setParameter('gerencia_id', $gerencia_id)
+            ->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'- 2 week' )))
+            ->orderBy('a.fecha', 'DESC')            
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    
+    public function findBySatus($parametros)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.gerencia = :gerencia_id')
+            ->andWhere('a.status = :status')            
+            ->andWhere('a.fecha > :fecha')
+            ->setParameter('gerencia_id', $parametros['gerencia'])
+            ->setParameter('status', $parametros['status'])
+            ->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'- 2 week' )))
+            ->orderBy('a.fecha', 'DESC')            
+            ->getQuery()
+            ->getResult()
+        ;
+   
+    }
 }

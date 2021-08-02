@@ -16,18 +16,28 @@
                     
           </div>
 
+          <div class="form-group">
+                  {{ form_label(form.telefono,'Telefono:') }}
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    </div>
+                    {{ form_widget(form.telefono) }}
+                    <small>{{ form_help(form.telefono) }}</small>
+                  </div>
+                  <!-- /.input group -->
+                    
+          </div>
 
                 <div class="form-group">
-                  {#{ form_label(form.password,'Clave:') }#}
-
                   <div class="input-group">                    
                     {{ form_widget(form.password) }}
                     
     				<small>{{ form_help(form.password) }}</small>
                   </div>
                   <!-- /.input group -->
-                  <div class="form-error">
-				        {#{ form_errors(form.password.first) }#}
+                  <div class="form-error">				    
 				    </div>
                 </div>
      
@@ -38,7 +48,7 @@
 
      <div class="card-footer">
                 <button type="submit" class="btn btn-primary">
-                  {{ button_label|default('Save') }}
+                  {{ button_label|default('Registrar') }}
               </button>
      </div>
 {{ form_end(form) }}

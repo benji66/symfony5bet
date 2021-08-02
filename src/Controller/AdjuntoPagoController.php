@@ -114,16 +114,13 @@ class AdjuntoPagoController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-             if ($this->isGranted('ROLE_COORDINADOR')) {
-                 $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);
+             $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);
+             if ($this->isGranted('ROLE_COORDINADOR')) {                
 
-                    if($request->get("adjunto_pago")['validado']=='1'){
+                    if($adjuntoPago->getValidado()){
                       $perfil->setSaldo($perfil->getSaldo() + $adjuntoPago->getMonto());
                     }
-
-             }else{ 
-                $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago_user")['perfil_id']);
-              }    
+             }  
 
              $ruta_relativa = '/data/uploads/'; 
               //ruta absoluta para manupilar el archivo
@@ -151,7 +148,7 @@ class AdjuntoPagoController extends AbstractController
 
              $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('adjunto_pago_index');
@@ -201,7 +198,7 @@ class AdjuntoPagoController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('adjunto_pago_index');
@@ -225,7 +222,7 @@ class AdjuntoPagoController extends AbstractController
          
          $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 

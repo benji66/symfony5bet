@@ -15,12 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 //pdf
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 /**
+ * @IsGranted("ROLE_COORDINADOR")
  * @Route("/carrera")
  */
 class CarreraController extends AbstractController
@@ -65,7 +67,7 @@ class CarreraController extends AbstractController
             // Define the page parameter
             $request->query->getInt('page', 1),
             // Items per page
-            2
+            20
         );
         
         // Render the twig view
@@ -99,7 +101,7 @@ class CarreraController extends AbstractController
 
              $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('carrera_index');
@@ -134,7 +136,7 @@ class CarreraController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('carrera_index');
@@ -158,7 +160,7 @@ class CarreraController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('carrera_index');
@@ -179,7 +181,7 @@ class CarreraController extends AbstractController
 
                            $this->addFlash(
                             'success',
-                            'Your changes were saved!'
+                            'Los cambios fueron realizados!'
                             );
 
                             return $this->redirectToRoute('carrera_index');
@@ -203,7 +205,7 @@ class CarreraController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
 
             return $this->redirectToRoute('carrera_index');       
@@ -249,23 +251,29 @@ class CarreraController extends AbstractController
                 }
                 
                 if($ganador){
-                        //echo '********'.$ganador_o.'******distribuir ganancia*****';
                         
-                        $ganador->setSaldo($ganador->getSaldo() + $apuesta->getMonto() +($apuesta->getMonto() * 0.95));
+                        $monto_porcentaje_1 = round($apuesta->getMonto() * 0.95);
+                         $monto_porcentaje_2 = round($apuesta->getMonto() * 0.05);
+                        $ganador->setSaldo($ganador->getSaldo() + $apuesta->getMonto() +$monto_porcentaje_1);
+
                         $apuesta->setGanador($ganador);
 
                         $cuenta = new Cuenta();
                         $cuenta->setGerencia($user->getPerfil()->getGerencia());
-                        $cuenta->setSaldoCasa($apuesta->getMonto() * 0.05);
-                        $cuenta->setSaldoGanador($apuesta->getMonto() * 0.95);
-                        $cuenta->setSaldoSistema($apuesta->getMonto() * 0.05);
+                        $cuenta->setSaldoCasa($monto_porcentaje_2);
+                        $cuenta->setSaldoGanador($monto_porcentaje_1);
+                        $cuenta->setSaldoSistema($monto_porcentaje_2);
 
                         $apuesta->setCuenta($cuenta);
+
+                        $saldo_casa_acumulado = $apuesta->getCarrera()->getGerencia()->getSaldoAcumulado();
+
+                         $apuesta->getCarrera()->getGerencia()->setSaldoAcumulado($saldo_casa_acumulado + $monto_porcentaje_2 );
                         $entityManager->persist($apuesta);
 
-                        $totalPagado += ($apuesta->getMonto() * 0.95);
-                        $totalGanancia += ($apuesta->getMonto() * 0.05);
-                        //echo 'apuesta monto'.$apuesta->getMonto().' saldo antes: '.$ganador->getSaldo().' saldo ganador: '.$ganador->getNickname().' '.($ganador->getSaldo() + $apuesta->getMonto() +($apuesta->getMonto() * 0.95)).'***saldo casa:'.($apuesta->getMonto() * 0.05).'**ganancia ganador:'.($apuesta->getMonto() * 0.95);
+                        $totalPagado += $monto_porcentaje_1;
+                        $totalGanancia += $monto_porcentaje_2;
+                        
                 }else{
                     //echo '*******sin ganador, restaurar fondos*******';
                    
@@ -287,7 +295,7 @@ class CarreraController extends AbstractController
 
            $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
             return $this->redirectToRoute('carrera_index');       
     }
@@ -304,7 +312,7 @@ class CarreraController extends AbstractController
          
          $this->addFlash(
             'success',
-            'Your changes were saved!'
+            'Los cambios fueron realizados!'
             );
         }
 

@@ -85,7 +85,7 @@
                 <td>{{ gerencium.nombre }}</td>
                 <td>{{ gerencium.createdBy }}</td>
                 <td>
-                    <a href="{{ path('gerencia_show', {'id': gerencium.id}) }}"><i class="far fa-eye">show</i></a>
+                    <a href="{{ path('gerencia_show', {'id': gerencium.id}) }}"><i class="far fa-eye">mostrar</i></a>
                     <a href="{{ path('gerencia_edit', {'id': gerencium.id}) }}"><i class="fas fa-edit">edit</i></a>
                 </td>
             </tr>
@@ -110,7 +110,7 @@
             {{ knp_pagination_render(gerencias) }}
         </div>
     <a href="{{ path('gerencia_new') }}">
-        <i class="fas fa-plus"></i>Create new
+        <i class="fas fa-plus"></i>Nuevo
     </a>
     
     </div>

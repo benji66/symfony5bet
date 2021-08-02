@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\FormPerfilType;
+use App\FormPerfilGerenciaType;
 
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -33,20 +33,18 @@ exit;*/
             ->add('email', EmailType::class)
             ->add('nombre')
             ->add('apellido')
-            
+            ->add('telefono')
             
             ->add('password', RepeatedType::class, array(
                 'required' => false, 
                 'empty_data' => '',
-
-                'data' =>  '#0000FF',
-      
+                'data' =>  '#0000FF',      
                 'type' => PasswordType::class,
                 'first_options'  => array('label' => 'Clave:'),
                 'second_options' => array('label' => 'Confirmar clave:'),
             ));
 
-            
+            $builder->add('perfil', PerfilGerenciaType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
