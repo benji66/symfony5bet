@@ -61,7 +61,7 @@ class CarreraRepository extends ServiceEntityRepository
         ;
     }
     
-    public function findBySatus($parametros)
+    public function findByStatus($parametros)
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.gerencia = :gerencia_id')

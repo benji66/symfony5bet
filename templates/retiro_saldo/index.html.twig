@@ -1,0 +1,139 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}RetiroSaldo index{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>RetiroSaldo index FRAN</h1>
+
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>  
+                <th>Fecha de Carga</th>
+                <th>Monto</th>
+                <th>Validado</th>
+                <th>Validado por</th>
+                <th>Numero_referencia</th>                
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for retiro_saldo in retiro_saldos %}
+            <tr>
+                <td>{{ retiro_saldo.Perfil.Usuario.username }}</td>
+                <td>{{ retiro_saldo.monto }}</td>
+                <td>
+                    {% if retiro_saldo.validado=='1' %}
+                        aprobado
+                  
+
+                    {% elseif retiro_saldo.validado=='0' %}
+                        rechazado
+                
+
+                    {% elseif retiro_saldo.validado==null %}
+                        en proceso
+                    {% endif %}
+
+
+                </td>
+                <td>{{ retiro_saldo.validadoBy ? retiro_saldo.validadoBy : 'en proceso' }}</td>
+                <td>{{ retiro_saldo.numeroReferencia }}</td>
+              
+                <td>{{ retiro_saldo.createdAt ? retiro_saldo.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('retiro_saldo_show', {'id': retiro_saldo.id}) }}"><i class="far fa-eye">mostrar</i></a>
+                    
+           {% if is_granted('ROLE_COORDINADOR') %}
+                validar
+            {% endif %}    
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Fecha de Carga</th>                
+                <th>Monto</th>
+                <th>Validado</th>
+                <th>Validado por</th>
+                <th>Numero_referencia</th>
+                
+                <th>actions</th>
+            </tr>
+        </tfoot>
+    </table>
+
+   <div class="navigation float-right">
+            {{ knp_pagination_render(retiro_saldos) }}
+        </div>
+ 
+{% if app.user.perfil.saldo > 0 %}
+        <a href="{{ path('retiro_saldo_new') }}">
+            <i class="fas fa-plus"></i>Nuevo -
+        </a>
+ {% else %}
+       Posee saldo negativo de {{ app.user.perfil.saldo }} 
+ {% endif %}   
+        
+    </div>
+ </div>
+{% endblock %}
+
+{% block javascripts %}
+
+<!-- DataTables -->
+<script src="/bundles/fgimenezadminlte/plugins/datatables/jquery.dataTables.js"></script>
+
+<script>
+
+
+
+  $(function () {
+
+    $('#example2').DataTable({
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false,
+    });
+  });
+</script>
+
+{% endblock %}
+
+
+
+

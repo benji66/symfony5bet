@@ -90,6 +90,7 @@ class CorreccionController extends AbstractController
 
              $clientes = $request->get('clientes');
              $observacion_sistema =null;
+             
              foreach ($clientes as $key => $row) {
                  $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($key);
 

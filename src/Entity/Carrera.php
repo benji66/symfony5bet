@@ -76,7 +76,7 @@ class Carrera
     private $gerencia;
 
     /**
-     * @ORM\OneToMany(targetEntity=Apuesta::class, mappedBy="carrera")
+     * @ORM\OneToMany(targetEntity=Apuesta::class, mappedBy="carrera", cascade={"persist"})
      */
     private $apuestas;
 

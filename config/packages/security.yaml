@@ -52,9 +52,11 @@ security:
     # Note: Only the *first* access control that matches will be used
     role_hierarchy:        
         
-        ROLE_COORDINADOR: [ROLE_USER]
-        ROLE_GERENCIA:    [ROLE_COORDINADOR, ROLE_USER]
-        ROLE_ADMIN:       [ROLE_GERENCIA, ROLE_USER]
+        ROLE_EMPLEADO: [ROLE_USER]
+        ROLE_ADMINISTRATIVO: [ROLE_EMPLEADO]
+        ROLE_COORDINADOR: [ROLE_EMPLEADO]
+        ROLE_GERENCIA:    [ROLE_COORDINADOR, ROLE_ADMINISTRATIVO]
+        ROLE_ADMIN:       [ROLE_GERENCIA]
                
     access_control:
         - { path: ^/user, roles: ROLE_COORDINADOR }

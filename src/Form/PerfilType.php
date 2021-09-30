@@ -42,7 +42,8 @@ class PerfilType extends AbstractType
                     //'ROLE_OTRO' => 'ROLE_OTRO',
                     //'ROLE_ADMIN' => 'ROLE_ADMIN',
                     //'ROLE_GERENCIA' => 'ROLE_GERENCIA',
-                    'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',
+                    //'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',
+                    'ROLE_EMPLEADO' => 'ROLE_EMPLEADO',
 
 
                    

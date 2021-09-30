@@ -1,0 +1,121 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Pago Personal Saldo{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>Pago por Saldo</h1>
+
+    {# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+           
+<div class="card">
+            <div class="card-header">
+              <h3 class="card-title">DataTable with default features</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                 <thead>
+                    <tr>              
+                        <th>Fecha</th>
+                        <th>Email</th>
+                        <th>Monto</th>
+                        <th>Concepto</th>
+                        <th>accion</th>                        
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for pago in pagos %}
+                        <tr>               
+                            <td>{{ pago.createdAt ? pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>
+                                <a href="{{ path('user_show', {'id': pago.perfil.Usuario.id}) }}">
+                                    {{ pago.perfil.usuario.email }}
+                                 </a>
+                            </td>
+                            <td>{{ pago.monto }}</td>
+                            <td>{{ pago.concepto }}</td>
+                            <td>
+
+                              <a href="{{ path('pago_personal_show_bysaldo', {'id': pago.id}) }}">
+                                    <i class="far fa-eye">mostrar</i>
+                                 </a>
+                            </td>        
+                            
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">no records found</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Email</th>
+                            <th>Monto</th>
+                            <th>Concepto</th>
+                            <th>accion</th> 
+                        </tr>
+                    </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+
+    <a href="{{ path('pago_personal_new_bysaldo') }}">
+        <i class="fas fa-plus"></i>Nuevo pago por saldo
+    </a>
+
+     <a href="{{ path('pago_personal_nomina') }}">
+        <i class="fas fa-plus"></i>Nueva nomina
+    </a>      
+         
+    
+    </div>
+ </div>
+{% endblock %}
+
+{% block javascripts %}
+
+<!-- DataTables -->
+<script src="/bundles/fgimenezadminlte/plugins/datatables/jquery.dataTables.js"></script>
+
+<script>
+  $(function () {
+
+    $("#example1").DataTable();
+
+    $('#example2').DataTable({
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false,
+    });
+  });
+</script>
+
+{% endblock %}
+
+
+
+

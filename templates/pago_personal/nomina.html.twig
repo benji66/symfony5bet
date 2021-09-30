@@ -1,0 +1,44 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Pago Nomina{% endblock %}
+
+{% block body %}
+    <h1>Pago Nomina</h1>
+
+    <table class="table">
+        <tbody>
+        
+            <tr>
+                <th>Empleado</th>
+                <th>Sueldo</th>
+                <th>Permisos</th>
+            </tr>
+            {% for row in perfils %}
+                {% if row.sueldo > 0 and row.activo==true %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('user_show', {'id':row.Usuario.id}) }}">
+                                {{ row.nickname }} - {{ row.Usuario.nombre }} {{ row.Usuario.apellido }}
+                             </a>   
+                        </td>
+                        <td>{{ row.sueldo }}</td>
+                        <td>{{ row.roles ? row.roles|json_encode : '' }}</td>
+                    </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="5">no records found</td>
+                </tr>
+            {% endfor %}       
+        </tbody>
+    </table>
+
+ 
+    <a href="{{ path('pago_personal_pagar_nomina') }}">
+
+        <i class="fas fa-plus"></i>
+        pagar
+
+    </a>    
+
+{% endblock %}

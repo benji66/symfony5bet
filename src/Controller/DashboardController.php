@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Carrera;
+use App\Entity\RetiroSaldo;
+use App\Entity\AdjuntoPago;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,14 +33,23 @@ class DashboardController extends AbstractController
     {      
 
     	$gerencia = $this->getUser()->getPerfil()->getGerencia();    
-		$cantidad_clientes = $gerencia->getPerfils()->count();
+		
+
+        $meses = ['January','February','March','April','May','June','July','August','September', 'October','November', 'December'];
+
+
+
+        $cantidad_clientes = $gerencia->getPerfils()->count();
     	$tarjeta['clientes'] = $cantidad_clientes;
     	
     	$carreras = $this->getDoctrine()->getRepository(Carrera::class)->findByGerenciaWeeks($gerencia->getId());
 
     	$tarjeta['carreras'] = count($carreras);
 		
-		$cantidad_apuestas = 0;
+		
+        //id="pieChart"
+
+        $cantidad_apuestas = 0;
 		$cantidad_correcciones = 0;
         $hipodromo = null; //graph
         $i = 0;
@@ -59,11 +70,54 @@ class DashboardController extends AbstractController
     	$tarjeta['apuestas'] = $cantidad_apuestas;
         $tarjeta['saldo'] = $gerencia->getSaldoAcumulado();
     	$tarjeta['correcciones'] = $cantidad_correcciones;
-    	//echo count($carreras).'--/--';
-    	//exit;
+
+        //mes - gerencia - validado
+
+        //retiro_saldo
+        $parametros = NULL;
+        $parametros['gerencia_id'] = $gerencia->getId();
+        $parametros['validado'] = true;
+        foreach ($meses as $mes) {
+            $parametros['mes'] = $mes;
+            $retiro = $this->getDoctrine()->getRepository(RetiroSaldo::class)->findByMesGerenciaValidado($parametros);
+            
+            if($retiro['suma']){
+                $dinero['retiro'][] = intval($retiro['suma']);
+            }else{
+                $dinero['retiro'][] = 0;
+            }
+                
+        }
+
+        //adjunto_pago
+        $parametros = NULL;
+        $parametros['gerencia_id'] = $gerencia->getId();
+        $parametros['validado'] = true;
+        foreach ($meses as $mes) {
+            $parametros['mes'] = $mes;
+            $retiro = $this->getDoctrine()->getRepository(AdjuntoPago::class)->findByMesGerenciaValidado($parametros);
+            
+            if($retiro['suma']){
+                $dinero['adjunto_pago'][] = intval($retiro['suma']);
+            }else{
+                $dinero['adjunto_pago'][] = 0;
+            }
+                
+        }
+
+            /*echo '<pre>';
+                print_r($dinero);
+            echo '</pre>';*/
+           
+           
+
+  
+        //exit;
+
         return $this->render('dashboard/dash1.html.twig', [
             'tarjeta' => $tarjeta,
             'hipodromo' => $hipodromo,
+            'dinero' => $dinero
         ]);
     }
 

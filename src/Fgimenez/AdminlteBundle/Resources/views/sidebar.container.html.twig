@@ -32,8 +32,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-            {% if is_granted('ROLE_ADMIN') %}
-                 
+            {% if is_granted('ROLE_ADMIN') %}               
                                     
                   <li class="nav-item">                    
                     <a href="{{ path('gerencia_index') }}" class="nav-link">                      
@@ -72,19 +71,27 @@
                       </p>
                     </a>
                   </li>
-
-
               {% endif %}  
             </ul>
           </li>
         {% endif %}   
       
          {% if is_granted('ROLE_GERENCIA') %}
+                 <li class="nav-header">COORDINACION</li>
                   <li class="nav-item">
                     <a href="{{ path('carrera_index') }}" class="nav-link">
                       <i class="nav-icon fas fa-horse"></i>
                       <p>
                         Carreras                
+                      </p>
+                    </a>
+                  </li>
+                  <li class="nav-header">GERENCIA</li>
+                  <li class="nav-item">
+                    <a href="{{ path('reporte_index') }}" class="nav-link">
+                      <i class="nav-icon fas fa-table"></i>
+                      <p>
+                        Reporte index                
                       </p>
                     </a>
                   </li>
@@ -97,30 +104,74 @@
                       </p>
                     </a>
                   </li>                
-          {% endif %}
+          {% endif %}    
 
-      
-
-          <li class="nav-item">
-            <a href="{{ path('profile_update') }}" class="nav-link">
-              <i class="nav-icon fas fa-user-secret"></i>
+       {% if is_granted('ROLE_ADMINISTRATIVO') %}     
+           <li class="nav-header">ADMINISTRACION</li>              
+           <li class="nav-item">
+            <a href="{{ path('pago_personal_index') }}" class="nav-link">
+              <i class="nav-icon fas fa-funnel-dollar"></i>
               <p>
-                Cambio de Perfil
-                <span class="right badge badge-danger">New</span>
+                Pago por deposito directo
               </p>
             </a>
-          </li>         
+           </li>
+
+           <li class="nav-item">
+            <a href="{{ path('pago_personal_bysaldo') }}" class="nav-link">
+              <i class="nav-icon fas fa-funnel-dollar"></i>
+              <p>
+                Pago por abono de saldo
+              </p>
+            </a>
+           </li>
+            
+           <li class="nav-item">
+            <a href="{{ path('retiro_saldo_pendiente') }}" class="nav-link">
+              <i class="nav-icon fas fa-hand-holding-usd"></i>
+              <p>
+                Retiro Pendiente
+              </p>
+            </a>
+           </li> 
+
+
+        {% endif %}         
+        
  
-      {% if is_granted('ROLE_USER') and app.user.Perfil %}
-                   
+      {% if is_granted('ROLE_USER') and app.user.Perfil %} 
+
+         
+
+           <li class="nav-header">USUARIO</li>
+
+             <li class="nav-item">
+            <a href="{{ path('perfil_banco_index') }}" class="nav-link">
+              <i class="nav-icon fas fa-money-check-alt"></i>
+              <p>
+                Cuentas de banco
+              </p>
+            </a>
+           </li>
+                           
            <li class="nav-item">
             <a href="{{ path('adjunto_pago_index') }}" class="nav-link">
-              <i class="nav-icon fas fa-dollar-sign"></i>
+              <i class="nav-icon far fa-money-bill-alt"></i>
               <p>
-                Registro de Pagos
+                Abono de Saldo
               </p>
             </a>
-           </li>  
+           </li>
+           
+           <li class="nav-item">
+            <a href="{{ path('retiro_saldo_index') }}" class="nav-link">
+              <i class="nav-icon fas fa-money-bill-alt"></i>
+              <p>
+                Retiro de Saldo
+              </p>
+            </a>
+           </li>
+
            <li class="nav-item">
             <a href="{{ path('carrera_abierta_index') }}" class="nav-link">
               <i class="nav-icon fas fa-horse-head"></i>
@@ -129,9 +180,18 @@
               </p>
             </a>
            </li>  
-  
         {% endif %}  
         
+          <li class="nav-item">
+            <a href="{{ path('profile_update') }}" class="nav-link">
+              <i class="nav-icon fas fa-user-secret"></i>
+              <p>
+                Cambio de Perfil
+                <span class="right badge badge-danger">New</span>
+              </p>
+            </a>
+          </li> 
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

@@ -14,7 +14,8 @@
         </div>
     {% endfor %}
 {% endfor %}
-    <table class="table">
+       <div class="card-body table-responsive p-0">      
+     <table  class="table table-bordered table-hover text-nowrap">
         <tbody>
             <tr>
                 <th>Fecha</th>
@@ -26,11 +27,12 @@
             </tr>           
         </tbody>
     </table>
-
+    </div>
 
 <h1>Propuestas</h1>
     <div class="row">
     {% for propuesta in carrera.ApuestaPropuestas %}
+          {% if propuesta.monto > 0 %}
           <div class="col-md-4">
             <div class="card">
               <div class="card-header">
@@ -48,13 +50,13 @@
                   <dd>{{ propuesta.caballos|json_encode }}</dd>
                   {% if propuesta.Jugador != app.user.Perfil %}
                   <dd>
-                      <form id="form_apuesta"> 
+                      <form id="form_apuesta" method="POST" action="{{ path('carrera_abierta_cargar', {'id': propuesta.id}) }}"> 
                           <div class="form-group">
                             <label>Monto:</label>
                             <div class="input-group input-group-sm">
-                            <input type="number" id="apuesta_monto" class="form-control">
+                            <input type="number" id="apuesta_monto" name="apuesta_monto" class="form-control apuesta_monto">
                               <span class="input-group-append">
-                                <button type="button" class="btn btn-info btn-flat" id="apuesta_boton">Jugar</button>
+                                <button type="submit" required class="btn btn-info btn-flat apuesta_boton" id="apuesta_boton">Jugar</button>
                               </span>
                             </div>
                           </div>
@@ -67,6 +69,7 @@
             </div>
             <!-- /.card -->            
         </div>
+        {% endif %}
       <!-- ./col -->    
        {% endfor %}  
     </div>        
@@ -83,15 +86,21 @@
 {% block javascripts %}
 
 <script>
-    $('#form_apuesta').on('click', 'button', function(){
+    /*$('#form_apuesta').on('click', 'button', function(){
+            
+           alert($(this).prev('#apuesta_monto').val());     
+    });*/
 
-            //$(this).attr('perfil_id') 
-           alert($(this).('#apuesta_monto').val());
-                 
 
-    });
 
- </script>    
+        /*$('#form_apuesta').on('click','.apuesta_boton',function(){
+          //let val = $(this).val();
+              alert($(this).attr('class'));
+              alert($(this).closest('input').attr('class'));
+         });*/
+
+
+</script>    
   
 
  {% endblock %}

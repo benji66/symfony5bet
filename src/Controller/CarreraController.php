@@ -200,8 +200,24 @@ class CarreraController extends AbstractController
     {       
             $user = $this->getUser(); 
             $carrera->setStatus("CERRADO");  
+            
             $carrera->setCerradoBy($user->getUsername());
-            $this->getDoctrine()->getManager()->flush();
+
+            $propuestas = $carrera->getApuestaPropuestas(); 
+
+            foreach($propuestas as $propuesta){
+               
+               $monto = $propuesta->getMonto();
+               $jugador = $propuesta->getJugador();
+               $jugador->setSaldo($jugador->getSaldo() + $monto);
+               $propuesta->setJugador($jugador);
+               $propuesta->setMonto(0);
+
+               $this->getDoctrine()->getManager()->persist($propuesta);
+
+            }
+
+           $this->getDoctrine()->getManager()->flush();
 
            $this->addFlash(
             'success',
@@ -227,29 +243,46 @@ class CarreraController extends AbstractController
             $totalPagado = 0;
             $totalGanancia = 0;
             foreach ($apuestas as $apuesta) {
-                $ganador = null;
+                $ganador_temp = null;
+                $ganador =null;
+                $propuesta = false;
                 $detalles = $apuesta->getApuestaDetalles();
+                $ganador_index = $apuesta->getTipo()->getId();
 
                 foreach ($detalles as $detalle) {
                     $perfil = $detalle->getPerfil();
 
                      // echo $perfil->getNickname().'<br/>';
-                      $caballos = $detalle->getCaballos();
+                      $caballos = $detalle->getCaballos();                     
                       
                       /*$array = $detalle->getCaballos();                      
                       foreach ($array as $clave => $valor) {
                             echo "{$clave} => {$valor} </br>"; 
 
                        }*/
-                       for($i=0; $i < $apuesta->getTipo()->getId(); $i++){
-                           if( in_array($orden[$i], $caballos)){                                
-                                $ganador = $perfil;
-                                $ganador_o = $ganador->getNickname();
+
+                    if($caballos){    
+                     
+                           for($i=0; $i < $apuesta->getTipo()->getId(); $i++){
+                               if(in_array($orden[$i], $caballos)){                                
+                                    if ($i<$ganador_index ) {
+                                      $ganador = $perfil;
+                                       $ganador_index = $i;   
+                                    }                                 
+                                    break;
+                               }
                            }
-                       }
+                     }else{
+                        $propuesta = true;  
+                        $propuesta_perfil = $perfil; 
+                     }      
 
                 }
                 
+                if($propuesta && !$ganador){
+                   $ganador = $propuesta_perfil;
+                } 
+
                 if($ganador){
                         
                         $monto_porcentaje_1 = round($apuesta->getMonto() * 0.95);

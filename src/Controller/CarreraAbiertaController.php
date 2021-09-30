@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Carrera;
 use App\Entity\Cuenta;
 
+use App\Entity\ApuestaDetalle;
+use App\Entity\Apuesta;
 use App\Entity\ApuestaPropuesta;
 use App\Form\ApuestaPropuestaType;
 use App\Form\CarreraType;
@@ -39,8 +41,7 @@ class CarreraAbiertaController extends AbstractController
 
         $parametros['gerencia'] = $user->getPerfil()->getGerencia()->getId();
         $parametros['status'] = 'ABIERTO';
-
-        $carreras = $carreraRepository->findBySatus($parametros);
+        $carreras = $carreraRepository->findByStatus($parametros);
 
         // Render the twig view
         return $this->render('apuesta_abierta/index.html.twig', [
@@ -60,6 +61,76 @@ class CarreraAbiertaController extends AbstractController
             'carrera' => $carrera,
         ]);
     } 
+
+    /**
+     * @Route("/cargar/{id}", name="carrera_abierta_cargar", methods={"POST"}, requirements={"id":"\d+"})
+     */
+    public function cargar(Request $request, ApuestaPropuesta $propuesta): Response
+    {       
+        
+       if($propuesta->getCarrera()->getStatus()!='ABIERTO'){
+          $this->addFlash(
+                   'danger',
+                   'La carrera se encuentra cerrada'
+              );
+           return $this->redirectToRoute('carrera_abierta_index');
+        }
+
+
+        $perfil = $this->getUser()->getPerfil();
+
+        $monto = $request->request->get('apuesta_monto');
+
+        if($monto <= $propuesta->getMonto() && $monto > 0){
+
+            if($perfil->getSaldo() >= $monto || ($perfil->getSaldoIlimitado())){ 
+
+                $apuesta = new Apuesta();                
+                $apuesta->setMonto($monto);
+                $apuesta->setTipo($propuesta->getTipo());
+                //$apuesta->setCarrera($propuesta->getCarrera());
+                //jugador 1 - quien propone
+                $apuesta_detalle = new ApuestaDetalle();
+                $apuesta_detalle->setPerfil($propuesta->getJugador());
+                $apuesta_detalle->setCaballos($propuesta->getCaballos());
+                $apuesta->addApuestaDetalle($apuesta_detalle);
+
+                //-quien apuesta, caballos en null ya que se rigen por los caballso propuestos
+                $perfil->setSaldo($perfil->getSaldo() -  $monto);
+                $apuesta_detalle = new ApuestaDetalle();
+                $apuesta_detalle->setPerfil($perfil);
+                $apuesta_detalle->setCaballos(null);
+                $apuesta->addApuestaDetalle($apuesta_detalle);
+                
+                $propuesta->setMonto($propuesta->getMonto() - $monto);
+                $propuesta->getCarrera()->addApuesta($apuesta);
+                 
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($propuesta);        
+                $entityManager->flush();
+
+                $this->addFlash(
+                  'success',
+                  'Jugado!'
+                ); 
+
+            }else{
+                 $this->addFlash(
+                    'danger',
+                    'Saldo insuficiente'
+                 );
+            }             
+
+        }else{
+              $this->addFlash(
+                   'danger',
+                   'El monto jugado es invalido'
+              );
+        }
+
+        return $this->redirectToRoute('carrera_abierta_show', ['id'=>$propuesta->getCarrera()->getId()]);
+        
+    }     
 
     /**
      * @Route("/new/{id}", name="carrera_abierta_new", methods={"GET","POST"})

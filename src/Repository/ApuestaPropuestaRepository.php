@@ -51,9 +51,9 @@ class ApuestaPropuestaRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.jugador = :perfil_id')            
-            //->andWhere('a.updatedAt > :fecha')
+            ->andWhere('a.updatedAt > :fecha')
             ->setParameter('perfil_id', $perfil_id)
-            //->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'-1 week' )))
+            ->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'-1 week' )))
             ->orderBy('a.updatedAt', 'DESC')            
             ->getQuery()
             ->getResult()

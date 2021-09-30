@@ -1,0 +1,44 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}PerfilBanco{% endblock %}
+
+{% block body %}
+    <h1>PerfilBanco</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ perfil_banco.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ perfil_banco.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Descripcion</th>
+                <td>{{ perfil_banco.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Activo</th>
+                <td>{{ perfil_banco.activo ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('perfil_banco_index') }}">
+
+        <i class="fas fa-arrow-left"></i>
+        volver
+
+    </a>
+
+    <a href="{{ path('perfil_banco_edit', {'id': perfil_banco.id}) }}">
+        
+         <i class="fas fa-edit"></i>
+        edit
+
+    </a>
+
+    {{ include('perfil_banco/_delete_form.html.twig') }}
+{% endblock %}

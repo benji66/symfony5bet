@@ -1,0 +1,101 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}PerfilBanco index{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>PerfilBanco</h1>
+
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>             
+                <th>Nombre</th>
+                <th>Activo</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for perfil_banco in perfil_bancos %}
+            <tr>               
+                <td>{{ perfil_banco.nombre }}</td>                
+                <td>{{ perfil_banco.activo ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('perfil_banco_show', {'id': perfil_banco.id}) }}"><i class="far fa-eye">mostrar</i></a>   
+                    {{ include('perfil_banco/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>                
+                <th>Nombre</th>
+                <th>Activo</th>
+                <th>actions</th>
+            </tr>
+        </tfoot>
+    </table>
+
+
+    <a href="{{ path('perfil_banco_new') }}">
+        <i class="fas fa-plus"></i>Nuevo
+    </a>
+    
+    </div>
+ </div>
+{% endblock %}
+
+{% block javascripts %}
+
+<!-- DataTables -->
+<script src="/bundles/fgimenezadminlte/plugins/datatables/jquery.dataTables.js"></script>
+
+<script>
+
+
+
+  $(function () {
+
+    $('#example2').DataTable({
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false,
+    });
+  });
+</script>
+
+{% endblock %}
+
+
+
+

@@ -1,0 +1,57 @@
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>PerfilBanco index FRAN</h1>
+
+
+
+           <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+     <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Activo</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for perfil_banco in perfil_bancos %}
+            <tr>
+                <td>{{ perfil_banco.id }}</td>
+                <td>{{ perfil_banco.nombre }}</td>
+                <td>{{ perfil_banco.descripcion }}</td>
+                <td>{{ perfil_banco.activo ? 'Yes' : 'No' }}</td>
+                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Activo</th>
+               
+            </tr>
+        </tfoot>
+    </table>
+
+  
+    </div>
+
+{% endblock %}

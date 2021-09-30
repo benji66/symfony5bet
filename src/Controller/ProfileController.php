@@ -88,6 +88,8 @@ class ProfileController extends AbstractController
             $tarjeta['gana'] = 0;
             $tarjeta['pierde'] = 0;
             $tarjeta['neutral'] = 0;
+            $ext_observacion = null;
+            
         foreach ($apuestas as $row) {
             $time[$i]['tipo'] = 'apuesta';
             $time[$i]['status'] = $row->getApuesta()->getCarrera()->getStatus();
@@ -95,7 +97,20 @@ class ProfileController extends AbstractController
             $time[$i]['fecha'] = $row->getUpdatedAt();
             $time[$i]['mensaje'] = 'Jugó '.$row->getApuesta()->getTipo()->getNombre().' en carrera '.$row->getApuesta()->getCarrera()->getNumeroCarrera().' de Hipódromo: '.$row->getApuesta()->getCarrera()->getHipodromo()->getNombre();
 
-            $time[$i]['observacion'] = json_encode($row->getCaballos()).' por '.$row->getApuesta()->getMonto();
+            if($row->getCaballos()){
+                 $caballos = $row->getCaballos();
+            }else{
+                $apuesta_detalle = $this->getDoctrine()->getRepository(ApuestaDetalle::class)->findByApuestaCaballoNotNull($row->getApuesta()->getId());
+
+                $caballos = $apuesta_detalle->getCaballos();
+                $ext_observacion = ' EN CONTRA ';
+
+                
+                //$apuesta= $row->getApuesta();
+            }
+
+
+            $time[$i]['observacion'] = $ext_observacion.json_encode($caballos).' por '.$row->getApuesta()->getMonto();
 
           
             if($row->getApuesta()->getCarrera()->getStatus()=='PAGADO'){

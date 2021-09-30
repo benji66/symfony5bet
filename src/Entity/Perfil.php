@@ -100,6 +100,8 @@ class Perfil
     private $adjuntoPagos;
 
 
+
+
     /**
      * @ORM\OneToMany(targetEntity=Apuesta::class, mappedBy="ganador")
      */
@@ -118,14 +120,51 @@ class Perfil
     /**
      * @ORM\OneToMany(targetEntity=ApuestaPropuesta::class, mappedBy="jugador")
      */
-    private $apuestaPropuestas;    
+    private $apuestaPropuestas;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $sueldo;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PagoPersonal::class, mappedBy="perfil")
+     */
+    private $pagoPersonals;
+
+
+
+
+    /**
+     * @ORM\OneToMany(targetEntity=RetiroSaldo::class, mappedBy="perfil")
+     */
+    private $retiroSaldos;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PerfilBanco::class, mappedBy="perfil")
+     */
+    private $perfilBancos;
+
+
+
+
+
+     
 
     public function __construct()
     {
         $this->adjuntoPagos = new ArrayCollection();
-        $this->ganadores = new ArrayCollection();
+          $this->ganadores = new ArrayCollection();
         $this->apuestaDetalles = new ArrayCollection();
         $this->apuestaPropuestas = new ArrayCollection();
+        $this->pagoPersonals = new ArrayCollection();
+  
+        $this->retiroSaldos = new ArrayCollection();
+        $this->perfilBancos = new ArrayCollection();
+    
+       
+
+     
     }
 
     public function getId(): ?int
@@ -280,6 +319,7 @@ class Perfil
     }
 
 
+
     /**
      * @return Collection|Apuesta[]
      */
@@ -359,5 +399,91 @@ class Perfil
 
         return $this;
     }
+
+    public function getSueldo(): ?int
+    {
+        return $this->sueldo;
+    }
+
+    public function setSueldo(?int $sueldo): self
+    {
+        $this->sueldo = $sueldo;
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection|PerfilBanco[]
+     */
+    public function getPerfilBancos(): ?Collection
+    {
+        return $this->perfilBancos;
+    }
+
+    public function addPerfilBanco(PerfilBanco $perfilBanco): self
+    {
+        if (!$this->perfilBancos->contains($perfilBanco)) {
+            $this->perfilBancos[] = $perfilBanco;
+            $perfilBanco->setPerfil($this);
+        }
+
+        return $this;
+    }
+
+    public function removePerfilBanco(PerfilBanco $perfilBanco): self
+    {
+        if ($this->perfilBancos->removeElement($perfilBanco)) {
+            // set the owning side to null (unless already changed)
+            if ($perfilBanco->getPerfil() === $this) {
+                $perfilBanco->setPerfil(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection|PagoPersonal[]
+     */
+    public function getPagoPersonals(): Collection
+    {
+        return $this->pagoPersonals;
+    }
+
+    /**
+     * @return Collection|RetiroSaldo[]
+     */
+    public function getRetiroSaldos(): Collection
+    {
+        return $this->retiroSaldos;
+    }
+
+    public function addRetiroSaldo(RetiroSaldo $retiroSaldo): self
+    {
+        if (!$this->retiroSaldos->contains($retiroSaldo)) {
+            $this->retiroSaldos[] = $retiroSaldo;
+            $retiroSaldo->setPerfil($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRetiroSaldo(RetiroSaldo $retiroSaldo): self
+    {
+        if ($this->retiroSaldos->removeElement($retiroSaldo)) {
+            // set the owning side to null (unless already changed)
+            if ($retiroSaldo->getPerfil() === $this) {
+                $retiroSaldo->setPerfil(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+ 
+
  
 }

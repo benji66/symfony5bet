@@ -112,6 +112,17 @@ class UserController extends AbstractController
      */
     public function show(User $user): Response
     {
+
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $user->getPerfil()->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){            
+            $this->addFlash(
+             'danger',
+             'Acceso no autorizado'
+            );
+            $this->redirectToRoute('user_index');
+        } 
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);

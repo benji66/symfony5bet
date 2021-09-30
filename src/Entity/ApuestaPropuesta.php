@@ -35,7 +35,7 @@ class ApuestaPropuesta
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Carrera::class, inversedBy="apuestaPropuestas")
+     * @ORM\ManyToOne(targetEntity=Carrera::class, inversedBy="apuestaPropuestas", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $carrera;

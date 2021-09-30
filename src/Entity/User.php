@@ -280,8 +280,8 @@ class User implements UserInterface
     public function setPerfil(?Perfil $perfil): self
     {
         $this->perfil = $perfil;
-
         return $this;
+        
     }
 
 

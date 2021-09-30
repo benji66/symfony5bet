@@ -52,13 +52,24 @@ class ApuestaDetalleRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.perfil = :perfil_id')            
-            //->andWhere('a.updatedAt > :fecha')
+            ->andWhere('a.updatedAt > :fecha')
             ->setParameter('perfil_id', $perfil_id)
-            //->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'-1 week' )))
+            ->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'-2 week' )))
             ->orderBy('a.updatedAt', 'DESC')
             
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+        public function findByApuestaCaballoNotNull($apuesta_id): ?ApuestaDetalle
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.apuesta = :apuesta_id')
+            ->andWhere('a.caballos is not null')
+            ->setParameter('apuesta_id', $apuesta_id)
+            ->getQuery()
+            ->getOneOrNullResult()
         ;
     }
 }

@@ -27,13 +27,16 @@ class PerfilGerenciaType extends AbstractType
                 'expanded' => true,
                 'choices'  => [
                     //'ROLE_OTRO' => 'ROLE_OTRO',
-                    'ROLE_ADMIN' => 'ROLE_ADMIN',
+                    //'ROLE_ADMIN' => 'ROLE_ADMIN',
                     'ROLE_GERENCIA' => 'ROLE_GERENCIA',
-                    'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',                   
+                    'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',
+                    'ROLE_ADMINISTRATIVO' => 'ROLE_ADMINISTRATIVO', 
+                    'ROLE_EMPLEADO' => 'ROLE_EMPLEADO',                   
                 ],
             ])
             ->add('saldo_ilimitado')
             ->add('activo')
+            ->add('sueldo')
         ;
     }
 

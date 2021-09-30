@@ -62,6 +62,11 @@ class MetodoPago
      */
     private $adjuntoPagos;
 
+
+    /**
+     * @ORM\OneToMany(targetEntity=RetiroSaldo::class, mappedBy="metodo_pago")
+     */
+    private $retiroSaldos;
  
 
     public function __construct()
@@ -152,5 +157,12 @@ class MetodoPago
         return $this;
     }
 
+    /**
+     * @return Collection|RetiroSaldo[]
+     */
+    public function getRetiroSaldos(): Collection
+    {
+        return $this->retiroSaldos;
+    }
 
 }
