@@ -96,12 +96,19 @@ class ApuestaController extends AbstractController
                  $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($row['perfil_id']);
 
                  if(($perfil->getSaldo() >= $apuestum->getMonto()) || ($perfil->getSaldoIlimitado())){
-                      $perfil->setSaldo($perfil->getSaldo() -  $apuestum->getMonto() );
+                      $perfil->setSaldo($perfil->getSaldo() -  $apuestum->getMonto());
                       
                       $apuesta_detalle = new ApuestaDetalle();
                       $apuesta_detalle->setPerfil($perfil);
 
-                      $apuesta_detalle->setCaballos($row['caballos']);
+                      if(isset($row['caballos'])){
+                        $apuesta_detalle->setCaballos($row['caballos']);
+                      }else{
+                        $apuesta_detalle->setCaballos(null);;
+                      }
+
+                      
+                      
 
                       $apuestum->addApuestaDetalle($apuesta_detalle);   
 

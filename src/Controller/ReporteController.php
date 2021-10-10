@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Gerencia;
 use App\Entity\Correccion;
 use App\Entity\Carrera;
+use App\Entity\Apuesta;
 use App\Entity\PagoPersonal;
 use App\Entity\PagoPersonalSaldo;
 use App\Entity\RetiroSaldo;
@@ -231,7 +232,7 @@ class ReporteController extends AbstractController
             $i++;
         }        
         
-        $sheet->setTitle("Correcciones en apuestas");
+        $sheet->setTitle("Carreras");
 
         $sheet->setAutoFilter('A1:J'.$i);
         
@@ -538,5 +539,117 @@ class ReporteController extends AbstractController
         // Return the excel file as an attachment
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
 
-    }       
+    }
+
+
+   /**
+     * @Route("/apuesta", name="reporte_apuesta", methods={"GET"})
+     */
+    public function apuesta(Request $request): Response
+    {           
+
+        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+
+
+        $repository = $this->getDoctrine()->getRepository(Apuesta::class);            
+        
+        $user = $this->getUser();
+
+        $allRowsQuery = $repository->createQueryBuilder('a'); 
+
+        //example filter code, you must uncomment and modify
+
+        if ($request->query->get("fecha1")) {
+            $fecha1 = $request->query->get("fecha1"); 
+            $fecha2 = $request->query->get("fecha2"); 
+                        
+            $allRowsQuery = $allRowsQuery
+            ->innerJoin('a.carrera','c') 
+            ->andWhere('a.createdAt BETWEEN :fecha1 AND :fecha2')
+            ->andWhere('c.gerencia = :gerencia')
+            ->orderBy('a.createdAt', 'ASC')
+            ->setParameter('fecha1', $fecha1)
+            ->setParameter('fecha2', $fecha2)
+            ->setParameter('gerencia', $user->getPerfil()->getGerencia()->getId());
+        }
+
+        // Find all the data, filter your query as you need
+        $allRowsQuery = $allRowsQuery->getQuery()->getResult();    
+
+        $spreadsheet = new Spreadsheet();
+
+
+        
+        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        //columnas
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+        $sheet->getColumnDimension('J')->setAutoSize(true);
+        $sheet->getColumnDimension('K')->setAutoSize(true);
+
+        $i=1;
+        $sheet->setCellValue('A'.$i, 'FECHA APUESTA');
+        $sheet->setCellValue('B'.$i, 'TIPO APUESTA');       
+        $sheet->setCellValue('C'.$i, 'CARRERA'); 
+        $sheet->setCellValue('D'.$i, 'HIPODROMO');
+        $sheet->setCellValue('E'.$i, 'GANADOR');  
+        $sheet->setCellValue('F'.$i, 'NICKNAME');
+        $sheet->setCellValue('G'.$i, 'MONTO');
+        $sheet->setCellValue('H'.$i, 'MONTO GANADO');
+        $sheet->setCellValue('I'.$i, 'MONTO CASA');  
+        $sheet->setCellValue('J'.$i, 'PAGADO POR');
+        $sheet->setCellValue('K'.$i, 'CREADO POR');                          
+        
+        $i=3;
+        foreach ($allRowsQuery as $row) {           
+            $sheet->setCellValue('A'.$i, $row->getCreatedAt()); 
+            $sheet->setCellValue('B'.$i, $row->getTipo()->getNombre());           
+            $sheet->setCellValue('C'.$i, $row->getCarrera()->getNumeroCarrera());
+            $sheet->setCellValue('D'.$i, $row->getCarrera()->getHipodromo()->getNombre()); 
+       
+            if($row->getGanador()){
+                $sheet->setCellValue('E'.$i, $row->getGanador()->getUsuario()->getNombre());
+                $sheet->setCellValue('F'.$i, $row->getGanador()->getNickname());  
+            }
+            $sheet->setCellValue('G'.$i, $row->getMonto()); 
+            
+            if($row->getCuenta()){
+                $sheet->setCellValue('H'.$i, $row->getCuenta()->getSaldoGanador()); 
+                $sheet->setCellValue('I'.$i, $row->getCuenta()->getSaldoCasa()); 
+            }
+
+            $sheet->setCellValue('J'.$i, $row->getCarrera()->getPagadoBy());
+            $sheet->setCellValue('K'.$i, $row->getCarrera()->getCreatedBy());           
+
+            $i++;
+        }        
+        
+        $sheet->setTitle("Apuestas");
+
+        $sheet->setAutoFilter('A1:J'.$i);
+        
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+        
+        // Create a Temporary file in the system
+        $fileName = 'apuestas'.$fecha1.'-'.$fecha2.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);
+       
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
+
+    }    
+
 }

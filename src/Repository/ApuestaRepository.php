@@ -61,4 +61,21 @@ class ApuestaRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findByFecha($parametros)
+    {
+        return $this->createQueryBuilder('a')            
+           
+            ->innerJoin('a.carrera', 'c')
+            ->andWhere('c.gerencia = :gerencia_id')           
+            ->andWhere('a.createdAt BETWEEN :fecha1 AND :fecha2')
+            ->setParameter('gerencia_id', $parametros['gerencia_id'])
+
+            ->setParameter('fecha1', date('Y-m-d', strtotime(date('Y-m-d').'-2 week' )))
+            ->setParameter('fecha2', date('Y-m-d', strtotime(date('Y-m-d').'-2 week' )))
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 }
