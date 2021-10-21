@@ -21,6 +21,8 @@ class PerfilGerenciaType extends AbstractType
         $builder           
 
             ->add('nickname')
+            ->add('porcentaje_ganar')
+            ->add('porcentaje_perder')
 
             ->add('roles', ChoiceType::class, [
                 'multiple' => true,
@@ -33,7 +35,7 @@ class PerfilGerenciaType extends AbstractType
                     'ROLE_ADMINISTRATIVO' => 'ROLE_ADMINISTRATIVO', 
                     'ROLE_EMPLEADO' => 'ROLE_EMPLEADO',                   
                 ],
-            ])
+            ])            
             ->add('saldo_ilimitado')
             ->add('activo')
             ->add('sueldo')

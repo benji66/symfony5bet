@@ -72,7 +72,7 @@ class Perfil
     private $nickname;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      * @Groups({"read"})
      */
     private $saldo;
@@ -145,8 +145,15 @@ class Perfil
      */
     private $perfilBancos;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $porcentaje_ganar;
 
-
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $porcentaje_perder;
 
 
      
@@ -221,12 +228,12 @@ class Perfil
         return $this;
     }
 
-    public function getSaldo(): ?int
+    public function getSaldo(): ?float
     {
         return $this->saldo;
     }
 
-    public function setSaldo(?int $saldo): self
+    public function setSaldo(?float $saldo): self
     {
         $this->saldo = $saldo;
 
@@ -478,6 +485,30 @@ class Perfil
                 $retiroSaldo->setPerfil(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPorcentajeGanar(): ?float
+    {
+        return $this->porcentaje_ganar;
+    }
+
+    public function setPorcentajeGanar(?float $porcentaje_ganar): self
+    {
+        $this->porcentaje_ganar = $porcentaje_ganar;
+
+        return $this;
+    }
+
+    public function getPorcentajePerder(): ?float
+    {
+        return $this->porcentaje_perder;
+    }
+
+    public function setPorcentajePerder(?float $porcentaje_perder): self
+    {
+        $this->porcentaje_perder = $porcentaje_perder;
 
         return $this;
     }

@@ -77,7 +77,7 @@ class Gerencia
     private $cuentas;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $saldo_acumulado;
 
@@ -273,12 +273,12 @@ class Gerencia
         return $this;
     }
 
-    public function getSaldoAcumulado(): ?int
+    public function getSaldoAcumulado(): ?float
     {
         return $this->saldo_acumulado;
     }
 
-    public function setSaldoAcumulado(?int $saldo_acumulado): self
+    public function setSaldoAcumulado(?float $saldo_acumulado): self
     {
         $this->saldo_acumulado = $saldo_acumulado;
 

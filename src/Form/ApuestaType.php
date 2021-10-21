@@ -15,13 +15,8 @@ class ApuestaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('busca_perfil',null, [
-
-                'attr' => ['placeholder'=>'buscar persona'],
-                'mapped'=>false,
-
-            ])
-            ->add('monto')
+     
+            
              ->add('tipo', EntityType::class, [
                     // looks for choices from this entity
                     'class' => ApuestaTipo::class,
@@ -33,6 +28,13 @@ class ApuestaType extends AbstractType
                     // 'multiple' => true,
                     // 'expanded' => true,
                 ])
+             ->add('monto')
+             ->add('busca_perfil',null, [
+
+                'attr' => ['placeholder'=>'buscar persona'],
+                'mapped'=>false,
+
+            ])
             //->add('corre_lista')
             //->add('validado')
             //->add('validado_by')

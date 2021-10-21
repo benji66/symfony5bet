@@ -37,13 +37,16 @@ class CarreraController extends AbstractController
         $carrera = new Carrera();
         $form = $this->createForm(CarreraType::class, $carrera);
         
+        $user = $this->getUser();
         
         $allRowsQuery = $carreraRepository->createQueryBuilder('a')
             //->where('a.status != :status')
+            ->andWhere('a.gerencia = :gerencia')
+
             ->orderBy('a.fecha', 'DESC')
            
             //->setParameter('status', 'canceled')
-            ; 
+            ->setParameter('gerencia', $user->getPerfil()->getGerencia()->getId());
 
         //example filter code, you must uncomment and modify    
 
@@ -118,6 +121,17 @@ class CarreraController extends AbstractController
      */
     public function show(Carrera $carrera): Response
     {
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $carrera->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('carrera_index');
+        }    
+
         return $this->render('carrera/show.html.twig', [
             'carrera' => $carrera,
         ]);
@@ -155,13 +169,35 @@ class CarreraController extends AbstractController
     public function abrir(Request $request, Carrera $carrera): Response
     {
        
-            $carrera->setStatus("ABIERTO");  
-            $this->getDoctrine()->getManager()->flush();
+            $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+            $gerencia = $carrera->getGerencia()->getId();
 
-           $this->addFlash(
-            'success',
-            'Los cambios fueron realizados!'
-            );
+            if($gerencia_logueada != $gerencia){
+                $this->addFlash(
+                'danger',
+                'Acceso no autorizado'
+                );
+                return $this->redirectToRoute('carrera_index');  
+            }    
+
+           if($carrera->getStatus()!="PENDIENTE"){
+
+                $this->addFlash(
+                'danger',
+                'Operacion no permitida, status '.$carrera->getStatus()
+                );
+                return $this->redirectToRoute('carrera_index');  
+            }
+             
+                $carrera->setStatus("ABIERTO");  
+                $this->getDoctrine()->getManager()->flush();
+
+               $this->addFlash(
+                'success',
+                'Los cambios fueron realizados!'
+                );
+
+          
 
             return $this->redirectToRoute('carrera_index');
        
@@ -172,6 +208,24 @@ class CarreraController extends AbstractController
      */
     public function finalizar(Request $request, Carrera $carrera): Response
     {               
+            $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+            $gerencia = $carrera->getGerencia()->getId();
+
+            if($gerencia_logueada != $gerencia){
+                $this->addFlash(
+                'danger',
+                'Acceso no autorizado'
+                );
+                return $this->redirectToRoute('carrera_index');  
+            }    
+
+             if($carrera->getStatus()!="CERRADO"){
+                $this->addFlash(
+                'danger',
+                'Operacion no permitida, status '.$carrera->getStatus()
+                );
+                return $this->redirectToRoute('carrera_index');  
+              }
                     if($request->get("pos")){
                         
                            $carrera->setOrdenOficial($request->get("pos"));
@@ -185,7 +239,12 @@ class CarreraController extends AbstractController
                             );
 
                             return $this->redirectToRoute('carrera_index');
-                    }        
+                    }    
+
+
+
+
+    
 
             return $this->render('carrera/finalizar.html.twig', [
             'carrera' => $carrera,
@@ -198,24 +257,48 @@ class CarreraController extends AbstractController
      */
     public function cerrar(Request $request, Carrera $carrera): Response
     {       
-            $user = $this->getUser(); 
-            $carrera->setStatus("CERRADO");  
             
-            $carrera->setCerradoBy($user->getUsername());
+            $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+            $gerencia = $carrera->getGerencia()->getId();
 
-            $propuestas = $carrera->getApuestaPropuestas(); 
+            if($gerencia_logueada != $gerencia){
+                $this->addFlash(
+                'danger',
+                'Acceso no autorizado'
+                );
+                return $this->redirectToRoute('carrera_index');  
+            }    
 
-            foreach($propuestas as $propuesta){
-               
-               $monto = $propuesta->getMonto();
-               $jugador = $propuesta->getJugador();
-               $jugador->setSaldo($jugador->getSaldo() + $monto);
-               $propuesta->setJugador($jugador);
-               $propuesta->setMonto(0);
+           if($carrera->getStatus()!="ABIERTO"){
+                $this->addFlash(
+                'danger',
+                'Operacion no permitida, status '.$carrera->getStatus()
+                );
+                return $this->redirectToRoute('carrera_index');  
+           }
+                $user = $this->getUser(); 
+                $carrera->setStatus("CERRADO");  
+                
+                $carrera->setCerradoBy($user->getUsername());
 
-               $this->getDoctrine()->getManager()->persist($propuesta);
+                $propuestas = $carrera->getApuestaPropuestas(); 
 
-            }
+                foreach($propuestas as $propuesta){
+                   
+                   $monto = $propuesta->getMonto();
+                   $jugador = $propuesta->getJugador();
+                   $jugador->setSaldo($jugador->getSaldo() + $monto);
+                   $propuesta->setJugador($jugador);
+                   $propuesta->setMonto(0);
+
+                   $this->getDoctrine()->getManager()->persist($propuesta);
+
+                }
+
+      
+
+
+
 
            $this->getDoctrine()->getManager()->flush();
 
@@ -232,6 +315,26 @@ class CarreraController extends AbstractController
      */
     public function pagar(Request $request, Carrera $carrera): Response
     {       
+
+            $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+            $gerencia = $carrera->getGerencia()->getId();
+
+            if($gerencia_logueada != $gerencia){
+                $this->addFlash(
+                'danger',
+                'Acceso no autorizado'
+                );
+            }    
+
+             if($carrera->getStatus()!="ORDEN"){
+                $this->addFlash(
+                'danger',
+                'Operacion no permitida, status '.$carrera->getStatus()
+                );
+
+              }
+
+    
             $entityManager = $this->getDoctrine()->getManager();
             $user = $this->getUser(); 
             $carrera->setStatus("PAGADO");
@@ -245,12 +348,14 @@ class CarreraController extends AbstractController
             foreach ($apuestas as $apuesta) {
                 $ganador_temp = null;
                 $ganador =null;
+                $arreglo_jugadores = null;
                 $propuesta = false;
                 $detalles = $apuesta->getApuestaDetalles();
                 $ganador_index = $apuesta->getTipo()->getId();
 
                 foreach ($detalles as $detalle) {
                     $perfil = $detalle->getPerfil();
+                    $arreglo_jugadores[] = $perfil;
 
                      // echo $perfil->getNickname().'<br/>';
                       $caballos = $detalle->getCaballos();                     
@@ -275,7 +380,7 @@ class CarreraController extends AbstractController
                      }else{
                         $propuesta = true;  
                         $propuesta_perfil = $perfil; 
-                     }      
+                     }                         
 
                 }
                 
@@ -283,14 +388,34 @@ class CarreraController extends AbstractController
                    $ganador = $propuesta_perfil;
                 } 
 
-                if($ganador){
-                        
-                        $monto_porcentaje_1 = round($apuesta->getMonto() * 0.95);
-                         $monto_porcentaje_2 = round($apuesta->getMonto() * 0.05);
-                        $ganador->setSaldo($ganador->getSaldo() + $apuesta->getMonto() +$monto_porcentaje_1);
+                if($ganador){                        
+                   
+                        $monto_porcentaje_2 = $apuesta->getMonto() *  ($ganador->getPorcentajeGanar()/100);
+                         $monto_porcentaje_1 = $apuesta->getMonto() -  $monto_porcentaje_2;
+                       
+                        //si el jugador que pierde tiene porcentaje de reintegro
+                        foreach($arreglo_jugadores as $jugador){
+                          if($ganador->getId() != $jugador->getId() && $jugador->getPorcentajePerder()>0){
+                                
+                                $monto_porcentaje_jugador = $apuesta->getMonto() *  ($jugador->getPorcentajePerder()/100);                       
+                                $monto_porcentaje_2 -= $monto_porcentaje_jugador;
+                                $jugador->setSaldo( $jugador->getSaldo() + $monto_porcentaje_jugador );
+
+                                //echo 'perdedor:'.($monto_porcentaje_jugador).'--';
+                                $entityManager->persist($jugador);
+                          } 
+                        }
+
+                        //echo 'ganador:'.($apuesta->getMonto() + $monto_porcentaje_1).'--';
+                        //echo 'casa:'.$monto_porcentaje_2.'--';
+                        //exit;
+
+                        //round() con dos decimales
+                        $ganador->setSaldo($ganador->getSaldo() + $apuesta->getMonto() + $monto_porcentaje_1);
 
                         $apuesta->setGanador($ganador);
 
+                        //hay que reestructurar esta entidad
                         $cuenta = new Cuenta();
                         $cuenta->setGerencia($user->getPerfil()->getGerencia());
                         $cuenta->setSaldoCasa($monto_porcentaje_2);
@@ -306,6 +431,9 @@ class CarreraController extends AbstractController
 
                         $totalPagado += $monto_porcentaje_1;
                         $totalGanancia += $monto_porcentaje_2;
+
+              
+                    
                         
                 }else{
                     //echo '*******sin ganador, restaurar fondos*******';
@@ -316,8 +444,7 @@ class CarreraController extends AbstractController
                         //echo '///--'.$detalle->getPerfil()->getNickname();
                          $entityManager->persist($perfil);
                     }    
-                }
-               
+                }               
 
                 //echo '*************************************<br/>';
             }

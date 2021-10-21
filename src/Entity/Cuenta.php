@@ -41,18 +41,18 @@ class Cuenta
     private $gerencia;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $saldo_casa;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $saldo_sistema;
 
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $saldo_ganador;
 
@@ -61,6 +61,7 @@ class Cuenta
      * @ORM\JoinColumn(nullable=false)
      */
     private $apuesta;
+
 
 
 
@@ -81,24 +82,24 @@ class Cuenta
         return $this;
     }
 
-    public function getSaldoCasa(): ?int
+    public function getSaldoCasa(): ?float
     {
         return $this->saldo_casa;
     }
 
-    public function setSaldoCasa(int $saldo_casa): self
+    public function setSaldoCasa(float $saldo_casa): self
     {
         $this->saldo_casa = $saldo_casa;
 
         return $this;
     }
 
-    public function getSaldoSistema(): ?int
+    public function getSaldoSistema(): ?float
     {
         return $this->saldo_sistema;
     }
 
-    public function setSaldoSistema(int $saldo_sistema): self
+    public function setSaldoSistema(float $saldo_sistema): self
     {
         $this->saldo_sistema = $saldo_sistema;
 
@@ -106,12 +107,12 @@ class Cuenta
     }
 
 
-    public function getSaldoGanador(): ?int
+    public function getSaldoGanador(): ?float
     {
         return $this->saldo_ganador;
     }
 
-    public function setSaldoGanador(int $saldo_ganador): self
+    public function setSaldoGanador(float $saldo_ganador): self
     {
         $this->saldo_ganador = $saldo_ganador;
 
@@ -128,9 +129,7 @@ class Cuenta
         $this->apuesta = $apuesta;
 
         return $this;
-    }
 
-
-
+    } 
 
 }
