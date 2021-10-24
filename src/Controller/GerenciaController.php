@@ -60,7 +60,7 @@ class GerenciaController extends AbstractController
             // Define the page parameter
             $request->query->getInt('page', 1),
             // Items per page
-            20
+            50
         );
         
         // Render the twig view

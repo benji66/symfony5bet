@@ -8,7 +8,7 @@
 
 
 {% block body %}
-    <h1>User index FRAN</h1>
+    <h1>User </h1>
 
     {# read and display all flash messages #}
 {% for label, messages in app.flashes %}

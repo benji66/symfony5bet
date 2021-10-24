@@ -2,63 +2,139 @@
 
 {% block title %}Perfil{% endblock %}
 
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
 {% block body %}
     <h1>Perfil</h1>
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ perfil.id }}</td>
-            </tr>
-            <tr>
-                <th>Roles</th>
-                <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>
-            </tr>
-            <tr>
+            <tr>               
+                
                 <th>Nickname</th>
-                <td>{{ perfil.nickname }}</td>
+                <th>Roles</th>                
+                <th>Activo</th>   
+                <th>Saldo</th>
+                
             </tr>
             <tr>
-                <th>Saldo</th>
+                
+                <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>
+                <td>{{ perfil.nickname }}</td>
+                <td>{{ perfil.activo ? 'Yes' : 'No' }}</td> 
                 <td>{{ perfil.saldo }}</td>
             </tr>
-            <tr>
-                <th>Activo</th>
-                <td>{{ perfil.activo ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
+            <tr>                
                 <th>CreatedBy</th>
-                <td>{{ perfil.createdBy }}</td>
-            </tr>
-            <tr>
                 <th>UpdatedBy</th>
-                <td>{{ perfil.updatedBy }}</td>
-            </tr>
-            <tr>
                 <th>CreatedAt</th>
+                <th>UpdatedAt</th>                
+            </tr>
+            <tr>                
+                <td>{{ perfil.createdBy }}</td>
+                <td>{{ perfil.updatedBy }}</td>
                 <td>{{ perfil.createdAt ? perfil.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ perfil.updatedAt ? perfil.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>               
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Nombre</th>             
+                <th>Telefono</th>
+            </tr>
+            <tr>                
+                <td>{{ perfil.Usuario.email }}</td>
+                <td>{{ perfil.Usuario.roles ? perfil.Usuario.roles|json_encode : '' }}</td>
+                <td>{{ perfil.Usuario.nombre }} {{ perfil.Usuario.apellido }}</td>
+                <td>{{ perfil.Usuario.telefono }}</td>               
             </tr>
             <tr>
-                <th>UpdatedAt</th>
-                <td>{{ perfil.updatedAt ? perfil.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <th>Id</th>                          
+            </tr>
+            <tr>
+                <td>{{ perfil.id }}</td>                           
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('perfil_index') }}">
 
+    <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Apuestas</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                 <thead>
+                    <tr>              
+                        <th>Fecha</th>                              
+                        <th>monto</th>
+                        <th>actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for apuesta_detalle in perfil.ApuestaDetalles %}
+                        <tr>               
+                            <td>{{ apuesta_detalle.createdAt ? apuesta_detalle.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>{{ apuesta_detalle.Apuesta.monto }}</td>
+                            <td></td>                    
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">no records found</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                         <th>Fecha</th>
+                         <th>monto</th>                              
+                        <th>actions</th>
+                        </tr>
+                    </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+
+    <a href="{{ path('user_index') }}">
         <i class="fas fa-arrow-left"></i>
         volver
-
     </a>
 
-    <a href="{{ path('perfil_edit', {'id': perfil.id}) }}">
-        
+    <a href="{{ path('perfil_edit', {'id': perfil.id}) }}">        
          <i class="fas fa-edit"></i>
-        edit
-
+        editar
     </a>
 
-    {{ include('perfil/_delete_form.html.twig') }}
+  
+{% endblock %}
+
+
+{% block javascripts %}
+
+<!-- DataTables -->
+<script src="/bundles/fgimenezadminlte/plugins/datatables/jquery.dataTables.js"></script>
+
+<script>
+  $(function () {
+
+    $("#example1").DataTable();
+
+    $('#example2').DataTable({
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false,
+    });
+  });
+</script>
+
 {% endblock %}

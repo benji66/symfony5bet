@@ -89,7 +89,6 @@ class ApuestaDetalle
     public function setCaballos(?array $caballos): self
     {
         $this->caballos = $caballos;
-
         return $this;
     }
 }

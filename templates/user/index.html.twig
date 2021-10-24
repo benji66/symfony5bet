@@ -8,7 +8,7 @@
 
 
 {% block body %}
-    <h1>User index FRAN</h1>
+    <h1>User </h1>
 
     {# read and display all flash messages #}
 {% for label, messages in app.flashes %}
@@ -46,7 +46,7 @@
                             <td>{{ perfil.saldoIlimitado ? 'Si' : 'No' }}</td>
                             <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>             
                             <td>
-                                <a href="{{ path('user_show', {'id': perfil.Usuario.id}) }}"><i class="far fa-eye">mostrar</i></a>
+                                <a href="{{ path('perfil_show', {'id': perfil.id}) }}"><i class="far fa-eye">mostrar</i></a>
                                 <a href="{{ path('perfil_edit', {'id': perfil.id}) }}"><i class="fas fa-edit">edit</i></a>
                             </td>
                         </tr>
@@ -75,8 +75,7 @@
 
     <a href="{{ path('user_new') }}">
         <i class="fas fa-plus"></i>Nuevo
-    </a> 
-    
+    </a>     
     
     </div>
  </div>

@@ -25,7 +25,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-        {% if is_granted('ROLE_COORDINADOR') %}
+        {% if is_granted('ROLE_GERENCIA') %}
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -78,8 +78,32 @@
             </ul>
           </li>
         {% endif %}   
-      
-         {% if is_granted('ROLE_GERENCIA') %}
+ 
+          {% if is_granted('ROLE_GERENCIA') %}      
+                  <li class="nav-header">GERENCIA</li>
+                  
+                  <li class="nav-item">
+                    <a href="{{ path('dashboard_index') }}" class="nav-link">
+                      <i class="nav-icon fas fa-chart-line"></i>
+                      <p>
+                        Dashboard
+                      </p>
+                    </a>
+                  </li>  
+
+                  <li class="nav-item">
+                    <a href="{{ path('reporte_index') }}" class="nav-link">
+                      <i class="nav-icon fas fa-table"></i>
+                      <p>
+                        Reportes              
+                      </p>
+                    </a>
+                  </li>
+
+                                
+          {% endif %}       
+   
+         {% if is_granted('ROLE_COORDINADOR') %}   
                  <li class="nav-header">COORDINACION</li>
                   <li class="nav-item">
                     <a href="{{ path('carrera_index') }}" class="nav-link">
@@ -89,25 +113,9 @@
                       </p>
                     </a>
                   </li>
-                  <li class="nav-header">GERENCIA</li>
-                  <li class="nav-item">
-                    <a href="{{ path('reporte_index') }}" class="nav-link">
-                      <i class="nav-icon fas fa-table"></i>
-                      <p>
-                        Reporte index                
-                      </p>
-                    </a>
-                  </li>
-
-                  <li class="nav-item">
-                    <a href="{{ path('dashboard_index') }}" class="nav-link">
-                      <i class="nav-icon fas fa-chart-line"></i>
-                      <p>
-                        Dashboard
-                      </p>
-                    </a>
-                  </li>                
-          {% endif %}    
+         {% endif %}    
+               
+  
 
        {% if is_granted('ROLE_ADMINISTRATIVO') %}     
            <li class="nav-header">ADMINISTRACION</li>              
@@ -152,7 +160,7 @@
             <a href="{{ path('perfil_banco_index') }}" class="nav-link">
               <i class="nav-icon fas fa-money-check-alt"></i>
               <p>
-                Cuentas de banco
+                Cuentas de Banco
               </p>
             </a>
            </li>
@@ -190,7 +198,7 @@
               <i class="nav-icon fas fa-user-secret"></i>
               <p>
                 Cambio de Perfil
-                <span class="right badge badge-danger">New</span>
+                <!-- <span class="right badge badge-danger">New</span> -->
               </p>
             </a>
           </li> 

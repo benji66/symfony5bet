@@ -81,6 +81,30 @@ class ApuestaController extends AbstractController
      */
     public function new(Request $request, Carrera $carrera): Response
     {
+        
+         $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+            $gerencia = $carrera->getGerencia()->getId();
+
+            if($gerencia_logueada != $gerencia){
+                $this->addFlash(
+                'danger',
+                'Acceso no autorizado'
+                );
+                return $this->redirectToRoute('carrera_index');  
+            }    
+
+           if($carrera->getStatus()=="PAGADO"){
+
+                $this->addFlash(
+                'danger',
+                'Operacion no permitida, status '.$carrera->getStatus()
+                );
+                return $this->redirectToRoute('carrera_index');  
+            }
+
+
+
+
         $apuestum = new Apuesta();
         $form = $this->createForm(ApuestaType::class, $apuestum);
         $form->handleRequest($request);

@@ -107,6 +107,17 @@ class PerfilController extends AbstractController
      */
     public function show(Perfil $perfil): Response
     {
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $perfil->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){            
+            $this->addFlash(
+             'danger',
+             'Acceso no autorizado'
+            );
+            $this->redirectToRoute('user_index');
+        } 
+
         return $this->render('perfil/show.html.twig', [
             'perfil' => $perfil,
         ]);
@@ -137,80 +148,7 @@ class PerfilController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="perfil_delete", methods={"DELETE"})
-     */
-    public function delete(Request $request, Perfil $perfil): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$perfil->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($perfil);
-            $entityManager->flush();
-         
-         $this->addFlash(
-            'success',
-            'Los cambios fueron realizados!'
-            );
-        }
 
-        return $this->redirectToRoute('user_index');
-    }
 
-     /**
-     * @Route("/pdf", name="perfil_pdf", methods={"GET"})
-     */
-     public function getPdf(PerfilRepository $perfilRepository, Request $request)
-     {        // Configure Dompdf according to your needs
-     
-             //searchForm   
-        
-        
-           $allRowsQuery = $perfilRepository->createQueryBuilder('a')
-            //->where('a.status != :status')
-            //->setParameter('status', 'canceled')
-            ; 
-
-        //example filter code, you must uncomment and modify
-
-        /*if ($request->query->get("perfil")) {
-            $val = $request->query->get("perfil");
-          
-                        
-            $allRowsQuery = $allRowsQuery
-            ->andWhere('a.email LIKE :email')
-            ->setParameter('email', '%'.$val['email'].'%');
-        }*/
-
-        // Find all the data, filter your query as you need
-         $allRowsQuery = $allRowsQuery->getQuery()->getResult();   
- 
-
-      
-        $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Arial');
-        
-        // Instantiate Dompdf with our options
-        $dompdf = new Dompdf($pdfOptions);
-
-        // Retrieve the HTML generated in our twig file
-        //$html = $this->renderView($vista, $registros);
-
-        $html = $this->renderView('perfil/pdf.html.twig', [
-            'perfils' => $allRowsQuery
-        ]);
-        
-        // Load HTML to Dompdf
-        $dompdf->loadHtml($html);
-        
-        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Render the HTML as PDF
-        $dompdf->render();
-
-        // Output the generated PDF to Browser (force download)
-        $dompdf->stream("mypdf.pdf", [
-            "Attachment" => true
-        ]);        
-    }    
+  
 }
