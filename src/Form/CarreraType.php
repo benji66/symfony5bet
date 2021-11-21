@@ -7,8 +7,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Component\Form\CallbackTransformer;
+
 use App\Entity\Local;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class CarreraType extends AbstractType
 {
@@ -26,15 +29,36 @@ class CarreraType extends AbstractType
                     // 'multiple' => true,
                     // 'expanded' => true,
                 ])
-            //->add('gerencia')
             ->add('fecha')
+            /*->add('fecha', DateTimeType::class, [
+                'time_widget' => false,
+                'date_widget' => 'choice',
+                'date_format' => 'dd/MM/YYYY',
+                'html5'=>false
+            ])*/
             ->add('numero_carrera')
-            ->add('cantidad_caballos')
+            //->add('cantidad_caballos')
             //->add('status')
             
             //->add('orden_oficial')
 
         ;
+
+
+        $builder->get('fecha')->addModelTransformer(
+            new CallbackTransformer(
+                function($value){
+                    if(!$value){
+                        return new \DateTime('now');
+                     }
+                     return $value;   
+                },
+
+                function($value){
+                    return $value;
+                }                
+
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -99,7 +99,8 @@
                     {% endif %}
 
                     {% if (carrera.status=='ABIERTO') %}
-                           <a href="{{ path('apuesta_new', {'id': carrera.id}) }}"><i class="fas fa-edit">apuestas</i></a>
+                          
+                          <a href="{{ path('apuesta_new', {'id': carrera.id}) }}"><i class="fas fa-edit">apuestas</i></a>
 
                           <a href="{{ path('carrera_cerrar', {'id': carrera.id}) }}"><i class="fas fa-edit">cerrar</i></a> 
                           {% if carrera.Apuestas is empty %}
@@ -108,7 +109,7 @@
                     {% endif %}
 
                     {% if (carrera.status == 'CERRADO') %}
-                          <a href="{{ path('carrera_finalizar', {'id': carrera.id}) }}"><i class="fas fa-edit">finalizar</i></a>
+                          <a href="{{ path('carrera_finalizar', {'id': carrera.id}) }}"><i class="fas fa-edit">orden oficial</i></a>
 
                            <a href="{{ path('apuesta_new', {'id': carrera.id}) }}"><i class="fas fa-edit">apuestas</i></a>
                     {% endif %}
@@ -159,11 +160,6 @@
 
 <script>
 
-function descargaPDF(form){
-    $(form).attr('target', '_blank');
-    $(form).attr('action', "{{ path('carrera_pdf') }}");   
-    $(form).submit();
-}
 
 function buscar(form){
     $(form).attr('target', ' ');

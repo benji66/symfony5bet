@@ -22,7 +22,7 @@
                         <i class="{{ item.iclass }}"></i>
 
                         <div class="timeline-item">
-                          <span class="time">
+                          <span class="time" style=" {{ item.status_class ? item.status_class : '' }}">
                               {{ item.status ? item.status : '-' }}
                           </span>
                           <h3 class="timeline-header">{{ item.mensaje }}</h3>

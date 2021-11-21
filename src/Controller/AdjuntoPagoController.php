@@ -113,13 +113,17 @@ class AdjuntoPagoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-             $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);
-             if ($this->isGranted('ROLE_COORDINADOR')) {                
+            /*echo $request->get("adjunto_pago_user")['perfil_id'].'---';
+               exit;*/ 
+            
+             if ($this->isGranted('ROLE_COORDINADOR')) { 
+                    $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);               
 
                     if($adjuntoPago->getValidado()){
                       $perfil->setSaldo($perfil->getSaldo() + $adjuntoPago->getMonto());
                     }
+             }else{
+                 $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago_user")['perfil_id']);  
              }  
 
              $ruta_relativa = '/data/uploads/'; 

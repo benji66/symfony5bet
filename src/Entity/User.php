@@ -23,6 +23,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ApiResource()
+ * @Gedmo\Loggable 
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository") 
  * @UniqueEntity(
  *     fields={"email"}, 

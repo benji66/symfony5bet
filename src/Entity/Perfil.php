@@ -23,6 +23,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ApiResource(normalizationContext={"groups"={"read"}})
+ * @Gedmo\Loggable 
  * @ORM\Entity(repositoryClass="App\Repository\PerfilRepository")
  * @UniqueEntity(
  *     fields={"gerencia", "nickname"},
@@ -61,11 +62,13 @@ class Perfil
 
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="json")
      */
     private $roles = [];
     
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=25, nullable=false, unique=false)
      * @Groups({"read"})
      */
@@ -108,6 +111,7 @@ class Perfil
     private $ganadores;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $saldo_ilimitado;
@@ -123,6 +127,7 @@ class Perfil
     private $apuestaPropuestas;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="integer", nullable=true)
      */
     private $sueldo;
@@ -146,14 +151,48 @@ class Perfil
     private $perfilBancos;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="float", nullable=true)
      */
     private $porcentaje_ganar;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="float", nullable=true)
      */
     private $porcentaje_perder;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Banca::class, mappedBy="usuario")
+     */
+    private $usuario_bancas;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Banca::class, mappedBy="cliente")
+     */
+    private $cliente_bancas;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Cuenta::class, mappedBy="ganador")
+     */
+    private $cuentas_ganador;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Cuenta::class, mappedBy="perdedor")
+     */
+    private $cuentas_perdedor;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Traspaso::class, mappedBy="descuento")
+     */
+    private $traspaso_descuentos;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Traspaso::class, mappedBy="abono")
+     */
+    private $traspaso_abonos;
+
+
 
 
      
@@ -168,6 +207,13 @@ class Perfil
   
         $this->retiroSaldos = new ArrayCollection();
         $this->perfilBancos = new ArrayCollection();
+        $this->usuario_bancas = new ArrayCollection();
+        $this->cliente_bancas = new ArrayCollection();
+        $this->cuentas_ganador = new ArrayCollection();
+        $this->cuentas_perdedor = new ArrayCollection();
+        $this->traspaso_retiros = new ArrayCollection();
+        $this->traspaso_descuentos = new ArrayCollection();
+        $this->traspaso_abonos = new ArrayCollection();
     
        
 
@@ -230,12 +276,12 @@ class Perfil
 
     public function getSaldo(): ?float
     {
-        return $this->saldo;
+        return  round($this->saldo,2,PHP_ROUND_HALF_DOWN);
     }
 
     public function setSaldo(?float $saldo): self
     {
-        $this->saldo = $saldo;
+        $this->saldo = round($saldo,2,PHP_ROUND_HALF_DOWN);
 
         return $this;
     }
@@ -512,6 +558,188 @@ class Perfil
 
         return $this;
     }
+
+    /**
+     * @return Collection|Banca[]
+     */
+    public function getUsuarioBancas(): Collection
+    {
+        return $this->usuario_bancas;
+    }
+
+    public function addUsuarioBanca(Banca $usuarioBanca): self
+    {
+        if (!$this->usuario_bancas->contains($usuarioBanca)) {
+            $this->usuario_bancas[] = $usuarioBanca;
+            $usuarioBanca->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsuarioBanca(Banca $usuarioBanca): self
+    {
+        if ($this->usuario_bancas->removeElement($usuarioBanca)) {
+            // set the owning side to null (unless already changed)
+            if ($usuarioBanca->getUsuario() === $this) {
+                $usuarioBanca->setUsuario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Banca[]
+     */
+    public function getClienteBancas(): Collection
+    {
+        return $this->cliente_bancas;
+    }
+
+    public function addClienteBanca(Banca $clienteBanca): self
+    {
+        if (!$this->cliente_bancas->contains($clienteBanca)) {
+            $this->cliente_bancas[] = $clienteBanca;
+            $clienteBanca->setCliente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClienteBanca(Banca $clienteBanca): self
+    {
+        if ($this->cliente_bancas->removeElement($clienteBanca)) {
+            // set the owning side to null (unless already changed)
+            if ($clienteBanca->getCliente() === $this) {
+                $clienteBanca->setCliente(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cuenta[]
+     */
+    public function getCuentasGanador(): Collection
+    {
+        return $this->cuentas_ganador;
+    }
+
+    public function addCuentasGanador(Cuenta $cuentasGanador): self
+    {
+        if (!$this->cuentas_ganador->contains($cuentasGanador)) {
+            $this->cuentas_ganador[] = $cuentasGanador;
+            $cuentasGanador->setGanador($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCuentasGanador(Cuenta $cuentasGanador): self
+    {
+        if ($this->cuentas_ganador->removeElement($cuentasGanador)) {
+            // set the owning side to null (unless already changed)
+            if ($cuentasGanador->getGanador() === $this) {
+                $cuentasGanador->setGanador(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cuenta[]
+     */
+    public function getCuentasPerdedor(): Collection
+    {
+        return $this->cuentas_perdedor;
+    }
+
+    public function addCuentasPerdedor(Cuenta $cuentasPerdedor): self
+    {
+        if (!$this->cuentas_perdedor->contains($cuentasPerdedor)) {
+            $this->cuentas_perdedor[] = $cuentasPerdedor;
+            $cuentasPerdedor->setPerdedor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCuentasPerdedor(Cuenta $cuentasPerdedor): self
+    {
+        if ($this->cuentas_perdedor->removeElement($cuentasPerdedor)) {
+            // set the owning side to null (unless already changed)
+            if ($cuentasPerdedor->getPerdedor() === $this) {
+                $cuentasPerdedor->setPerdedor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Traspaso[]
+     */
+    public function getTraspasoDescuentos(): Collection
+    {
+        return $this->traspaso_descuentos;
+    }
+
+    public function addTraspasoDescuento(Traspaso $traspasoDescuento): self
+    {
+        if (!$this->traspaso_descuentos->contains($traspasoDescuento)) {
+            $this->traspaso_descuentos[] = $traspasoDescuento;
+            $traspasoDescuento->setDescuento($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraspasoDescuento(Traspaso $traspasoDescuento): self
+    {
+        if ($this->traspaso_descuentos->removeElement($traspasoDescuento)) {
+            // set the owning side to null (unless already changed)
+            if ($traspasoDescuento->getDescuento() === $this) {
+                $traspasoDescuento->setDescuento(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Traspaso[]
+     */
+    public function getTraspasoAbonos(): Collection
+    {
+        return $this->traspaso_abonos;
+    }
+
+    public function addTraspasoAbono(Traspaso $traspasoAbono): self
+    {
+        if (!$this->traspaso_abonos->contains($traspasoAbono)) {
+            $this->traspaso_abonos[] = $traspasoAbono;
+            $traspasoAbono->setAbono($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraspasoAbono(Traspaso $traspasoAbono): self
+    {
+        if ($this->traspaso_abonos->removeElement($traspasoAbono)) {
+            // set the owning side to null (unless already changed)
+            if ($traspasoAbono->getAbono() === $this) {
+                $traspasoAbono->setAbono(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 
 
  

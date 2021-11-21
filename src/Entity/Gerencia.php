@@ -96,6 +96,11 @@ class Gerencia
      */
     private $imagen;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Traspaso::class, mappedBy="gerencia")
+     */
+    private $traspasos;
+
 
     public function __construct()
     {
@@ -104,6 +109,7 @@ class Gerencia
         $this->metodoPagos = new ArrayCollection();
         $this->carreras = new ArrayCollection();
         $this->cuentas = new ArrayCollection();
+        $this->traspasos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -275,12 +281,12 @@ class Gerencia
 
     public function getSaldoAcumulado(): ?float
     {
-        return $this->saldo_acumulado;
+        return round($this->saldo_acumulado,2,PHP_ROUND_HALF_DOWN);
     }
 
     public function setSaldoAcumulado(?float $saldo_acumulado): self
     {
-        $this->saldo_acumulado = $saldo_acumulado;
+        $this->saldo_acumulado = round($saldo_acumulado,2,PHP_ROUND_HALF_DOWN);
 
         return $this;
     }
@@ -317,6 +323,36 @@ class Gerencia
     public function setImagen(?string $imagen): self
     {
         $this->imagen = $imagen;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Traspaso[]
+     */
+    public function getTraspasos(): Collection
+    {
+        return $this->traspasos;
+    }
+
+    public function addTraspaso(Traspaso $traspaso): self
+    {
+        if (!$this->traspasos->contains($traspaso)) {
+            $this->traspasos[] = $traspaso;
+            $traspaso->setGerencia($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraspaso(Traspaso $traspaso): self
+    {
+        if ($this->traspasos->removeElement($traspaso)) {
+            // set the owning side to null (unless already changed)
+            if ($traspaso->getGerencia() === $this) {
+                $traspaso->setGerencia(null);
+            }
+        }
 
         return $this;
     }

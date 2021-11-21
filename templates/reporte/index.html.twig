@@ -103,6 +103,14 @@
                                 <a href="#" id="link_apuesta"><i class="far fa-eye">descargar</i></a>
                             </td>
                         </tr>
+
+                         <tr>               
+                            <td>Total Clientes</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_total_cliente"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
                 
                     </tbody>
 
@@ -173,6 +181,8 @@ $("#reservation").change(function() {
   $("#link_deposito_saldo").attr('href', '{{ path('reporte_deposito_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_retiro_saldo").attr('href', '{{ path('reporte_retiro_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_apuesta").attr('href', '{{ path('reporte_apuesta') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
+
+  $("#link_total_cliente").attr('href', '{{ path('reporte_total_cliente') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);   
 
 }); 
 

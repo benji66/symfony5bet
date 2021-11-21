@@ -124,11 +124,7 @@
 
 <script>
 
-function descargaPDF(form){
-    $(form).attr('target', '_blank');
-    $(form).attr('action', "{{ path('gerencia_pdf') }}");   
-    $(form).submit();
-}
+
 
 function buscar(form){
     $(form).attr('target', ' ');

@@ -19,10 +19,9 @@
                 <th>Saldo</th>
                 
             </tr>
-            <tr>
-                
-                <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>
+            <tr>                
                 <td>{{ perfil.nickname }}</td>
+                <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>
                 <td>{{ perfil.activo ? 'Yes' : 'No' }}</td> 
                 <td>{{ perfil.saldo }}</td>
             </tr>
@@ -39,27 +38,28 @@
                 <td>{{ perfil.updatedAt ? perfil.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>               
-                <th>Email</th>
-                <th>Roles</th>
+                <th>Id</th>  
+                <th>Email</th>                
                 <th>Nombre</th>             
                 <th>Telefono</th>
             </tr>
             <tr>                
-                <td>{{ perfil.Usuario.email }}</td>
-                <td>{{ perfil.Usuario.roles ? perfil.Usuario.roles|json_encode : '' }}</td>
+                 <td>{{ perfil.id }}</td>  
+                <td>{{ perfil.Usuario.email }}</td>                
                 <td>{{ perfil.Usuario.nombre }} {{ perfil.Usuario.apellido }}</td>
-                <td>{{ perfil.Usuario.telefono }}</td>               
+                <td>{{ perfil.Usuario.telefono }}</td>
+                             
             </tr>
             <tr>
-                <th>Id</th>                          
+                                       
             </tr>
             <tr>
-                <td>{{ perfil.id }}</td>                           
+                                          
             </tr>
         </tbody>
     </table>
 
-
+    <h1>Apuestas</h1>
     <div class="card">
             <div class="card-header">
               <h3 class="card-title">Apuestas</h3>

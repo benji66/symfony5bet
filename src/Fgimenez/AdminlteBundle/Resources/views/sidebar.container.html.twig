@@ -104,7 +104,7 @@
           {% endif %}       
    
          {% if is_granted('ROLE_COORDINADOR') %}   
-                 <li class="nav-header">COORDINACION</li>
+                 <li class="nav-header">CORREDOR</li>
                   <li class="nav-item">
                     <a href="{{ path('carrera_index') }}" class="nav-link">
                       <i class="nav-icon fas fa-horse"></i>
@@ -123,7 +123,7 @@
             <a href="{{ path('pago_personal_index') }}" class="nav-link">
               <i class="nav-icon fas fa-funnel-dollar"></i>
               <p>
-                Pago por deposito directo
+                Gastos
               </p>
             </a>
            </li>
@@ -132,7 +132,7 @@
             <a href="{{ path('pago_personal_bysaldo') }}" class="nav-link">
               <i class="nav-icon fas fa-funnel-dollar"></i>
               <p>
-                Pago por abono de saldo
+                Pago Administrativo
               </p>
             </a>
            </li>
@@ -146,6 +146,22 @@
             </a>
            </li> 
 
+           <li class="nav-item">
+            <a href="{{ path('pago_cliente_index') }}" class="nav-link">
+              <i class="nav-icon fas fa-hand-holding-usd"></i>
+              <p>
+                Pago a Clientes
+              </p>
+            </a>
+           </li> 
+           <li class="nav-item">
+            <a href="{{ path('traspaso_index') }}" class="nav-link">
+              <i class="nav-icon fas fa-hand-holding-usd"></i>
+              <p>
+                Traspasos
+              </p>
+            </a>
+           </li> 
 
         {% endif %}         
         
@@ -183,14 +199,15 @@
             </a>
            </li>
 
-           <li class="nav-item">
-            <a href="{{ path('carrera_abierta_index') }}" class="nav-link">
-              <i class="nav-icon fas fa-horse-head"></i>
-              <p>
-                Carreras abiertas
-              </p>
-            </a>
-           </li>  
+            <li class="nav-item">
+                 <a href="{{ path('reporte_cliente_index') }}" class="nav-link">
+                   <i class="nav-icon fas fa-table"></i>
+                 <p>
+                    Reporte Cliente              
+                 </p>
+               </a>
+            </li>
+  
         {% endif %}  
         
           <li class="nav-item">

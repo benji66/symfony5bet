@@ -4,13 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Carrera;
 use App\Entity\Cuenta;
-
 use App\Entity\ApuestaDetalle;
 use App\Entity\Apuesta;
 use App\Entity\ApuestaPropuesta;
+
 use App\Form\ApuestaPropuestaType;
 use App\Form\CarreraType;
+
 use App\Repository\CarreraRepository;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,8 +57,18 @@ class CarreraAbiertaController extends AbstractController
      * @Route("/show/{id}", name="carrera_abierta_show", methods={"GET"}, requirements={"id":"\d+"})
      */
     public function show(Carrera $carrera): Response
-    {
-       
+    {       
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $carrera->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('carrera_abierta_index');
+        }    
+
         return $this->render('apuesta_abierta/show.html.twig', [
             'carrera' => $carrera,
         ]);
@@ -68,6 +80,17 @@ class CarreraAbiertaController extends AbstractController
     public function cargar(Request $request, ApuestaPropuesta $propuesta): Response
     {       
         
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $propuesta->getCarrera()->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('carrera_abierta_index');
+        }    
+
        if($propuesta->getCarrera()->getStatus()!='ABIERTO'){
           $this->addFlash(
                    'danger',
@@ -138,6 +161,17 @@ class CarreraAbiertaController extends AbstractController
     public function new(Request $request, Carrera $carrera): Response
     {       
       
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $carrera->getCarrera()->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('carrera_abierta_index');
+        }    
+
         $perfil = $this->getUser()->getPerfil();
         $apuestaPropuestum = new ApuestaPropuesta();
         $form = $this->createForm(ApuestaPropuestaType::class, $apuestaPropuestum);

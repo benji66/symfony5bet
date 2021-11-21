@@ -43,10 +43,6 @@ class Carrera
      */
     private $fecha;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $cantidad_caballos;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -110,12 +106,19 @@ class Carrera
      */
     private $apuestaPropuestas;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Banca::class, mappedBy="carrera")
+     */
+    private $bancas;
+
    
 
     public function __construct()
     {
         $this->apuestas = new ArrayCollection();
         $this->apuestaPropuestas = new ArrayCollection();
+        $this->bancas = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
@@ -135,17 +138,7 @@ class Carrera
         return $this;
     }
 
-    public function getCantidadCaballos(): ?int
-    {
-        return $this->cantidad_caballos;
-    }
 
-    public function setCantidadCaballos(int $cantidad_caballos): self
-    {
-        $this->cantidad_caballos = $cantidad_caballos;
-
-        return $this;
-    }
 
     public function getStatus(): ?string
     {
@@ -263,24 +256,24 @@ class Carrera
 
     public function getTotalPagado(): ?int
     {
-        return $this->total_pagado;
+        return round($this->total_pagado,2,PHP_ROUND_HALF_DOWN);
     }
 
     public function setTotalPagado(?int $total_pagado): self
     {
-        $this->total_pagado = $total_pagado;
+        $this->total_pagado = round($total_pagado,2,PHP_ROUND_HALF_DOWN);
 
         return $this;
     }
 
     public function getTotalGanancia(): ?int
     {
-        return $this->total_ganancia;
+        return round($this->total_ganancia,2,PHP_ROUND_HALF_DOWN);
     }
 
     public function setTotalGanancia(?int $total_ganancia): self
     {
-        $this->total_ganancia = $total_ganancia;
+        $this->total_ganancia = round($total_ganancia,2,PHP_ROUND_HALF_DOWN);
 
         return $this;
     }
@@ -329,6 +322,36 @@ class Carrera
             // set the owning side to null (unless already changed)
             if ($apuestaPropuesta->getCarrera() === $this) {
                 $apuestaPropuesta->setCarrera(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Banca[]
+     */
+    public function getBancas(): Collection
+    {
+        return $this->bancas;
+    }
+
+    public function addBanca(Banca $banca): self
+    {
+        if (!$this->bancas->contains($banca)) {
+            $this->bancas[] = $banca;
+            $banca->setCarrera($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBanca(Banca $banca): self
+    {
+        if ($this->bancas->removeElement($banca)) {
+            // set the owning side to null (unless already changed)
+            if ($banca->getCarrera() === $this) {
+                $banca->setCarrera(null);
             }
         }
 

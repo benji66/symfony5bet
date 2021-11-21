@@ -1,0 +1,56 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Pago Cliente{% endblock %}
+
+{% block body %}
+    <h1>Pago Cliente</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Nickname</th>
+                <td>
+                    <a href="{{ path('user_show', {'id': pago.Perfil.Usuario.id}) }}">
+                        {{ pago.Perfil.Nickname }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ pago.Perfil.Usuario.nombre }} {{ pago.Perfil.Usuario.apellido }}</td>
+            </tr>
+
+            <tr>
+                <th>Comprobante</th>
+                <td><img src="{{ pago.ruta }}" width="800"></td>
+            </tr>
+            <tr>
+                <th>Monto</th>
+                <td>{{ pago.monto }}</td>
+            </tr>
+   
+            <tr>
+                <th>Numero  de referencia</th>
+                <td>{{ pago.numeroReferencia }}</td>
+            </tr>
+            <tr>
+                <th>Observacion</th>
+                <td>{{ pago.observacion }}</td>
+            </tr>
+            <tr>
+                <th>Creado por</th>
+                <td>{{ pago.createdBy }} {{ pago.createdAt ? pago.createdAt|date('Y-m-d H:i:s') : '' }} </td>
+            </tr>
+
+       
+        </tbody>
+    </table>
+
+    <a href="{{ path('pago_cliente_index') }}">
+
+        <i class="fas fa-arrow-left"></i>
+        volver
+
+    </a>
+
+{% endblock %}

@@ -85,6 +85,7 @@ class DashboardController extends AbstractController
     	}
 /******************************************************************************************************/
          //ordenar los indices del arreglo
+         $ganadores_temp = array();
          foreach ($ganadores as $item ) {
              $ganadores_temp[] = $item; 
          }
@@ -103,7 +104,8 @@ class DashboardController extends AbstractController
                 }
             }
 
-
+        $grafico_dona['label'][0] = null;
+        $grafico_dona['data'][0] = null;
           // 5 por monto
         for($i=0;$i<=4; $i++){
            if(isset($ganadores[$i])){
@@ -126,7 +128,8 @@ class DashboardController extends AbstractController
                 }
             }
 
-
+        $grafico_torta['label'][0] = null;
+        $grafico_torta['data'][0] = null;
           // 5 por cantidad de apuesta
         for($i=0;$i<=4; $i++){
            if(isset($ganadores[$i])){

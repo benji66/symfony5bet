@@ -40,7 +40,8 @@ class PagoPersonalAsignacionType extends AbstractType
                                 ->innerJoin('a.usuario','u')
                                 ->andWhere('a.gerencia = :gerencia')
                                 ->andWhere('a.sueldo > 0')
-                                ->orderBy('u.email')
+                                //->orderBy('u.email')
+                                ->orderBy('a.nickname')
                                 ->setParameter('gerencia', $gerencia_id);
                     },
                     // uses the User.username property as the visible option string
@@ -59,9 +60,22 @@ class PagoPersonalAsignacionType extends AbstractType
                     // 'multiple' => true,
                     // 'expanded' => true,
                 ])
+
+
             ->add('monto')
             ->add('numero_referencia')
-            ->add('concepto')
+            
+            ->add('concepto', ChoiceType::class, [
+                'multiple' => false,
+                'expanded' => false,
+                'choices'  => [
+                    'ALIMENTACION' => 'ALIMENTACION',
+                    'BEBIDA' => 'BEBIDA',
+                    'LIMPIEZA' => 'LIMPIEZA',
+                    'OTRO' => 'OTRO',                   
+                ],
+            ])
+            
             ->add('observacion')            
         ;
     }

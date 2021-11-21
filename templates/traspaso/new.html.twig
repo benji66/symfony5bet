@@ -1,0 +1,50 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Nuevo Traspaso de Saldo{% endblock %}
+
+{% block body %}
+
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+    <h1>Nuevo Traspaso de Saldo {#{token}#} </h1>
+
+       <div class="row">
+         <!-- left column -->
+         <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Nuevo</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->            
+                <div class="card-body">
+                   {{ include('traspaso/_form.html.twig') }}
+                </div>
+                <!-- /.card-body -->            
+            </div>
+             <!-- /.card -->
+
+              <a href="{{ path('traspaso_index') }}">
+              <i class="fas fa-arrow-left"></i>
+              volver
+              
+            </a>
+      </div>
+      <div class="col-md-6">
+            <div id="datos_perfil"></div>
+      </div>   
+    </div>
+            
+{% endblock %}
+
+

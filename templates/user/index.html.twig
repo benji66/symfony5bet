@@ -32,6 +32,7 @@
                  <thead>
                     <tr>              
                         <th>Email</th>
+                        <th>Nickname</th>
                         <th>Activo</th>
                         <th>Ilimitado</th>
                         <th>Roles</th>             
@@ -42,6 +43,7 @@
                     {% for perfil in perfils %}
                         <tr>               
                             <td>{{ perfil.usuario.email }}</td>
+                            <td>{{ perfil.nickname }}</td>
                             <td>{{ perfil.activo ? 'Si' : 'No' }}</td>
                             <td>{{ perfil.saldoIlimitado ? 'Si' : 'No' }}</td>
                             <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>             
@@ -60,6 +62,7 @@
                     <tfoot>
                         <tr>
                             <th>Email</th>
+                            <th>Nickname</th>
                             <th>Activo</th>
                             <th>Ilimitado</th>
                             <th>Roles</th>

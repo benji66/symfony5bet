@@ -3,7 +3,7 @@
 {% block title %}New Adjunto_pago{% endblock %}
 
 {% block body %}
-    <h1>Nuevo Adjunto_pago {#{token}#} </h1>
+    <h1>Nuevo Abono de Saldo {#{token}#} </h1>
 
        <div class="row">
          <!-- left column -->
@@ -24,8 +24,7 @@
 
               <a href="{{ path('adjunto_pago_index') }}">
               <i class="fas fa-arrow-left"></i>
-              volver
-              
+              volver              
             </a>
       </div>
       <div class="col-md-6">
@@ -82,6 +81,7 @@
 
 var options = {
 
+
   url: function(phrase) {
     return "{{ path('profile_search') }}";
   },
@@ -105,6 +105,12 @@ var options = {
   },
 
   list: {
+        
+        maxNumberOfElements: 500,
+        match: {
+            enabled: true
+        },
+
         onSelectItemEvent: function() {
 
             var selectedItemName = $("#adjunto_pago_busca_perfil").getSelectedItemData().nombre+' '+$("#adjunto_pago_busca_perfil").getSelectedItemData().apellido+' '+$("#adjunto_pago_busca_perfil").getSelectedItemData().saldo+' '+$("#adjunto_pago_busca_perfil").getSelectedItemData().nickname;
@@ -261,6 +267,7 @@ $("#adjunto_pago_busca_perfil").easyAutocomplete(options);
     {% if (perfil_id) %}
         //alert({{perfil_id}});
         $("#adjunto_pago_user_perfil_id").val({{perfil_id}});
+
         //alert($("#adjunto_pago_user_perfil_id").val());
     {% endif %}  
     </script>

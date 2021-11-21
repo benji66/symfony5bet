@@ -267,8 +267,8 @@ class RetiroSaldoController extends AbstractController
         $form = $this->createForm(RetiroSaldoType::class, $retiroSaldo);       
         $allRowsQuery = $retiroSaldoRepository->createQueryBuilder('a')
             ->orderBy('a.id', 'DESC')
-            //->where('a.status != :status')
-            //->setParameter('status', 'canceled')
+            ->where('a.gerencia = :gerencia_id')
+            ->setParameter('gerencia_id',  $this->getUser()->getPerfil()->getGerencia()->getId())
             ;
 
         

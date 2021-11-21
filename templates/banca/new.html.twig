@@ -1,0 +1,155 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Banca New{% endblock %}
+
+{% block body %}
+
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+    <h1>Nueva banca en {{carrera.Hipodromo.nombre}}  - carrera {{carrera.numeroCarrera}}</h1>
+
+       <div class="row">
+          <!-- left column -->
+          <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Nuevo</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->            
+                <div class="card-body">
+                   {{ include('banca/_form.html.twig') }}
+                </div>
+                <!-- /.card-body -->               
+             
+            </div>
+            <!-- /.card -->
+
+              <a href="{{ path('apuesta_new', {'id': carrera.id}) }}">
+            	<i class="fas fa-arrow-left"></i>
+            	volver a apuestas
+            	
+            </a>
+
+            <a href="{{ path('carrera_cerrar', {'id': carrera.id}) }}"><i class="fas fa-edit">cerrar carrera</i></a>
+		  </div>
+
+      <div class="col-md-6">
+          
+      </div> 
+		</div>
+
+     <h1>Banca sin confirmar</h1>
+        <table id="example2" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Juega</th>
+                <th>Da</th>                
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+         {% set total_juega = 0 %}
+         {% set total_da = 0 %}
+
+        {% for banca in bancas %}
+            <tr>                
+                <td>{{ banca.Cliente.nickname }}</td>
+                
+                {% if banca.juega == '1' %}
+                    {% set total_juega = total_juega + banca.monto %}  
+                    <td>{{ banca.monto }}</td>
+                    <td></td>
+                 {% else %}
+                      {% set total_da = total_da + banca.monto %}
+                      <td></td>
+                      <td>{{ banca.monto }}</td>                      
+                 {% endif %}                  
+                  
+                <td>                    
+                      {{ include('banca/_delete_form.html.twig') }}                
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+           {% if total_juega != total_da %}
+            <tr>
+                <th></th>
+                <th style="color:red">{{ total_juega }}</th>
+                <th style="color:red">{{ total_da }}</th>
+                <th></th>
+            </tr>
+
+             <tr>
+                <td colspan="4" align="center" style="color:red"><b>Los totales deben coincidir</b></td>
+            </tr>
+            {% else %}
+
+              <tr>
+                <th></th>
+                <th>{{ total_juega }}</th>
+                <th>{{ total_da }}</th>
+                <th></th>
+              </tr>
+              
+               <tr>
+                <td colspan="4" align="center">
+                      <div class="card-body">
+                        {{ include('banca/_form_confirmar.html.twig') }}
+                      </div>
+                </td>
+               </tr>
+            {% endif %}  
+        </tfoot>
+    </table>
+
+{% endblock %}
+
+{% block javascripts %}
+<script> 
+     
+     $('#caballos_boton').click(function() {
+
+           var datos_caballos_id = $('#caballos_texto').val();
+           //alert(datos_caballos_id+'--');
+           // alert($("#datos_caballos_id_"+datos_caballos_id).val());
+
+            if(!$("#datos_caballos_id_"+datos_caballos_id).val() && datos_caballos_id!=''){
+                
+                $("#datos_caballos").append('<li id="datos_caballos_texto_'+datos_caballos_id+'"> <a onclick="$(\'#datos_caballos_texto_'+datos_caballos_id+'\').remove()" href="#"><i class="fas fa-horse">X</i></a>  '+ datos_caballos_id +' <input type="hidden" id="datos_caballos_id_'+ datos_caballos_id +'" name="caballos[]" value="'+ datos_caballos_id+'"></li>');               
+            }            
+
+            $('#caballos_texto' ).val('');        
+
+    });
+
+    $("#banca_boton_cargar").click(function() {
+       
+        //alert($('#datos_caballos li').length);
+        
+        if($('#datos_caballos li').length < 1){
+            alert('Debe agregar minimo 1 caballo');
+            return false;
+        }      
+        
+        $('form[name=confirmar]').submit();
+    });
+</script> 
+{% endblock %}

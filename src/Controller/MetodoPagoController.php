@@ -57,7 +57,7 @@ class MetodoPagoController extends AbstractController
 
             $user =  $user = $this->getUser(); 
 
-           $metodoPago->setGerencia($user->getGerencia());
+           $metodoPago->setGerencia($user->getPerfil()->getGerencia());
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($metodoPago);
@@ -131,61 +131,5 @@ class MetodoPagoController extends AbstractController
         return $this->redirectToRoute('metodo_pago_index');
     }
 
-     /**
-     * @Route("/pdf", name="metodo_pago_pdf", methods={"GET"})
-     */
-     public function getPdf(MetodoPagoRepository $metodoPagoRepository, Request $request)
-     {        // Configure Dompdf according to your needs
-     
-             //searchForm   
-        
-        
-           $allRowsQuery = $metodoPagoRepository->createQueryBuilder('a')
-            //->where('a.status != :status')
-            //->setParameter('status', 'canceled')
-            ; 
 
-        //example filter code, you must uncomment and modify
-
-        /*if ($request->query->get("metodo_pago")) {
-            $val = $request->query->get("metodo_pago");
-          
-                        
-            $allRowsQuery = $allRowsQuery
-            ->andWhere('a.email LIKE :email')
-            ->setParameter('email', '%'.$val['email'].'%');
-        }*/
-
-        // Find all the data, filter your query as you need
-         $allRowsQuery = $allRowsQuery->getQuery()->getResult();   
- 
-
-      
-        $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Arial');
-        
-        // Instantiate Dompdf with our options
-        $dompdf = new Dompdf($pdfOptions);
-
-        // Retrieve the HTML generated in our twig file
-        //$html = $this->renderView($vista, $registros);
-
-        $html = $this->renderView('metodo_pago/pdf.html.twig', [
-            'metodo_pagos' => $allRowsQuery
-        ]);
-        
-        // Load HTML to Dompdf
-        $dompdf->loadHtml($html);
-        
-        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Render the HTML as PDF
-        $dompdf->render();
-
-        // Output the generated PDF to Browser (force download)
-        $dompdf->stream("mypdf.pdf", [
-            "Attachment" => true
-        ]);        
-    }    
 }

@@ -62,6 +62,21 @@ class Cuenta
      */
     private $apuesta;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $saldo_perdedor;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Perfil::class, inversedBy="cuentas_ganador")
+     */
+    private $ganador;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Perfil::class, inversedBy="cuentas_perdedor")
+     */
+    private $perdedor;
+
 
 
 
@@ -84,12 +99,12 @@ class Cuenta
 
     public function getSaldoCasa(): ?float
     {
-        return $this->saldo_casa;
+        return round($this->saldo_casa,2,PHP_ROUND_HALF_DOWN);
     }
 
     public function setSaldoCasa(float $saldo_casa): self
     {
-        $this->saldo_casa = $saldo_casa;
+        $this->saldo_casa = round($saldo_casa,2,PHP_ROUND_HALF_DOWN);
 
         return $this;
     }
@@ -109,12 +124,12 @@ class Cuenta
 
     public function getSaldoGanador(): ?float
     {
-        return $this->saldo_ganador;
+        return round($this->saldo_ganador,2,PHP_ROUND_HALF_DOWN);
     }
 
     public function setSaldoGanador(float $saldo_ganador): self
     {
-        $this->saldo_ganador = $saldo_ganador;
+        $this->saldo_ganador = round($saldo_ganador,2,PHP_ROUND_HALF_DOWN);
 
         return $this;
     }
@@ -130,6 +145,42 @@ class Cuenta
 
         return $this;
 
+    }
+
+    public function getSaldoPerdedor(): ?float
+    {
+        return round($this->saldo_perdedor,2,PHP_ROUND_HALF_DOWN);
+    }
+
+    public function setSaldoPerdedor(?float $saldo_perdedor): self
+    {
+        $this->saldo_perdedor = round($saldo_perdedor,2,PHP_ROUND_HALF_DOWN);
+
+        return $this;
+    }
+
+    public function getGanador(): ?Perfil
+    {
+        return $this->ganador;
+    }
+
+    public function setGanador(?Perfil $ganador): self
+    {
+        $this->ganador = $ganador;
+
+        return $this;
+    }
+
+    public function getPerdedor(): ?Perfil
+    {
+        return $this->perdedor;
+    }
+
+    public function setPerdedor(?Perfil $perdedor): self
+    {
+        $this->perdedor = $perdedor;
+
+        return $this;
     } 
 
 }

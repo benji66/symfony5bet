@@ -1,0 +1,176 @@
+{% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
+
+{% block title %}Reportes Index{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/daterangepicker/daterangepicker.css">
+{% endblock %}
+
+
+{% block body %}
+    <h1>Reporte Cliente</h1>
+
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+    
+        <div class="alert alert-{{ label }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
+                  {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+      <div class="row">
+        <div class="col-md-6">              
+              <!-- Date range -->
+                <div class="form-group">
+                  <label>Date range:</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" id="reservation">
+                  </div>
+                  <!-- /.input group -->
+                </div>
+        </div>      <!-- /.form group -->
+      </div>
+
+      <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">DataTable with default features</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                 <thead>
+                    <tr>              
+                        <th>Reporte</th>
+                        <th>Rango</th>                            
+                        <th>actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                   
+                        <tr>               
+                            <td>Correcciones en apuestas</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
+                         <tr>               
+                            <td>Totales en Carreras</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_carreras"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
+             
+                        <tr>               
+                            <td>Depositos por saldo</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_deposito_saldo"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
+
+                        <tr>               
+                            <td>Retiro de saldo</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_retiro_saldo"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
+
+                        <tr>               
+                            <td>Apuestas</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_apuesta"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
+
+
+                
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <th>Reporte</th>
+                             <th>Rango</th>                          
+                            <th>actions</th>
+                        </tr>
+                    </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->    
+    </div>
+ </div>
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+
+<!-- InputMask -->
+<script src="/bundles/fgimenezadminlte/plugins/moment/moment.min.js"></script>
+<script src="/bundles/fgimenezadminlte/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+<!-- date-range-picker -->
+<script src="/bundles/fgimenezadminlte/plugins/daterangepicker/daterangepicker.js"></script>
+
+<!-- DataTables -->
+<script src="/bundles/fgimenezadminlte/plugins/datatables/jquery.dataTables.js"></script>
+
+<script>
+  $(function () {
+
+    $("#example1").DataTable();
+
+    $('#example2').DataTable({
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false,
+    });
+
+      //Date range picker
+    $('#reservation').daterangepicker({      
+      locale: {
+        format: 'YYYY-MM-DD',
+        separator: ' / '
+      }
+    });
+
+  });
+
+
+$("#reservation").change(function() {
+
+  $('#rango').html($(this).val()); 
+
+  var fecha = $(this).val().split(' / ');
+
+  
+  $("#link_deposito_saldo").attr('href', '{{ path('reporte_cliente_deposito_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
+  $("#link_retiro_saldo").attr('href', '{{ path('reporte_cliente_retiro_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
+  $("#link_apuesta").attr('href', '{{ path('reporte_cliente_apuesta') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
+    
+
+}); 
+
+
+</script>
+
+{% endblock %}

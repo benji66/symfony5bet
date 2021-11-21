@@ -219,7 +219,7 @@ class CarreraController extends AbstractController
                 return $this->redirectToRoute('carrera_index');  
             }    
 
-             if($carrera->getStatus()!="CERRADO"){
+             if($carrera->getStatus()!="CERRADO" && $carrera->getStatus()!="ORDEN"){
                 $this->addFlash(
                 'danger',
                 'Operacion no permitida, status '.$carrera->getStatus()
@@ -326,7 +326,7 @@ class CarreraController extends AbstractController
                 );
             }    
 
-             if($carrera->getStatus()!="ORDEN"){
+             if($carrera->getStatus()!='ORDEN'){
                 $this->addFlash(
                 'danger',
                 'Operacion no permitida, status '.$carrera->getStatus()
@@ -372,7 +372,8 @@ class CarreraController extends AbstractController
                                if(in_array($orden[$i], $caballos)){                                
                                     if ($i<$ganador_index ) {
                                       $ganador = $perfil;
-                                       $ganador_index = $i;   
+                                       $ganador_index = $i; 
+
                                     }                                 
                                     break;
                                }
@@ -389,20 +390,31 @@ class CarreraController extends AbstractController
                 } 
 
                 if($ganador){                        
-                   
-                        $monto_porcentaje_2 = $apuesta->getMonto() *  ($ganador->getPorcentajeGanar()/100);
+                    if($ganador->getPorcentajeGanar()!=NULL){
+                         
+                         $monto_porcentaje_ganador = $ganador->getPorcentajeGanar();
+                    }else{
+                        $monto_porcentaje_ganador=0;
+                    }
+
+                        $monto_porcentaje_2 = $apuesta->getMonto() *  ($monto_porcentaje_ganador/100);
                          $monto_porcentaje_1 = $apuesta->getMonto() -  $monto_porcentaje_2;
                        
                         //si el jugador que pierde tiene porcentaje de reintegro
+                         //acomodar aqui lo de cuenta tambien
                         foreach($arreglo_jugadores as $jugador){
-                          if($ganador->getId() != $jugador->getId() && $jugador->getPorcentajePerder()>0){
-                                
-                                $monto_porcentaje_jugador = $apuesta->getMonto() *  ($jugador->getPorcentajePerder()/100);                       
-                                $monto_porcentaje_2 -= $monto_porcentaje_jugador;
-                                $jugador->setSaldo( $jugador->getSaldo() + $monto_porcentaje_jugador );
-
+                         
+                          if($ganador->getId() != $jugador->getId()){
+                            $perdedor = $jugador;
+                            $monto_porcentaje_jugador_perdedor = 0;
+                            if($perdedor->getPorcentajePerder()>0){
+                              $monto_porcentaje_jugador_perdedor = $apuesta->getMonto() *  ($perdedor->getPorcentajePerder()/100);                       
+                                $monto_porcentaje_2 -= $monto_porcentaje_jugador_perdedor;
+                                $perdedor->setSaldo( $perdedor->getSaldo() + $monto_porcentaje_jugador_perdedor);
                                 //echo 'perdedor:'.($monto_porcentaje_jugador).'--';
-                                $entityManager->persist($jugador);
+                                $entityManager->persist($perdedor);
+                            }          
+                                
                           } 
                         }
 
@@ -420,7 +432,11 @@ class CarreraController extends AbstractController
                         $cuenta->setGerencia($user->getPerfil()->getGerencia());
                         $cuenta->setSaldoCasa($monto_porcentaje_2);
                         $cuenta->setSaldoGanador($monto_porcentaje_1);
-                        $cuenta->setSaldoSistema($monto_porcentaje_2);
+                        $cuenta->setSaldoPerdedor($monto_porcentaje_jugador_perdedor);
+                        //$cuenta->setSaldoSistema($monto_porcentaje_2);
+                        $cuenta->setSaldoSistema(0);
+                        $cuenta->setPerdedor($perdedor);
+                        $cuenta->setGanador($ganador);
 
                         $apuesta->setCuenta($cuenta);
 
@@ -429,7 +445,7 @@ class CarreraController extends AbstractController
                          $apuesta->getCarrera()->getGerencia()->setSaldoAcumulado($saldo_casa_acumulado + $monto_porcentaje_2 );
                         $entityManager->persist($apuesta);
 
-                        $totalPagado += $monto_porcentaje_1;
+                        $totalPagado += $monto_porcentaje_1+$monto_porcentaje_jugador_perdedor;
                         $totalGanancia += $monto_porcentaje_2;
 
               
@@ -478,62 +494,5 @@ class CarreraController extends AbstractController
 
         return $this->redirectToRoute('carrera_index');
     }
-
-     /**
-     * @Route("/pdf", name="carrera_pdf", methods={"GET"})
-     */
-     public function getPdf(CarreraRepository $carreraRepository, Request $request)
-     {        // Configure Dompdf according to your needs
-     
-             //searchForm   
-        
-        
-           $allRowsQuery = $carreraRepository->createQueryBuilder('a')
-            //->where('a.status != :status')
-            //->setParameter('status', 'canceled')
-            ; 
-
-        //example filter code, you must uncomment and modify
-
-        /*if ($request->query->get("carrera")) {
-            $val = $request->query->get("carrera");
-          
-                        
-            $allRowsQuery = $allRowsQuery
-            ->andWhere('a.email LIKE :email')
-            ->setParameter('email', '%'.$val['email'].'%');
-        }*/
-
-        // Find all the data, filter your query as you need
-         $allRowsQuery = $allRowsQuery->getQuery()->getResult();   
  
-
-      
-        $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Arial');
-        
-        // Instantiate Dompdf with our options
-        $dompdf = new Dompdf($pdfOptions);
-
-        // Retrieve the HTML generated in our twig file
-        //$html = $this->renderView($vista, $registros);
-
-        $html = $this->renderView('carrera/pdf.html.twig', [
-            'carreras' => $allRowsQuery
-        ]);
-        
-        // Load HTML to Dompdf
-        $dompdf->loadHtml($html);
-        
-        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Render the HTML as PDF
-        $dompdf->render();
-
-        // Output the generated PDF to Browser (force download)
-        $dompdf->stream("mypdf.pdf", [
-            "Attachment" => true
-        ]);        
-    }    
 }
