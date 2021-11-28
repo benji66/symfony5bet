@@ -177,9 +177,9 @@ class ApuestaController extends AbstractController
      */
     public function show(Apuesta $apuestum): Response
     {
-        return $this->render('apuesta/show.html.twig', [
+        /*return $this->render('apuesta/show.html.twig', [
             'apuestum' => $apuestum,
-        ]);
+        ]);*/
     }
 
     /**

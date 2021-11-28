@@ -84,6 +84,18 @@ class PerfilBancoController extends AbstractController
      */
     public function show(PerfilBanco $perfilBanco): Response
     {
+
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia =  $perfilBanco->getPerfil()->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('adjunto_pago_index');
+        }   
+
         return $this->render('perfil_banco/show.html.twig', [
             'perfil_banco' => $perfilBanco,
         ]);

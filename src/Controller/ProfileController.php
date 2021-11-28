@@ -8,6 +8,7 @@ use App\Entity\AdjuntoPago;
 use App\Entity\ApuestaDetalle;
 use App\Entity\Traspaso;
 use App\Entity\PagoCliente;
+use App\Entity\PagoPersonalSaldo;
 use App\Entity\ApuestaPropuesta;
 use App\Form\UserPassType;
 use App\Form\ProfileType;
@@ -125,7 +126,7 @@ class ProfileController extends AbstractController
                              $tarjeta['gana']++;
 
                         }else{
-                            $time[$i]['status'] = 'PERDIO '.$row->getApuesta()->getCuenta()->getSaldoGanador();
+                            $time[$i]['status'] = 'PERDIO '.($row->getApuesta()->getCuenta()->getSaldoGanador() + $row->getApuesta()->getCuenta()->getSaldoPerdedor());
                             $time[$i]['iclass'] = 'fas fa-horse-head bg-red';
                             $time[$i]['status_class'] = 'color:red';
                             $tarjeta['pierde']++;
@@ -138,7 +139,7 @@ class ProfileController extends AbstractController
             $i++;  
         }
 
-        $propuestas = $this->getDoctrine()->getRepository(ApuestaPropuesta::class)->findById15Dias($user->getPerfil()->getId());
+        /*$propuestas = $this->getDoctrine()->getRepository(ApuestaPropuesta::class)->findById15Dias($user->getPerfil()->getId());
 
           foreach ($propuestas as $row) {
             $time[$i]['tipo'] = 'propuesta';
@@ -150,7 +151,7 @@ class ProfileController extends AbstractController
 
             $time[$i]['observacion'] = json_encode($row->getCaballos()).' Restan: '.$row->getMonto();     
             $i++;  
-        }
+        }*/
 
 
 
@@ -198,7 +199,33 @@ class ProfileController extends AbstractController
             $time[$i]['mensaje'] = 'Se realizo un deposito a favor por '.$row->getMonto().' con el numero de referencia '.$row->getNumeroReferencia().'  desde '.$row->getMetodoPago()->getNombre();
             $time[$i]['observacion'] = $row->getObservacion();
             $i++;  
-        }        
+        }    
+
+
+        $pagos_personal_saldo = $this->getDoctrine()->getRepository(PagoPersonalSaldo::class)->findById15Dias($user->getPerfil()->getId());    
+        foreach ($pagos_personal_saldo as $row) {
+            $time[$i]['tipo'] = 'pago_personal';
+         
+                   $time[$i]['iclass'] = 'fas fa-dollar-sign bg-green';
+                   $time[$i]['status_class'] = 'color:green';
+                   $time[$i]['status'] = 'ABONO DE SALDO';
+        
+                if($row->getMonto()>0){
+                   $time[$i]['iclass'] = 'fas fa-dollar-sign bg-green';
+                   $time[$i]['status_class'] = 'color:green';
+                    $time[$i]['status'] = $row->getConcepto();
+                }
+                else{
+                   $time[$i]['iclass'] = 'fas fa-dollar-sign bg-red';
+                   $time[$i]['status_class'] = 'color:red';
+                   $time[$i]['status'] = $row->getConcepto();
+                }
+            
+            $time[$i]['fecha'] = $row->getUpdatedAt();
+            $time[$i]['mensaje'] = 'Se realizo un movimiento de saldo por '.$row->getMonto(). 'por concepto de '.$row->getConcepto();
+            $time[$i]['observacion'] = $row->getObservacion();
+            $i++;  
+        }                
 
         $traspasos = $this->getDoctrine()->getRepository(Traspaso::class)->findById15Dias($user->getPerfil()->getId());    
         foreach ($traspasos as $row) {
@@ -221,7 +248,8 @@ class ProfileController extends AbstractController
             $time[$i]['fecha'] = $row->getUpdatedAt();
             
             $time[$i]['observacion'] = $row->getObservacion();
-            $i++;  
+            $i++; 
+
         }        
 
         //burbuja

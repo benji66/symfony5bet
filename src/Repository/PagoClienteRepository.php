@@ -56,7 +56,7 @@ class PagoClienteRepository extends ServiceEntityRepository
             ->setParameter('perfil_id', $perfil_id)
             ->setParameter('fecha', date('Y-m-d', strtotime(date('Y-m-d').'-2 week' )))
             ->orderBy('a.updatedAt', 'DESC')
-            ->setMaxResults(10)
+            //->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;

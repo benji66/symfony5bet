@@ -43,11 +43,11 @@ class AdjuntoPagoController extends AbstractController
         $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);       
         $allRowsQuery = $adjuntoPagoRepository->createQueryBuilder('a')
             ->orderBy('a.id', 'DESC')
-            //->where('a.status != :status')
-            //->setParameter('status', 'canceled')
+            ->where('a.gerencia = :gerencia_id')
+            ->setParameter('gerencia_id',  $this->getUser()->getPerfil()->getGerencia()->getId())
             ;
 
-             if (!$this->isGranted('ROLE_COORDINADOR')) { 
+             if (!$this->isGranted('ROLE_ADMINISTRATIVO')) { 
 
                 /*echo $user->getPerfil()->getId().'-----------';
                 exit;*/
@@ -99,7 +99,7 @@ class AdjuntoPagoController extends AbstractController
          $user = $this->getUser(); 
         $adjuntoPago = new AdjuntoPago();
 
-        if ($this->isGranted('ROLE_COORDINADOR')) {
+        if ($this->isGranted('ROLE_ADMINISTRATIVO')) {
             $form = $this->createForm(AdjuntoPagoType::class, $adjuntoPago);
              $adjuntoPago->setValidado(true);  
              $adjuntoPago->setValidadoBy($user->getUsername());
@@ -116,7 +116,7 @@ class AdjuntoPagoController extends AbstractController
             /*echo $request->get("adjunto_pago_user")['perfil_id'].'---';
                exit;*/ 
             
-             if ($this->isGranted('ROLE_COORDINADOR')) { 
+             if ($this->isGranted('ROLE_ADMINISTRATIVO')) { 
                     $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("adjunto_pago")['perfil_id']);               
 
                     if($adjuntoPago->getValidado()){
@@ -172,6 +172,18 @@ class AdjuntoPagoController extends AbstractController
      */
     public function show(AdjuntoPago $adjuntoPago): Response
     {
+       
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia =  $adjuntoPago->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('adjunto_pago_index');
+        }    
+
         return $this->render('adjunto_pago/show.html.twig', [
             'adjunto_pago' => $adjuntoPago,
         ]);
@@ -182,6 +194,18 @@ class AdjuntoPagoController extends AbstractController
      */
     public function edit(Request $request, AdjuntoPago $adjuntoPago): Response
     {
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia =  $adjuntoPago->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('adjunto_pago_index');
+        }   
+
+
         $form = $this->createForm(AdjuntoPagoEditType::class, $adjuntoPago);
         $form->handleRequest($request);
 
@@ -219,7 +243,7 @@ class AdjuntoPagoController extends AbstractController
      */
     public function delete(Request $request, AdjuntoPago $adjuntoPago): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$adjuntoPago->getId(), $request->request->get('_token'))) {
+       /* if ($this->isCsrfTokenValid('delete'.$adjuntoPago->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($adjuntoPago);
             $entityManager->flush();
@@ -228,7 +252,7 @@ class AdjuntoPagoController extends AbstractController
             'success',
             'Los cambios fueron realizados!'
             );
-        }
+        }*/
 
         return $this->redirectToRoute('adjunto_pago_index');
     }

@@ -44,7 +44,7 @@
 
       <div class="card">
             <div class="card-header">
-              <h3 class="card-title">DataTable with default features</h3>
+              <h3 class="card-title"></h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -58,23 +58,10 @@
                     </thead>
                     <tbody>
                    
-                        <tr>               
-                            <td>Correcciones en apuestas</td>
-                            <td><div id="rango"></div></td>      
-                            <td>
-                                <a href="#" id="link"><i class="far fa-eye">descargar</i></a>
-                            </td>
-                        </tr>
-                         <tr>               
-                            <td>Totales en Carreras</td>
-                            <td><div id="rango"></div></td>      
-                            <td>
-                                <a href="#" id="link_carreras"><i class="far fa-eye">descargar</i></a>
-                            </td>
-                        </tr>
+                   
              
                         <tr>               
-                            <td>Depositos por saldo</td>
+                            <td>Pago Administrativo</td>
                             <td><div id="rango"></div></td>      
                             <td>
                                 <a href="#" id="link_deposito_saldo"><i class="far fa-eye">descargar</i></a>
@@ -97,6 +84,13 @@
                             </td>
                         </tr>
 
+                        <tr>               
+                            <td>Traspaso</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_traspaso"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
 
                 
                     </tbody>
@@ -134,9 +128,9 @@
 <script>
   $(function () {
 
-    $("#example1").DataTable();
+   // $("#example1").DataTable();
 
-    $('#example2').DataTable({
+    $('#example1').DataTable({
       "paging": false,
       "lengthChange": false,
       "searching": false,
@@ -166,6 +160,7 @@ $("#reservation").change(function() {
   $("#link_deposito_saldo").attr('href', '{{ path('reporte_cliente_deposito_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_retiro_saldo").attr('href', '{{ path('reporte_cliente_retiro_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_apuesta").attr('href', '{{ path('reporte_cliente_apuesta') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
+  $("#link_traspaso").attr('href', '{{ path('reporte_cliente_traspaso') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
     
 
 }); 

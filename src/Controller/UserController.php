@@ -24,7 +24,7 @@ use Dompdf\Options;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * @IsGranted("ROLE_COORDINADOR")
+ * @IsGranted("ROLE_ADMINISTRATIVO")
  * @Route("/user")
  */
 class UserController extends AbstractController
@@ -35,7 +35,7 @@ class UserController extends AbstractController
     public function index(UserRepository $userRepository, PaginatorInterface $paginator,  Request $request): Response
     {           
 
-      $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA');          
+      $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO');          
         
         /*$logged_user = $this->getUser();
         echo  $logged_user->getGerenciaPermiso()->getId().'--------//-----';
@@ -134,6 +134,17 @@ class UserController extends AbstractController
     public function edit(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder): Response
     {
       
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $user->getPerfil()->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){            
+            $this->addFlash(
+             'danger',
+             'Acceso no autorizado'
+            );
+            $this->redirectToRoute('user_index');
+        } 
+
         $userOld['password'] = $user->getPassword();   
 
         $form = $this->createForm(UserType::class, $user);

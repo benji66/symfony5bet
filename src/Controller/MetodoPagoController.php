@@ -21,7 +21,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/metodo/pago")
- * @IsGranted("ROLE_COORDINADOR")
+ * @IsGranted("ROLE_ADMINISTRATIVO")
  */
 class MetodoPagoController extends AbstractController
 {
@@ -29,8 +29,7 @@ class MetodoPagoController extends AbstractController
      * @Route("/", name="metodo_pago_index", methods={"GET"})
      */
     public function index(MetodoPagoRepository $metodoPagoRepository, PaginatorInterface $paginator, Request $request): Response
-    {
-        
+    {        
 //
         $user = $this->getUser();
 
@@ -40,8 +39,6 @@ class MetodoPagoController extends AbstractController
             'metodo_pagos' => $rows,
             //'metodo_pago' => $metodoPago,            
         ]);
-
-
     }
 
     /**
@@ -82,6 +79,18 @@ class MetodoPagoController extends AbstractController
      */
     public function show(MetodoPago $metodoPago): Response
     {
+       
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $metodoPago->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('metodo_pago_index');  
+            }    
+   
         return $this->render('metodo_pago/show.html.twig', [
             'metodo_pago' => $metodoPago,
         ]);
@@ -92,6 +101,17 @@ class MetodoPagoController extends AbstractController
      */
     public function edit(Request $request, MetodoPago $metodoPago): Response
     {
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $metodoPago->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('metodo_pago_index');  
+            }    
+
         $form = $this->createForm(MetodoPagoType::class, $metodoPago);
         $form->handleRequest($request);
 

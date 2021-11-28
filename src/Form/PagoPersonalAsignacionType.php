@@ -56,9 +56,18 @@ class PagoPersonalAsignacionType extends AbstractType
                     'class' => MetodoPago::class,
                     // uses the User.username property as the visible option string
                     'choice_label' => 'nombre',
-                    // used to render a select box, check boxes or radios
-                    // 'multiple' => true,
-                    // 'expanded' => true,
+                     'query_builder' => function(EntityRepository $er){
+                        $user = $this->token->getToken()->getUser();
+                        $gerencia_id = $user->getPerfil()->getGerencia()->getId();
+
+                        return $er->createQueryBuilder('a')
+                              
+                                ->andWhere('a.gerencia = :gerencia')
+                                ->andWhere('a.activo = true')
+                                //->orderBy('u.email')
+                                ->orderBy('a.nombre')
+                                ->setParameter('gerencia', $gerencia_id);
+                    },   
                 ])
 
 

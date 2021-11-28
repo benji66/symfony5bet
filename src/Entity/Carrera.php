@@ -13,9 +13,16 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Blameable\Traits\BlameableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=CarreraRepository::class)
+ * @UniqueEntity(
+ *     fields={"numero_carrera", "hipodromo", "fecha"},
+ *     errorPath="fecha", 
+ *     message="Esta carrera ya ha sido cargada previamente"
+ * )
  */
 class Carrera
 {

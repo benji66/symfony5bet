@@ -222,7 +222,7 @@ class DashboardController extends AbstractController
             ->text('Sending emails is fun again!')
             ->html('<p>See Twig integration for better HTML integration!</p>');
 
-        $mailer->send($email);
+           $mailer->send($email);
 
         // ...
     }

@@ -11,6 +11,7 @@ use App\Entity\Cuenta;
 use App\Entity\PagoPersonal;
 use App\Entity\PagoPersonalSaldo;
 use App\Entity\RetiroSaldo;
+use App\Entity\Traspaso;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,9 +48,7 @@ class ReporteClienteController extends AbstractController
         /*$logged_user = $this->getUser();
         echo  $logged_user->getGerenciaPermiso()->getId().'--------//-----';
         exit;*/
-
-        $user = $this->getUser();
-    
+        $user = $this->getUser();    
 
         // Render the twig view
         return $this->render('reporte_cliente/index.html.twig');
@@ -117,48 +116,45 @@ class ReporteClienteController extends AbstractController
 
         $i=1;
         $sheet->setCellValue('A'.$i, 'FECHA CARRERA');
-        $sheet->setCellValue('B'.$i, 'FECHA APUESTA');
-        $sheet->setCellValue('C'.$i, 'TIPO APUESTA');       
-        $sheet->setCellValue('D'.$i, 'CARRERA'); 
-        $sheet->setCellValue('E'.$i, 'HIPODROMO');
-        $sheet->setCellValue('F'.$i, 'MONTO');
+        $sheet->setCellValue('B'.$i, 'TIPO APUESTA');       
+        $sheet->setCellValue('C'.$i, 'CARRERA'); 
+        $sheet->setCellValue('D'.$i, 'HIPODROMO');
+        $sheet->setCellValue('E'.$i, 'MONTO');
         
-        $sheet->setCellValue('G'.$i, 'GANADOR');  
-        $sheet->setCellValue('H'.$i, 'NICKNAME GANADOR');
-        $sheet->setCellValue('I'.$i, 'MONTO GANADOR');        
-        $sheet->setCellValue('J'.$i, 'PERDEDOR');  
-        $sheet->setCellValue('K'.$i, 'NICKNAME PERDEDOR');
-        $sheet->setCellValue('L'.$i, 'MONTO PERDEDOR');       
-        $sheet->setCellValue('M'.$i, 'MONTO CASA');
+        $sheet->setCellValue('F'.$i, 'GANADOR');  
+        $sheet->setCellValue('G'.$i, 'NICKNAME GANADOR');
+        $sheet->setCellValue('H'.$i, 'MONTO GANADOR');        
+        $sheet->setCellValue('I'.$i, 'PERDEDOR');  
+        $sheet->setCellValue('J'.$i, 'NICKNAME PERDEDOR');
+        $sheet->setCellValue('K'.$i, 'MONTO DEVUELTO POR CC');    
 
-        $sheet->setCellValue('N'.$i, 'PAGADO POR');
-        $sheet->setCellValue('O'.$i, 'CREADO POR');                          
+        $sheet->setCellValue('L'.$i, 'PAGADO POR');                        
         
         $i=3;
         foreach ($allRowsQuery as $row) {           
-            $sheet->setCellValue('A'.$i, $row->getCarrera()->getFecha());
-            $sheet->setCellValue('B'.$i, $row->getCreatedAt()); 
-            $sheet->setCellValue('C'.$i, $row->getTipo()->getNombre());           
-            $sheet->setCellValue('D'.$i, $row->getCarrera()->getNumeroCarrera());
-            $sheet->setCellValue('E'.$i, $row->getCarrera()->getHipodromo()->getNombre());           
-            $sheet->setCellValue('F'.$i, $row->getMonto()); 
+            $sheet->setCellValue('A'.$i, $row->getCarrera()->getFecha());      
+            $sheet->setCellValue('B'.$i, $row->getTipo()->getNombre());           
+            $sheet->setCellValue('C'.$i, $row->getCarrera()->getNumeroCarrera());
+            $sheet->setCellValue('D'.$i, $row->getCarrera()->getHipodromo()->getNombre());           
+            $sheet->setCellValue('E'.$i, $row->getMonto()); 
             
             if($row->getCuenta()){
-                $sheet->setCellValue('G'.$i, $row->getGanador()->getUsuario()->getNombre());
-                $sheet->setCellValue('H'.$i, $row->getGanador()->getNickname());
-                $sheet->setCellValue('I'.$i, $row->getCuenta()->getSaldoGanador());
+                
+                if($user->getPerfil() ==$row->getGanador()){
 
-                if($row->getCuenta()->getPerdedor()){
-                    $sheet->setCellValue('J'.$i, $row->getCuenta()->getPerdedor()->getUsuario()->getNombre());
-                    $sheet->setCellValue('K'.$i, $row->getCuenta()->getPerdedor()->getNickname()); 
+                    $sheet->setCellValue('F'.$i, $row->getGanador()->getUsuario()->getNombre());
+                    $sheet->setCellValue('G'.$i, $row->getGanador()->getNickname());
+                    $sheet->setCellValue('H'.$i, $row->getCuenta()->getSaldoGanador());
                 }
-               
-                $sheet->setCellValue('L'.$i, $row->getCuenta()->getSaldoPerdedor()); 
-                $sheet->setCellValue('M'.$i, $row->getCuenta()->getSaldoCasa()); 
-            }
 
-            $sheet->setCellValue('N'.$i, $row->getCarrera()->getPagadoBy());
-            $sheet->setCellValue('O'.$i, $row->getCarrera()->getCreatedBy());           
+                if($user->getPerfil() ==$row->getCuenta()->getPerdedor()){
+                    $sheet->setCellValue('I'.$i, $row->getCuenta()->getPerdedor()->getUsuario()->getNombre());
+                    $sheet->setCellValue('J'.$i, $row->getCuenta()->getPerdedor()->getNickname());
+                    $sheet->setCellValue('K'.$i, $row->getCuenta()->getSaldoPerdedor()); 
+                }
+                
+            }
+            $sheet->setCellValue('L'.$i, $row->getCarrera()->getPagadoBy());        
 
             $i++;
         }    
@@ -173,10 +169,7 @@ class ReporteClienteController extends AbstractController
         $sheet->setCellValue('A'.($i+3) , "TOTAL PAGADO A PERDEDOR");
         $sheet->setCellValue('B'.($i+3) , "=SUBTOTAL(109,$SUMRANGE)");
         $sheet->setCellValue('D'.($i+3) , "=SUBTOTAL(101,$SUMRANGE)"); 
-        $SUMRANGE = 'M3:M'.$i;
-        $sheet->setCellValue('A'.($i+4) , "GANANCIA OFICIAL");
-        $sheet->setCellValue('B'.($i+4) , "=SUBTOTAL(109,$SUMRANGE)");
-        $sheet->setCellValue('D'.($i+4) , "=SUBTOTAL(101,$SUMRANGE)"); 
+
         $SUMRANGE = 'F3:F'.$i;
         $sheet->setCellValue('A'.($i+5) , "TOTAL APUESTAS");
         $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
@@ -184,7 +177,7 @@ class ReporteClienteController extends AbstractController
         
         $sheet->setTitle("Apuestas");
 
-        $sheet->setAutoFilter('A1:O'.$i);
+        $sheet->setAutoFilter('A1:L'.$i);
         
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
@@ -302,6 +295,98 @@ class ReporteClienteController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
 
     }
+
+
+    /**
+     * @Route("/traspaso", name="reporte_cliente_traspaso", methods={"GET"})
+     */
+    public function traspaso(Request $request): Response
+    {          
+
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'User tried to access a page without having ROLE USER'); 
+        
+        $repository = $this->getDoctrine()->getRepository(Traspaso::class);            
+        
+        $user = $this->getUser();
+
+        $allRowsQuery = $repository->createQueryBuilder('a'); 
+
+        //example filter code, you must uncomment and modify
+
+        if ($request->query->get("fecha1")) {
+            $fecha1 = $request->query->get("fecha1"); 
+            $fecha2 = $request->query->get("fecha2"); 
+                        
+            $allRowsQuery = $allRowsQuery
+            ->andWhere('a.createdAt BETWEEN :fecha1 AND :fecha2')        
+            ->andWhere('a.abono = :perfil')
+            ->orWhere('a.descuento = :perfil')                  
+            ->orderBy('a.createdAt', 'ASC')
+            ->setParameter('fecha1', $fecha1. ' 00:00:00')
+            ->setParameter('fecha2', $fecha2. ' 11:59:59')
+            ->setParameter('perfil', $user->getPerfil()->getId());
+        }
+
+        // Find all the data, filter your query as you need
+        $allRowsQuery = $allRowsQuery->getQuery()->getResult();    
+
+        $spreadsheet = new Spreadsheet();
+
+
+        
+        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        //columnas
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+
+        $i=1;
+        $sheet->setCellValue('A'.$i, 'FECHA');          
+        $sheet->setCellValue('B'.$i, 'MONTO');
+        $sheet->setCellValue('C'.$i, 'USUARIO ABONO');
+        $sheet->setCellValue('D'.$i, 'USUARIO DESCUENTO');
+        $sheet->setCellValue('E'.$i, 'CREADO POR');
+        $sheet->setCellValue('F'.$i, 'OBSERVACION');
+
+        
+        $i=3;
+  
+            foreach ($allRowsQuery as $row) {  
+                $sheet->setCellValue('A'.$i, $row->getCreatedAt());                 
+                $sheet->setCellValue('B'.$i, $row->getMonto());
+                $sheet->setCellValue('C'.$i, $row->getAbono()->getNickname());
+                $sheet->setCellValue('D'.$i, $row->getDescuento()->getNickname());
+                $sheet->setCellValue('E'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('F'.$i, $row->getObservacion());             
+                $i++;
+            }
+      
+        
+        $sheet->setTitle("Traspasos");
+
+        $sheet->setAutoFilter('A1:F'.$i);
+        
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+        
+        // Create a Temporary file in the system
+        $fileName = 'traspaso'.$fecha1.'-'.$fecha2.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);       
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
+
+    } 
 
     /**
      * @Route("/depositosaldo", name="reporte_cliente_deposito_saldo", methods={"GET"})

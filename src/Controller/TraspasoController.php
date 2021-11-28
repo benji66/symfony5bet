@@ -92,7 +92,7 @@ class TraspasoController extends AbstractController
 
   
 
-        if($gerencia_logueada != $gerencia || ( !$this->isGranted('ROLE_COORDINADOR') && $id_user_logueado!=$id_user_row )){
+        if($gerencia_logueada != $gerencia || ( !$this->isGranted('ROLE_ADMINISTRATIVO') && $id_user_logueado!=$id_user_row )){
             $this->addFlash(
             'danger',
             'Acceso no autorizado'

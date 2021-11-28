@@ -8,6 +8,7 @@ use App\Entity\Correccion;
 use App\Entity\Carrera;
 use App\Entity\Apuesta;
 use App\Entity\Cuenta;
+use App\Entity\Traspaso;
 use App\Entity\PagoPersonal;
 use App\Entity\PagoPersonalSaldo;
 use App\Entity\RetiroSaldo;
@@ -42,7 +43,7 @@ class ReporteController extends AbstractController
     public function index(Request $request): Response
     {           
 
-      $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA');          
+      $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO');          
         
         /*$logged_user = $this->getUser();
         echo  $logged_user->getGerenciaPermiso()->getId().'--------//-----';
@@ -62,7 +63,7 @@ class ReporteController extends AbstractController
     public function correccion(Request $request): Response
     {           
 
-        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
 
         //echo $request->query->get("fecha1");
         //exit;
@@ -157,7 +158,7 @@ class ReporteController extends AbstractController
     public function carreras(Request $request): Response
     {           
 
-        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
 
 
         $repository = $this->getDoctrine()->getRepository(Carrera::class);            
@@ -260,7 +261,7 @@ class ReporteController extends AbstractController
     public function deposito(Request $request): Response
     {          
 
-        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
 
         //echo $request->query->get("fecha1");
         //exit;
@@ -359,7 +360,7 @@ class ReporteController extends AbstractController
     public function depositoSaldo(Request $request): Response
     {          
 
-        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
 
         //echo $request->query->get("fecha1");
         //exit;
@@ -452,7 +453,7 @@ class ReporteController extends AbstractController
     public function retiroSaldo(Request $request): Response
     {          
 
-        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
         
         $repository = $this->getDoctrine()->getRepository(RetiroSaldo::class);            
         
@@ -544,13 +545,104 @@ class ReporteController extends AbstractController
     }
 
 
+    /**
+     * @Route("/traspaso", name="reporte_traspaso", methods={"GET"})
+     */
+    public function traspaso(Request $request): Response
+    {          
+
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
+        
+        $repository = $this->getDoctrine()->getRepository(Traspaso::class);            
+        
+        $user = $this->getUser();
+
+        $allRowsQuery = $repository->createQueryBuilder('a'); 
+
+        //example filter code, you must uncomment and modify
+
+        if ($request->query->get("fecha1")) {
+            $fecha1 = $request->query->get("fecha1"); 
+            $fecha2 = $request->query->get("fecha2"); 
+                        
+            $allRowsQuery = $allRowsQuery
+            ->andWhere('a.createdAt BETWEEN :fecha1 AND :fecha2')
+            ->andWhere('a.gerencia = :gerencia')                
+            ->orderBy('a.createdAt', 'ASC')
+            ->setParameter('fecha1', $fecha1. ' 00:00:00')
+            ->setParameter('fecha2', $fecha2. ' 11:59:59')
+            ->setParameter('gerencia', $user->getPerfil()->getGerencia()->getId());
+        }
+
+        // Find all the data, filter your query as you need
+        $allRowsQuery = $allRowsQuery->getQuery()->getResult();    
+
+        $spreadsheet = new Spreadsheet();
+
+
+        
+        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        //columnas
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+
+        $i=1;
+        $sheet->setCellValue('A'.$i, 'FECHA');          
+        $sheet->setCellValue('B'.$i, 'MONTO');
+        $sheet->setCellValue('C'.$i, 'USUARIO ABONO');
+        $sheet->setCellValue('D'.$i, 'USUARIO DESCUENTO');
+        $sheet->setCellValue('E'.$i, 'CREADO POR');
+        $sheet->setCellValue('F'.$i, 'OBSERVACION');
+
+        
+        $i=3;
+  
+            foreach ($allRowsQuery as $row) {  
+                $sheet->setCellValue('A'.$i, $row->getCreatedAt());                 
+                $sheet->setCellValue('B'.$i, $row->getMonto());
+                $sheet->setCellValue('C'.$i, $row->getAbono()->getNickname());
+                $sheet->setCellValue('D'.$i, $row->getDescuento()->getNickname());
+                $sheet->setCellValue('E'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('F'.$i, $row->getObservacion());             
+                $i++;
+            }
+      
+        
+        $sheet->setTitle("Traspasos");
+
+        $sheet->setAutoFilter('A1:F'.$i);
+        
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+        
+        // Create a Temporary file in the system
+        $fileName = 'traspaso'.$fecha1.'-'.$fecha2.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);       
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
+
+    }    
+
+
    /**
      * @Route("/apuesta", name="reporte_apuesta", methods={"GET"})
      */
     public function apuesta(Request $request): Response
     {           
 
-        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
 
 
         $repository = $this->getDoctrine()->getRepository(Apuesta::class);            
@@ -610,14 +702,16 @@ class ReporteController extends AbstractController
         
         $sheet->setCellValue('G'.$i, 'GANADOR');  
         $sheet->setCellValue('H'.$i, 'NICKNAME GANADOR');
-        $sheet->setCellValue('I'.$i, 'MONTO GANADOR');        
-        $sheet->setCellValue('J'.$i, 'PERDEDOR');  
-        $sheet->setCellValue('K'.$i, 'NICKNAME PERDEDOR');
-        $sheet->setCellValue('L'.$i, 'MONTO PERDEDOR');       
-        $sheet->setCellValue('M'.$i, 'MONTO CASA');
+        $sheet->setCellValue('I'.$i, 'MONTO GANADOR');
+        $sheet->setCellValue('J'.$i, 'PORCENTAJE GANADOR');          
+        $sheet->setCellValue('K'.$i, 'PERDEDOR');  
+        $sheet->setCellValue('L'.$i, 'NICKNAME PERDEDOR');
+        $sheet->setCellValue('M'.$i, 'MONTO DEVUELTO POR CC');
+        $sheet->setCellValue('N'.$i, 'PORCENTAJE PERDEDOR');       
+        $sheet->setCellValue('O'.$i, 'GANANCIA CASA');
 
-        $sheet->setCellValue('N'.$i, 'PAGADO POR');
-        $sheet->setCellValue('O'.$i, 'CREADO POR');                          
+        $sheet->setCellValue('P'.$i, 'PAGADO POR');
+        $sheet->setCellValue('Q'.$i, 'CREADO POR');                          
         
         $i=3;
         foreach ($allRowsQuery as $row) {           
@@ -632,18 +726,20 @@ class ReporteController extends AbstractController
                 $sheet->setCellValue('G'.$i, $row->getGanador()->getUsuario()->getNombre());
                 $sheet->setCellValue('H'.$i, $row->getGanador()->getNickname());
                 $sheet->setCellValue('I'.$i, $row->getCuenta()->getSaldoGanador());
+                $sheet->setCellValue('J'.$i, $row->getGanador()->getPorcentajeGanador());
 
                 if($row->getCuenta()->getPerdedor()){
-                    $sheet->setCellValue('J'.$i, $row->getCuenta()->getPerdedor()->getUsuario()->getNombre());
-                    $sheet->setCellValue('K'.$i, $row->getCuenta()->getPerdedor()->getNickname()); 
+                    $sheet->setCellValue('K'.$i, $row->getCuenta()->getPerdedor()->getUsuario()->getNombre());
+                    $sheet->setCellValue('L'.$i, $row->getCuenta()->getPerdedor()->getNickname()); 
                 }
                
-                $sheet->setCellValue('L'.$i, $row->getCuenta()->getSaldoPerdedor()); 
-                $sheet->setCellValue('M'.$i, $row->getCuenta()->getSaldoCasa()); 
+                $sheet->setCellValue('M'.$i, $row->getCuenta()->getSaldoPerdedor()); 
+                $sheet->setCellValue('N'.$i, $row->getPerdedor()->getPorcentajePerdedor());
+                $sheet->setCellValue('O'.$i, $row->getCuenta()->getSaldoCasa()); 
             }
 
-            $sheet->setCellValue('N'.$i, $row->getCarrera()->getPagadoBy());
-            $sheet->setCellValue('O'.$i, $row->getCarrera()->getCreatedBy());           
+            $sheet->setCellValue('P'.$i, $row->getCarrera()->getPagadoBy());
+            $sheet->setCellValue('Q'.$i, $row->getCarrera()->getCreatedBy());           
 
             $i++;
         }    
@@ -655,7 +751,7 @@ class ReporteController extends AbstractController
         $sheet->setCellValue('C'.($i+2) , "PROMEDIO");
         $sheet->setCellValue('D'.($i+2) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");  
         $SUMRANGE = 'L3:L'.$i;
-        $sheet->setCellValue('A'.($i+3) , "% DEVUELTO POR CC");
+        $sheet->setCellValue('A'.($i+3) , "MONTO DEVUELTO POR CC");
         $sheet->setCellValue('B'.($i+3) , "=SUBTOTAL(109,$SUMRANGE)");
         $sheet->setCellValue('D'.($i+3) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)"); 
         $SUMRANGE = 'M3:M'.$i;
@@ -669,7 +765,7 @@ class ReporteController extends AbstractController
         
         $sheet->setTitle("Apuestas");
 
-        $sheet->setAutoFilter('A1:O'.$i);
+        $sheet->setAutoFilter('A1:Q'.$i);
         
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
@@ -693,7 +789,7 @@ class ReporteController extends AbstractController
     public function total_cliente(Request $request): Response
     {    
 
-        $this->denyAccessUnlessGranted('ROLE_GERENCIA', null, 'User tried to access a page without having ROLE GERENCIA'); 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
 
 
         $repository = $this->getDoctrine()->getRepository(Cuenta::class);            
@@ -903,7 +999,7 @@ class ReporteController extends AbstractController
 
        // exit;
         //$sheet->setAutoFilter('A1:I'.$i);
-        
+        $spreadsheet->setActiveSheetIndex(0);
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
 

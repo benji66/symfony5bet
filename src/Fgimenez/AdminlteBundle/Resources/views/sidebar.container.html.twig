@@ -91,14 +91,7 @@
                     </a>
                   </li>  
 
-                  <li class="nav-item">
-                    <a href="{{ path('reporte_index') }}" class="nav-link">
-                      <i class="nav-icon fas fa-table"></i>
-                      <p>
-                        Reportes              
-                      </p>
-                    </a>
-                  </li>
+              
 
                                 
           {% endif %}       
@@ -118,6 +111,15 @@
   
 
        {% if is_granted('ROLE_ADMINISTRATIVO') %}     
+               <li class="nav-item">
+                    <a href="{{ path('reporte_index') }}" class="nav-link">
+                      <i class="nav-icon fas fa-table"></i>
+                      <p>
+                        Reportes              
+                      </p>
+                    </a>
+                  </li>
+
            <li class="nav-header">ADMINISTRACION</li>              
            <li class="nav-item">
             <a href="{{ path('pago_personal_index') }}" class="nav-link">
@@ -168,9 +170,20 @@
  
       {% if is_granted('ROLE_USER') and app.user.Perfil %} 
 
-         
+      
+             <li class="nav-header">USUARIO</li>
 
-           <li class="nav-header">USUARIO</li>
+             <li class="nav-item">
+                <a href="{{ path('tasca_index') }}" class="nav-link">
+                  <i class="nav-icon fas fa-money-check-alt"></i>
+                  <p>
+                    Resumen 
+                  </p>
+                </a>
+               </li>         
+
+
+
 
              <li class="nav-item">
             <a href="{{ path('perfil_banco_index') }}" class="nav-link">
