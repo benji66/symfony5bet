@@ -1,0 +1,60 @@
+{% block body %} 			
+ 			
+ 		
+ 			{% for numero in numeros %}
+ 				{% set clase = null %}
+				{% set numero = numero + 1 %}
+ 				{% if numero == 1 %}
+ 					{% set clase = 'class="badge badge-pill bg-red text-dark" style="color:black"' %}
+
+ 				{% elseif numero == 2 %}	
+ 					{% set clase = 'class="badge badge-pill bg-white text-dark" style="background-color:#e5e5e5 !important"' %}
+
+ 				{% elseif numero == 3 %}	
+ 					{% set clase = 'class="badge badge-pill bg-blue text-dark" style="color:black"' %}
+
+ 				{% elseif numero == 4 %}	
+ 					{% set clase = 'class="badge badge-pill bg-yellow text-dark" style="color:black"' %}
+
+ 				{% elseif numero == 5 %}	
+ 					{% set clase = 'class="badge badge-pill bg-green text-dark" style="color:black !important"' %}
+
+ 				{% elseif numero == 6 %}	
+ 					{% set clase = 'class="badge badge-pill bg-black text-dark" style="color:black"' %}
+
+ 				{% elseif numero == 7 %}	
+ 					{% set clase = 'class="badge badge-pill bg-orange text-dark" style="color:black"' %}
+
+ 				{% elseif numero == 8 %}	
+ 					{% set clase = 'class="badge badge-pill bg-pink text-dark" style="color:black"' %}
+
+ 				{% elseif numero == 9 %}	
+ 					{% set clase = 'class="badge badge-pill  text-dark" style=" background: rgba(0, 123, 255, 0.5) !important"' %}
+
+ 				{% elseif numero == 10 %}	
+ 					{% set clase = 'class="badge badge-pill bg-purple text-dark" style="color:black"' %}
+
+ 				{% elseif numero == 11 %}	
+ 					{% set clase = 'class="badge badge-pill bg-gray text-dark" style="color:red !important"' %}
+
+ 				{% elseif numero == 12 %}	
+ 					{% set clase = 'class="badge badge-pill bg-lime  text-dark" ' %}	
+
+ 				{% elseif numero == 13 %}	
+ 					{% set clase = 'class="badge badge-pill  text-dark" style=" background: rgba(0, 123, 255, 0.7) !important"' %}
+
+ 				{% elseif numero == 14 %}	
+ 					{% set clase = 'class="badge badge-pill bg-fuchsia  text-dark" ' %}	
+
+ 				{% elseif numero == 15 %}	
+ 					{% set clase = 'class="badge badge-pill  text-dark" style=" background: rgba(111, 66, 193, 0.6) !important"' %}			
+
+
+ 				{% endif %}	
+
+ 				<span {{ clase|raw }}>
+                        {{ numero }}
+                 </span>
+             {% endfor %}
+
+{% endblock %}	

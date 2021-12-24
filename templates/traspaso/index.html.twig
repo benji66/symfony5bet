@@ -40,7 +40,7 @@
                 <th>Monto</th>
                 <th>Realizado por</th>
                               
-                <th>actions</th>
+               
             </tr>
         </thead>
         <tbody>
@@ -48,17 +48,12 @@
             <tr>
                 
                 <td>{{ traspaso.createdAt ? traspaso.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ traspaso.Descuento.Usuario.username }}</td>
-                <td>{{ traspaso.Abono.Usuario.username }}</td>
-                <td>{{ traspaso.monto }}</td>
+                <td>{{ traspaso.Descuento.nickname }}</td>
+                <td>{{ traspaso.Abono.nickname }}</td>
+                <td><i class="fas fa-dollar-sign"></i> {{ traspaso.monto }}</td>
               
-                <td>{{ traspaso.createdBy ? traspaso.createdBy : 'en proceso' }}</td>
-                
-              
-                
-                <td>
-                    <a href="{{ path('traspaso_show', {'id': traspaso.id}) }}"><i class="far fa-eye">mostrar</i></a>              
-                </td>
+                <td>{{ traspaso.createdBy ? traspaso.createdBy : 'en proceso' }}</td>         
+               
             </tr>
         {% else %}
             <tr>
@@ -74,8 +69,6 @@
                 <th>Usuario Abono</th>
                 <th>Monto</th>
                 <th>Realizado por</th>
-                              
-                <th>actions</th>
             </tr>
         </tfoot>
     </table>

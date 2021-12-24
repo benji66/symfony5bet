@@ -41,13 +41,14 @@ class TraspasoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+//
 
-            if(($traspaso->getDescuento()->getSaldo() < $traspaso->getMonto()) && !$traspaso->getDescuento()->getSaldoIlimitado() ) {
+            if(($traspaso->getDescuento()->getSaldo() < $traspaso->getMonto()) && (!$traspaso->getDescuento()->getSaldoIlimitado() || !count($traspaso->getDescuento()->getRoles()) > 1) ) {
                 $this->addFlash(
                 'danger',
-                'Su saldo es inferior al monto que desea retirar'
+                'Su saldo es inferior al monto que desea traspasar'
                 );
-                return $this->redirectToRoute('retiro_saldo_new');
+                return $this->redirectToRoute('traspaso_new');
             }          
                           
                    

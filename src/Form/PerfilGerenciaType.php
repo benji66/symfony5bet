@@ -34,7 +34,7 @@ class PerfilGerenciaType extends AbstractType
                     'CORREDOR' => 'ROLE_COORDINADOR',
                     'ADMINISTRATIVO' => 'ROLE_ADMINISTRATIVO', 
                     'EMPLEADO' => 'ROLE_EMPLEADO', 
-                    'PROVEEDOR' => 'ROLE_PROVEEDOR',                   
+                    //'PROVEEDOR' => 'ROLE_PROVEEDOR',                   
                 ],
             ])            
             ->add('saldo_ilimitado')

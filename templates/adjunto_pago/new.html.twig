@@ -1,9 +1,9 @@
 {% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
 
-{% block title %}New Adjunto_pago{% endblock %}
+{% block title %}New Recarga{% endblock %}
 
 {% block body %}
-    <h1>Nuevo Abono de Saldo {#{token}#} </h1>
+    <h1>Nuevo Recarga {#{token}#} </h1>
 
        <div class="row">
          <!-- left column -->
@@ -228,7 +228,7 @@ $("#adjunto_pago_busca_perfil").easyAutocomplete(options);
             validation: {
                 allowedExtensions: ['jpeg', 'jpg', 'txt'],
                 itemLimit: 1,
-                sizeLimit: 102400 // 50 kB = 50 * 1024 bytes
+                sizeLimit: 204800 // 50 kB = 50 * 1024 bytes
             },
 
             deleteFile: {

@@ -45,6 +45,7 @@ class AdjuntoPagoController extends AbstractController
             ->orderBy('a.id', 'DESC')
             ->where('a.gerencia = :gerencia_id')
             ->setParameter('gerencia_id',  $this->getUser()->getPerfil()->getGerencia()->getId())
+             ->orderBy('a.createdAt', 'DESC')    
             ;
 
              if (!$this->isGranted('ROLE_ADMINISTRATIVO')) { 
@@ -53,7 +54,8 @@ class AdjuntoPagoController extends AbstractController
                 exit;*/
                    $allRowsQuery = $allRowsQuery
                     ->andWhere('a.perfil = :perfil_id')
-                    ->setParameter('perfil_id', $user->getPerfil()->getId());              
+                    ->setParameter('perfil_id', $user->getPerfil()->getId());
+                             
              }  
 
         //example filter code, you must uncomment and modify    
@@ -78,7 +80,7 @@ class AdjuntoPagoController extends AbstractController
             // Define the page parameter
             $request->query->getInt('page', 1),
             // Items per page
-            20
+            50
         );
         
         // Render the twig view
@@ -138,7 +140,14 @@ class AdjuntoPagoController extends AbstractController
                             $adjuntoPago->setRuta($nueva_ruta_relativa);
                             rename ($ruta.$archivo, $nueva_ruta);
                         }
-                    }     
+                    }else{
+                          $this->addFlash(
+                            'danger',
+                            'Error en la carga del archivo'
+                            );
+
+                           return $this->redirectToRoute('adjunto_pago_index');
+                    }        
        
 
             

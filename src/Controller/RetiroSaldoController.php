@@ -164,7 +164,7 @@ class RetiroSaldoController extends AbstractController
 
   
 
-        if($gerencia_logueada != $gerencia || ( !$this->isGranted('ROLE_COORDINADOR') && $id_user_logueado!=$id_user_row )){
+        if($gerencia_logueada != $gerencia || ( !$this->isGranted('ROLE_ADMINISTRATIVO') && $id_user_logueado!=$id_user_row )){
             $this->addFlash(
             'danger',
             'Acceso no autorizado'
@@ -231,6 +231,13 @@ class RetiroSaldoController extends AbstractController
                             $retiroSaldo->setRuta($nueva_ruta_relativa);
                             rename ($ruta.$archivo, $nueva_ruta);
                         }
+                    }else{
+                          $this->addFlash(
+                            'danger',
+                            'Error en la carga del archivo'
+                            );
+
+                            return $this->redirectToRoute('retiro_saldo_pendiente');
                     }     
         }
 
@@ -259,8 +266,7 @@ class RetiroSaldoController extends AbstractController
      * @Route("/pendiente", name="retiro_saldo_pendiente", methods={"GET"})
      */
     public function pendiente(RetiroSaldoRepository $retiroSaldoRepository, PaginatorInterface $paginator, Request $request): Response
-    {
-               
+    {               
     
 
         $retiroSaldo = new RetiroSaldo();

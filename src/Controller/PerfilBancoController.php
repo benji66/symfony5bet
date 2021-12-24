@@ -29,8 +29,7 @@ class PerfilBancoController extends AbstractController
      * @Route("/", name="perfil_banco_index", methods={"GET"})
      */
     public function index(PerfilBancoRepository $perfilBancoRepository, PaginatorInterface $paginator, Request $request): Response
-    {
-        
+    {        
 //
         $user = $this->getUser();
 
@@ -42,8 +41,6 @@ class PerfilBancoController extends AbstractController
             'perfil_bancos' => $rows,
             //'perfil_banco' => $perfilBanco,            
         ]);
-
-
     }
 
     /**
@@ -93,7 +90,7 @@ class PerfilBancoController extends AbstractController
             'danger',
             'Acceso no autorizado'
             );
-            return $this->redirectToRoute('adjunto_pago_index');
+            return $this->redirectToRoute('perfil_banco_index');
         }   
 
         return $this->render('perfil_banco/show.html.twig', [

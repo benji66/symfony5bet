@@ -67,11 +67,11 @@
             </div>
             <!-- /.card-header -->
 
-   <div class="card-body table-responsive p-0">      
+   <div class="card-body table-responsive p-0">       
      <table id="example2" class="table table-bordered table-hover text-nowrap">
         <thead>
             <tr>
-                <th>fecha</th>
+                <th>Fecha</th>
                 <th>carrera</th>
                 <th>hipodromo</th>                 
                 <th>orden oficial</th>                
@@ -85,8 +85,21 @@
                 <td>{{ carrera.fecha ? carrera.fecha|date('Y-m-d') : '' }}</td>
                 <td>{{ carrera.numeroCarrera }}</td>  
                 <td>{{ carrera.Hipodromo.nombre }}</td>                             
-                <td>{{ carrera.ordenOficial ? carrera.ordenOficial|json_encode : '' }}</td>             
-                <td>{{ carrera.status }}</td>            
+                <td>
+
+                  {{ carrera.ordenOficial ? render(controller('App\\Controller\\CarreraController::numero_color', {array: carrera.ordenOficial }))  : '' }}
+
+             
+                  {#{ render(controller('App\\Service\\Util::numeroColor', {array: carrera.ordenOficial })) }#}
+
+                </td>             
+                <td>
+                  {% if (carrera.status=='PAGADO') %}
+                      <i class="fas fa-check-square"></i> {{ carrera.status }}
+                  {% else %}
+                    {{ carrera.status }}
+                  {% endif %}    
+                </td>            
                             
                 <td>
                     <a href="{{ path('carrera_show', {'id': carrera.id}) }}"><i class="far fa-eye">mostrar</i></a>            
@@ -173,7 +186,8 @@ function buscar(form){
       "paging": false,
       "lengthChange": false,
       "searching": false,
-      "ordering": false,
+      "ordering": true,
+      "order" : [[0,"desc"]],
       "info": false,
       "autoWidth": false,
     });

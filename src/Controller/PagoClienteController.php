@@ -130,7 +130,14 @@ class PagoClienteController extends AbstractController
                             $entidad->setRuta($nueva_ruta_relativa);
                             rename ($ruta.$archivo, $nueva_ruta);
                         }
-                    }     
+                    }else{
+                          $this->addFlash(
+                            'danger',
+                            'Error en la carga del archivo'
+                            );
+
+                           return $this->redirectToRoute('pago_cliente_index');
+                    }        
        
 
             

@@ -7,7 +7,9 @@ use App\Entity\Gerencia;
 use App\Entity\Correccion;
 use App\Entity\Carrera;
 use App\Entity\Apuesta;
+use App\Entity\AdjuntoPago;
 use App\Entity\Cuenta;
+use App\Entity\Perfil;
 use App\Entity\Traspaso;
 use App\Entity\PagoPersonal;
 use App\Entity\PagoPersonalSaldo;
@@ -307,36 +309,62 @@ class ReporteController extends AbstractController
         $sheet->getColumnDimension('F')->setAutoSize(true);
         $sheet->getColumnDimension('G')->setAutoSize(true);
         $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
 
         $i=1;
         $sheet->setCellValue('A'.$i, 'FECHA');       
-        $sheet->setCellValue('B'.$i, 'NICKNAME');
-        $sheet->setCellValue('C'.$i, 'CONCEPTO');        
-        $sheet->setCellValue('D'.$i, 'MONTO'); 
-        $sheet->setCellValue('E'.$i, 'METODO DE PAGO');
-        $sheet->setCellValue('F'.$i, 'REFERENCIA');
-        $sheet->setCellValue('G'.$i, 'CREADO POR');
-        $sheet->setCellValue('H'.$i, 'OBSERVACION');
+        $sheet->setCellValue('B'.$i, 'TIPO');
+        $sheet->setCellValue('C'.$i, 'CODIGO CLIENTE');
+        $sheet->setCellValue('D'.$i, 'CONCEPTO');        
+        $sheet->setCellValue('E'.$i, 'MONTO'); 
+        $sheet->setCellValue('F'.$i, 'METODO DE PAGO');
+        $sheet->setCellValue('G'.$i, 'REFERENCIA');
+        $sheet->setCellValue('H'.$i, 'CREADO POR');
+        $sheet->setCellValue('I'.$i, 'OBSERVACION');
 
         
         $i=3;
   
             foreach ($allRowsQuery as $row) {  
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());           
-                $sheet->setCellValue('B'.$i, $row->getPerfil()->getNickname());
-                $sheet->setCellValue('C'.$i, $row->getConcepto());
-                $sheet->setCellValue('D'.$i, $row->getMonto());
-                $sheet->setCellValue('E'.$i, $row->getMetodoPago()->getNombre());
-                $sheet->setCellValue('F'.$i, $row->getNumeroReferencia()); 
-                $sheet->setCellValue('G'.$i, $row->getCreatedBy()); 
-                $sheet->setCellValue('H'.$i, $row->getObservacion());             
+                
+                if($row->getPerfil()->getSaldoIlimitado()){
+                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('B'.$i, 'pozo');
+                }
+
+                $sheet->setCellValue('C'.$i, $row->getPerfil()->getNickname());
+                $sheet->setCellValue('D'.$i, $row->getConcepto());
+                $sheet->setCellValue('E'.$i, $row->getMonto());
+                $sheet->setCellValue('F'.$i, $row->getMetodoPago()->getNombre());
+                $sheet->setCellValue('G'.$i, $row->getNumeroReferencia()); 
+                $sheet->setCellValue('H'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('I'.$i, $row->getObservacion());
+
                 $i++;
             }
-      
+                    $bold = [
+                        'font' => [
+                            'bold' => true,
+                        ]
+                    ];
+                     
+               
+
+                    $sheet->getStyle('A1:O1')->applyFromArray($bold);
+                     $sheet->getStyle('B'.($i+5))->applyFromArray($bold);
+                     $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
+
+        $SUMRANGE = 'E3:E'.$i;
+        $sheet->setCellValue('A'.($i+5) , "TOTAL SALDO ACUMULADO");
+        $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
+        $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
+        $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");        
         
         $sheet->setTitle("Depositos directos");
 
-        $sheet->setAutoFilter('A1:H'.$i);
+        $sheet->setAutoFilter('A1:I'.$i);
         
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
@@ -406,30 +434,54 @@ class ReporteController extends AbstractController
         $sheet->getColumnDimension('F')->setAutoSize(true);
 
         $i=1;
-        $sheet->setCellValue('A'.$i, 'FECHA');       
-        $sheet->setCellValue('B'.$i, 'NICKNAME');
-        $sheet->setCellValue('C'.$i, 'CONCEPTO');        
-        $sheet->setCellValue('D'.$i, 'MONTO'); 
-        $sheet->setCellValue('E'.$i, 'CREADO POR');
-        $sheet->setCellValue('F'.$i, 'OBSERVACION');
+        $sheet->setCellValue('A'.$i, 'FECHA');
+        $sheet->setCellValue('B'.$i, 'TIPO');
+        $sheet->setCellValue('C'.$i, 'CODIGO CLIENTE');
+        $sheet->setCellValue('D'.$i, 'CONCEPTO');        
+        $sheet->setCellValue('E'.$i, 'MONTO'); 
+        $sheet->setCellValue('F'.$i, 'CREADO POR');
+        $sheet->setCellValue('G'.$i, 'OBSERVACION');
 
         
         $i=3;
   
             foreach ($allRowsQuery as $row) {  
-                $sheet->setCellValue('A'.$i, $row->getCreatedAt());           
-                $sheet->setCellValue('B'.$i, $row->getPerfil()->getNickname());
-                $sheet->setCellValue('C'.$i, $row->getConcepto());
-                $sheet->setCellValue('D'.$i, $row->getMonto()); 
-                $sheet->setCellValue('E'.$i, $row->getCreatedBy()); 
-                $sheet->setCellValue('F'.$i, $row->getObservacion());             
+                $sheet->setCellValue('A'.$i, $row->getCreatedAt());
+                
+                if($row->getPerfil()->getSaldoIlimitado()){
+                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('B'.$i, 'pozo');
+                }
+
+                $sheet->setCellValue('C'.$i, $row->getPerfil()->getNickname());
+                $sheet->setCellValue('D'.$i, $row->getConcepto());
+                $sheet->setCellValue('E'.$i, $row->getMonto()); 
+                $sheet->setCellValue('F'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('G'.$i, $row->getObservacion());             
                 $i++;
             }
       
-        
+                    $bold = [
+                        'font' => [
+                            'bold' => true,
+                        ]
+                    ];
+                     
+               
+
+                    $sheet->getStyle('A1:O1')->applyFromArray($bold);
+                     $sheet->getStyle('B'.($i+5))->applyFromArray($bold);
+                     $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
+
+        $SUMRANGE = 'E3:E'.$i;
+        $sheet->setCellValue('A'.($i+5) , "TOTAL");
+        $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
+        $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
+        $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");          
         $sheet->setTitle("Depositos por saldo");
 
-        $sheet->setAutoFilter('A1:F'.$i);
+        $sheet->setAutoFilter('A1:G'.$i);
         
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
@@ -497,38 +549,69 @@ class ReporteController extends AbstractController
         $sheet->getColumnDimension('G')->setAutoSize(true);
         $sheet->getColumnDimension('H')->setAutoSize(true);
         $sheet->getColumnDimension('I')->setAutoSize(true);
+         $sheet->getColumnDimension('J')->setAutoSize(true);
 
         $i=1;
-        $sheet->setCellValue('A'.$i, 'FECHA');       
-        $sheet->setCellValue('B'.$i, 'NICKNAME');          
-        $sheet->setCellValue('C'.$i, 'MONTO');
-        $sheet->setCellValue('D'.$i, 'REFERENCIA');
-        $sheet->setCellValue('E'.$i, 'PAGO POR');
-        $sheet->setCellValue('F'.$i, 'VALIDADO'); 
-        $sheet->setCellValue('G'.$i, 'VALIDADO POR');
-        $sheet->setCellValue('H'.$i, 'CREADO POR');
-        $sheet->setCellValue('I'.$i, 'OBSERVACION');
+        $sheet->setCellValue('A'.$i, 'FECHA'); 
+        $sheet->setCellValue('B'.$i, 'TIPO');      
+        $sheet->setCellValue('C'.$i, 'CODIGO CLIENTE');          
+        $sheet->setCellValue('D'.$i, 'MONTO');
+        $sheet->setCellValue('E'.$i, 'REFERENCIA');
+        $sheet->setCellValue('F'.$i, 'PAGO POR');
+        $sheet->setCellValue('G'.$i, 'VALIDADO'); 
+        $sheet->setCellValue('H'.$i, 'VALIDADO POR');
+        $sheet->setCellValue('I'.$i, 'CREADO POR');
+        $sheet->setCellValue('J'.$i, 'OBSERVACION');
 
         
         $i=3;
   
             foreach ($allRowsQuery as $row) {  
-                $sheet->setCellValue('A'.$i, $row->getCreatedAt());           
-                $sheet->setCellValue('B'.$i, $row->getPerfil()->getNickname());           
-                $sheet->setCellValue('C'.$i, $row->getMonto());
-                $sheet->setCellValue('D'.$i, $row->getNumeroReferencia());
-                $sheet->setCellValue('E'.$i, $row->getMetodoPago()->getNombre() );
-                $sheet->setCellValue('F'.$i, $row->getValidado());
-                $sheet->setCellValue('G'.$i, $row->getValidadoBy());
-                $sheet->setCellValue('H'.$i, $row->getCreatedBy()); 
-                $sheet->setCellValue('I'.$i, $row->getObservacion());             
+                $sheet->setCellValue('A'.$i, $row->getCreatedAt());   
+
+                if($row->getPerfil()->getSaldoIlimitado()){
+                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('B'.$i, 'pozo');
+                }        
+                
+                $sheet->setCellValue('C'.$i, $row->getPerfil()->getNickname());           
+                $sheet->setCellValue('D'.$i, $row->getMonto());
+                $sheet->setCellValue('E'.$i, $row->getNumeroReferencia());
+                
+                if( $row->getMetodoPago())
+                    $sheet->setCellValue('F'.$i, $row->getMetodoPago()->getNombre() );
+                
+                if($row->getValidado())
+                    $sheet->setCellValue('G'.$i, 'SI');
+                else
+                    $sheet->setCellValue('G'.$i, 'NO');
+                $sheet->setCellValue('H'.$i, $row->getValidadoBy());
+                $sheet->setCellValue('I'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('J'.$i, $row->getObservacion());             
                 $i++;
             }
       
-        
-        $sheet->setTitle("Depositos por saldo");
+                    $bold = [
+                        'font' => [
+                            'bold' => true,
+                        ]
+                    ];
+                     
+               
 
-        $sheet->setAutoFilter('A1:I'.$i);
+                    $sheet->getStyle('A1:O1')->applyFromArray($bold);
+                     $sheet->getStyle('B'.($i+5))->applyFromArray($bold);
+                     $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
+
+        $SUMRANGE = 'D3:D'.$i;
+        $sheet->setCellValue('A'.($i+5) , "TOTAL SALDO ACUMULADO");
+        $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
+        $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
+        $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");          
+        $sheet->setTitle("Retiros de saldo");
+
+        $sheet->setAutoFilter('A1:J'.$i);
         
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
@@ -543,6 +626,288 @@ class ReporteController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
 
     }
+
+
+    /**
+     * @Route("/abonosaldo", name="reporte_abono_saldo", methods={"GET"})
+     */
+    public function abonoSaldo(Request $request): Response
+    {          
+
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
+        
+        $repository = $this->getDoctrine()->getRepository(AdjuntoPago::class);            
+        
+        $user = $this->getUser();
+
+        $allRowsQuery = $repository->createQueryBuilder('a'); 
+
+        //example filter code, you must uncomment and modify
+
+        if ($request->query->get("fecha1")) {
+            $fecha1 = $request->query->get("fecha1"); 
+            $fecha2 = $request->query->get("fecha2"); 
+                        
+            $allRowsQuery = $allRowsQuery
+            ->andWhere('a.createdAt BETWEEN :fecha1 AND :fecha2')
+            ->andWhere('p.gerencia = :gerencia')
+            ->innerJoin('a.perfil','p')         
+            ->orderBy('a.createdAt', 'ASC')
+            ->setParameter('fecha1', $fecha1. ' 00:00:00')
+            ->setParameter('fecha2', $fecha2. ' 11:59:59')
+            ->setParameter('gerencia', $user->getPerfil()->getGerencia()->getId());
+        }
+
+        // Find all the data, filter your query as you need
+        $allRowsQuery = $allRowsQuery->getQuery()->getResult();    
+
+        $spreadsheet = new Spreadsheet();
+
+
+        
+        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        //columnas
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+         $sheet->getColumnDimension('J')->setAutoSize(true);
+
+        $i=1;
+        $sheet->setCellValue('A'.$i, 'FECHA'); 
+        $sheet->setCellValue('B'.$i, 'TIPO');      
+        $sheet->setCellValue('C'.$i, 'CODIGO CLIENTE');          
+        $sheet->setCellValue('D'.$i, 'MONTO');
+        $sheet->setCellValue('E'.$i, 'REFERENCIA');
+        $sheet->setCellValue('F'.$i, 'PAGO POR');
+        $sheet->setCellValue('G'.$i, 'VALIDADO'); 
+        $sheet->setCellValue('H'.$i, 'VALIDADO POR');
+        $sheet->setCellValue('I'.$i, 'CREADO POR');
+        $sheet->setCellValue('J'.$i, 'OBSERVACION');
+
+        
+        $i=3;
+  
+            foreach ($allRowsQuery as $row) {  
+                $sheet->setCellValue('A'.$i, $row->getCreatedAt());   
+
+                if($row->getPerfil()->getSaldoIlimitado()){
+                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('B'.$i, 'pozo');
+                }        
+                
+                $sheet->setCellValue('C'.$i, $row->getPerfil()->getNickname());           
+                $sheet->setCellValue('D'.$i, $row->getMonto());
+                $sheet->setCellValue('E'.$i, $row->getNumeroReferencia());
+                
+                if( $row->getMetodoPago())
+                    $sheet->setCellValue('F'.$i, $row->getMetodoPago()->getNombre() );
+                
+                if($row->getValidado())
+                    $sheet->setCellValue('G'.$i, 'SI');
+                else
+                    $sheet->setCellValue('G'.$i, 'NO');
+                $sheet->setCellValue('H'.$i, $row->getValidadoBy());
+                $sheet->setCellValue('I'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('J'.$i, $row->getObservacion());             
+                $i++;
+            }
+      
+                    $bold = [
+                        'font' => [
+                            'bold' => true,
+                        ]
+                    ];
+                     
+               
+
+                    $sheet->getStyle('A1:O1')->applyFromArray($bold);
+                     $sheet->getStyle('B'.($i+5))->applyFromArray($bold);
+                     $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
+
+        $SUMRANGE = 'D3:D'.$i;
+        $sheet->setCellValue('A'.($i+5) , "TOTAL");
+        $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
+        $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
+        $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");  
+
+        $sheet->setTitle("Depositos por saldo");
+
+        $sheet->setAutoFilter('A1:J'.$i);
+        
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+        
+        // Create a Temporary file in the system
+        $fileName = 'abono_de_saldo'.$fecha1.'-'.$fecha2.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);       
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
+
+    }
+
+
+    /**
+     * @Route("/usuarios", name="reporte_usuarios", methods={"GET"})
+     */
+    public function clientes(Request $request): Response
+    {          
+
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
+        
+        $repository = $this->getDoctrine()->getRepository(Perfil::class);            
+        
+        $user = $this->getUser();
+
+        $allRowsQuery = $repository->createQueryBuilder('a'); 
+
+        //example filter code, you must uncomment and modify
+
+        if ($request->query->get("fecha1")) {
+            $fecha1 = $request->query->get("fecha1"); 
+            $fecha2 = $request->query->get("fecha2"); 
+                        
+            $allRowsQuery = $allRowsQuery
+            //->andWhere('a.createdAt BETWEEN :fecha1 AND :fecha2')
+            ->andWhere('a.gerencia = :gerencia')
+                 
+            ->orderBy('a.nickname', 'ASC')
+            //->setParameter('fecha1', $fecha1. ' 00:00:00')
+            //->setParameter('fecha2', $fecha2. ' 11:59:59')
+            ->setParameter('gerencia', $user->getPerfil()->getGerencia()->getId());
+        }
+
+        // Find all the data, filter your query as you need
+        $allRowsQuery = $allRowsQuery->getQuery()->getResult();    
+
+        $spreadsheet = new Spreadsheet();
+
+
+        
+        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        //columnas
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+        $sheet->getColumnDimension('J')->setAutoSize(true);
+
+        $i=1;
+      
+            
+        $sheet->setCellValue('A'.$i, 'CODIGO CLIENTE'); 
+        $sheet->setCellValue('B'.$i, 'SALDO'); 
+        $sheet->setCellValue('C'.$i, 'TIPO');
+        $sheet->setCellValue('D'.$i, 'ACTIVO');               
+        $sheet->setCellValue('E'.$i, 'SUELDO');
+        $sheet->setCellValue('F'.$i, 'PORCENTAJE GANAR');
+        $sheet->setCellValue('G'.$i, 'PORCENTAJE PERDER');
+
+
+        $sheet->setCellValue('H'.$i, 'ROL');
+        $sheet->setCellValue('I'.$i, 'NOMBRE COMPLETO');
+        $sheet->setCellValue('J'.$i, 'EMAIL');
+        $sheet->setCellValue('K'.$i, 'TELEFONO');
+        $sheet->setCellValue('L'.$i, 'CREADO POR');
+        $sheet->setCellValue('M'.$i, 'FECHA CREACION');
+        $sheet->setCellValue('N'.$i, 'ACTUALIZADO POR');
+        $sheet->setCellValue('O'.$i, 'FECHA ACTUALIZACION');      
+
+        
+        $i=3;
+  
+            foreach ($allRowsQuery as $row) {  
+                $sheet->setCellValue('A'.$i, $row->getNickname());  
+                $sheet->setCellValue('B'.$i, $row->getSaldo());
+
+
+                if($row->getSaldoIlimitado()){
+                   $sheet->setCellValue('C'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('C'.$i, 'pozo');
+                }
+
+
+                if($row->getActivo())
+                    $sheet->setCellValue('D'.$i, 'SI');
+                else
+                    $sheet->setCellValue('D'.$i, 'NO');
+
+                 $sheet->setCellValue('E'.$i, $row->getSueldo()); 
+
+                $sheet->setCellValue('F'.$i, $row->getPorcentajeGanar()); 
+                $sheet->setCellValue('G'.$i, $row->getPorcentajePerder());                
+                         
+                $str_rol=NULL;
+                foreach ($row->getRoles() as $val) {
+                    $str_rol .= $val.' ';
+                }
+
+                $sheet->setCellValue('H'.$i, $str_rol);
+                $sheet->setCellValue('I'.$i, $row->getUsuario()->getNombre().' '.$row->getUsuario()->getApellido());
+                $sheet->setCellValue('J'.$i, $row->getUsuario()->getEmail());  
+                $sheet->setCellValue('K'.$i, $row->getUsuario()->getTelefono());              
+                $sheet->setCellValue('L'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('M'.$i, $row->getCreatedAt());
+                $sheet->setCellValue('N'.$i, $row->getUpdatedBy());
+                $sheet->setCellValue('O'.$i, $row->getUpdatedAt()); 
+                       
+                $i++;
+            }
+      
+                    $bold = [
+                        'font' => [
+                            'bold' => true,
+                        ]
+                    ];
+                     
+               
+
+                    $sheet->getStyle('A1:O1')->applyFromArray($bold);
+                     $sheet->getStyle('B'.($i+5))->applyFromArray($bold);
+                     $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
+
+        $SUMRANGE = 'B3:B'.$i;
+        $sheet->setCellValue('A'.($i+5) , "TOTAL SALDO ACUMULADO");
+        $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
+        $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
+        $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");  
+        $sheet->setTitle("Clientes");
+
+        $sheet->setAutoFilter('A1:O'.$i);
+        
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+        
+        // Create a Temporary file in the system
+        $fileName = 'usuarios'.$fecha1.'-'.$fecha2.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);       
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
+
+    }
+
 
 
     /**
@@ -598,10 +963,12 @@ class ReporteController extends AbstractController
         $i=1;
         $sheet->setCellValue('A'.$i, 'FECHA');          
         $sheet->setCellValue('B'.$i, 'MONTO');
-        $sheet->setCellValue('C'.$i, 'USUARIO ABONO');
-        $sheet->setCellValue('D'.$i, 'USUARIO DESCUENTO');
-        $sheet->setCellValue('E'.$i, 'CREADO POR');
-        $sheet->setCellValue('F'.$i, 'OBSERVACION');
+        $sheet->setCellValue('C'.$i, 'TIPO');
+        $sheet->setCellValue('D'.$i, 'USUARIO ABONO');
+        $sheet->setCellValue('E'.$i, 'TIPO');
+        $sheet->setCellValue('F'.$i, 'USUARIO DESCUENTO');
+        $sheet->setCellValue('G'.$i, 'CREADO POR');
+        $sheet->setCellValue('H'.$i, 'OBSERVACION');
 
         
         $i=3;
@@ -609,17 +976,47 @@ class ReporteController extends AbstractController
             foreach ($allRowsQuery as $row) {  
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());                 
                 $sheet->setCellValue('B'.$i, $row->getMonto());
-                $sheet->setCellValue('C'.$i, $row->getAbono()->getNickname());
-                $sheet->setCellValue('D'.$i, $row->getDescuento()->getNickname());
-                $sheet->setCellValue('E'.$i, $row->getCreatedBy()); 
-                $sheet->setCellValue('F'.$i, $row->getObservacion());             
+                if($row->getAbono()->getSaldoIlimitado()){
+                   $sheet->setCellValue('C'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('C'.$i, 'pozo');
+                }   
+                $sheet->setCellValue('D'.$i, $row->getAbono()->getNickname());
+
+                if($row->getDescuento()->getSaldoIlimitado()){
+                   $sheet->setCellValue('E'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('E'.$i, 'pozo');
+                } 
+                $sheet->setCellValue('F'.$i, $row->getDescuento()->getNickname());
+                $sheet->setCellValue('G'.$i, $row->getCreatedBy()); 
+                $sheet->setCellValue('H'.$i, $row->getObservacion());             
                 $i++;
             }
       
+
+                    $bold = [
+                        'font' => [
+                            'bold' => true,
+                        ]
+                    ];
+                     
+               
+
+                    $sheet->getStyle('A1:H1')->applyFromArray($bold);
+                     $sheet->getStyle('B'.($i+5))->applyFromArray($bold);
+                     $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
+
+        $SUMRANGE = 'B3:B'.$i;
+        $sheet->setCellValue('A'.($i+5) , "TOTAL MONTO TRASPASO");
+        $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
+        $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
+        $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)"); 
+
         
         $sheet->setTitle("Traspasos");
 
-        $sheet->setAutoFilter('A1:F'.$i);
+        $sheet->setAutoFilter('A1:H'.$i);
         
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
@@ -691,6 +1088,12 @@ class ReporteController extends AbstractController
         $sheet->getColumnDimension('J')->setAutoSize(true);
         $sheet->getColumnDimension('K')->setAutoSize(true);
         $sheet->getColumnDimension('L')->setAutoSize(true);
+        $sheet->getColumnDimension('M')->setAutoSize(true);
+        $sheet->getColumnDimension('N')->setAutoSize(true);
+        $sheet->getColumnDimension('O')->setAutoSize(true);
+        $sheet->getColumnDimension('P')->setAutoSize(true);
+        $sheet->getColumnDimension('Q')->setAutoSize(true);
+        $sheet->getColumnDimension('R')->setAutoSize(true);
 
         $i=1;
         $sheet->setCellValue('A'.$i, 'FECHA CARRERA');
@@ -700,18 +1103,19 @@ class ReporteController extends AbstractController
         $sheet->setCellValue('E'.$i, 'HIPODROMO');
         $sheet->setCellValue('F'.$i, 'MONTO');
         
-        $sheet->setCellValue('G'.$i, 'GANADOR');  
-        $sheet->setCellValue('H'.$i, 'NICKNAME GANADOR');
-        $sheet->setCellValue('I'.$i, 'MONTO GANADOR');
-        $sheet->setCellValue('J'.$i, 'PORCENTAJE GANADOR');          
-        $sheet->setCellValue('K'.$i, 'PERDEDOR');  
-        $sheet->setCellValue('L'.$i, 'NICKNAME PERDEDOR');
-        $sheet->setCellValue('M'.$i, 'MONTO DEVUELTO POR CC');
-        $sheet->setCellValue('N'.$i, 'PORCENTAJE PERDEDOR');       
-        $sheet->setCellValue('O'.$i, 'GANANCIA CASA');
-
-        $sheet->setCellValue('P'.$i, 'PAGADO POR');
-        $sheet->setCellValue('Q'.$i, 'CREADO POR');                          
+        $sheet->setCellValue('G'.$i, 'GANADOR');
+        $sheet->setCellValue('H'.$i, 'TIPO');          
+        $sheet->setCellValue('I'.$i, 'CODIGO CLIENTE GANADOR');
+        $sheet->setCellValue('J'.$i, 'MONTO GANADOR');
+        $sheet->setCellValue('K'.$i, 'PORCENTAJE GANADOR');          
+        $sheet->setCellValue('L'.$i, 'PERDEDOR');  
+        $sheet->setCellValue('M'.$i, 'TIPO');
+        $sheet->setCellValue('N'.$i, 'CODIGO CLIENTE PERDEDOR');
+        $sheet->setCellValue('O'.$i, 'MONTO DEVUELTO POR CC');
+        $sheet->setCellValue('P'.$i, 'PORCENTAJE PERDEDOR');       
+        $sheet->setCellValue('Q'.$i, 'GANANCIA CASA');
+        $sheet->setCellValue('R'.$i, 'PAGADO POR');
+        $sheet->setCellValue('S'.$i, 'CREADO POR');                          
         
         $i=3;
         foreach ($allRowsQuery as $row) {           
@@ -724,37 +1128,50 @@ class ReporteController extends AbstractController
             
             if($row->getCuenta()){
                 $sheet->setCellValue('G'.$i, $row->getGanador()->getUsuario()->getNombre());
-                $sheet->setCellValue('H'.$i, $row->getGanador()->getNickname());
-                $sheet->setCellValue('I'.$i, $row->getCuenta()->getSaldoGanador());
-                $sheet->setCellValue('J'.$i, $row->getGanador()->getPorcentajeGanador());
 
-                if($row->getCuenta()->getPerdedor()){
-                    $sheet->setCellValue('K'.$i, $row->getCuenta()->getPerdedor()->getUsuario()->getNombre());
-                    $sheet->setCellValue('L'.$i, $row->getCuenta()->getPerdedor()->getNickname()); 
+                if($row->getGanador()->getSaldoIlimitado()){
+                   $sheet->setCellValue('H'.$i, 'ilimitado');     
+                }else{
+                   $sheet->setCellValue('H'.$i, 'pozo');
                 }
+
+                $sheet->setCellValue('I'.$i, $row->getGanador()->getNickname());
+                $sheet->setCellValue('J'.$i, $row->getCuenta()->getSaldoGanador());
+                $sheet->setCellValue('K'.$i, $row->getCuenta()->getGanador()->getPorcentajeGanar());
+
+                //if($row->getCuenta()->getPerdedor()){
+                    $sheet->setCellValue('L'.$i, $row->getCuenta()->getPerdedor()->getUsuario()->getNombre());
+
+                    if($row->getCuenta()->getPerdedor()->getSaldoIlimitado()){
+                       $sheet->setCellValue('M'.$i, 'ilimitado');     
+                    }else{
+                       $sheet->setCellValue('M'.$i, 'pozo');
+                    }
+                    $sheet->setCellValue('N'.$i, $row->getCuenta()->getPerdedor()->getNickname()); 
+                //}
                
-                $sheet->setCellValue('M'.$i, $row->getCuenta()->getSaldoPerdedor()); 
-                $sheet->setCellValue('N'.$i, $row->getPerdedor()->getPorcentajePerdedor());
-                $sheet->setCellValue('O'.$i, $row->getCuenta()->getSaldoCasa()); 
+                $sheet->setCellValue('O'.$i, $row->getCuenta()->getSaldoPerdedor()); 
+                $sheet->setCellValue('P'.$i,$row->getCuenta()->getPerdedor()->getPorcentajePerder());
+                $sheet->setCellValue('Q'.$i, $row->getCuenta()->getSaldoCasa()); 
             }
 
-            $sheet->setCellValue('P'.$i, $row->getCarrera()->getPagadoBy());
-            $sheet->setCellValue('Q'.$i, $row->getCarrera()->getCreatedBy());           
+            $sheet->setCellValue('R'.$i, $row->getCarrera()->getPagadoBy());
+            $sheet->setCellValue('S'.$i, $row->getCarrera()->getCreatedBy());           
 
             $i++;
         }    
 
 
-        $SUMRANGE = 'I3:I'.$i;
+        $SUMRANGE = 'J3:H'.$i;
         $sheet->setCellValue('A'.($i+2) , "TOTAL PAGADO A GANADOR");
         $sheet->setCellValue('B'.($i+2) , "=SUBTOTAL(109,$SUMRANGE)");  
         $sheet->setCellValue('C'.($i+2) , "PROMEDIO");
         $sheet->setCellValue('D'.($i+2) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");  
-        $SUMRANGE = 'L3:L'.$i;
+        $SUMRANGE = 'O3:O'.$i;
         $sheet->setCellValue('A'.($i+3) , "MONTO DEVUELTO POR CC");
         $sheet->setCellValue('B'.($i+3) , "=SUBTOTAL(109,$SUMRANGE)");
         $sheet->setCellValue('D'.($i+3) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)"); 
-        $SUMRANGE = 'M3:M'.$i;
+        $SUMRANGE = 'Q3:Q'.$i;
         $sheet->setCellValue('A'.($i+4) , "GANANCIA OFICIAL");
         $sheet->setCellValue('B'.($i+4) , "=SUBTOTAL(109,$SUMRANGE)");
         $sheet->setCellValue('D'.($i+4) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)"); 
@@ -765,7 +1182,7 @@ class ReporteController extends AbstractController
         
         $sheet->setTitle("Apuestas");
 
-        $sheet->setAutoFilter('A1:Q'.$i);
+        $sheet->setAutoFilter('A1:S'.$i);
         
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsx($spreadsheet);
@@ -794,9 +1211,7 @@ class ReporteController extends AbstractController
 
         $repository = $this->getDoctrine()->getRepository(Cuenta::class);            
         
-        $user = $this->getUser();
-
-       
+        $user = $this->getUser();       
 
         //example filter code, you must uncomment and modify
         $spreadsheet = new Spreadsheet();
@@ -909,15 +1324,7 @@ class ReporteController extends AbstractController
                    }else{
                      $sheet = $spreadsheet->getActiveSheet();
                      $sheet->setTitle("TOTALES");                    
-                   }
-
-                    
-                   
-
-                    
-                    
-
-                    
+                   }                    
                     /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
                    // $sheet = $spreadsheet->getActiveSheet();
                     
@@ -951,7 +1358,7 @@ class ReporteController extends AbstractController
                           if($item['total']>0){
                             if ($item['saldo_ilimitado']) {
                                 $sheet->getStyle('A'.$i)->applyFromArray($bold);
-                                $item['nombre'] .= '*';
+                                $item['nombre'] .= '(ilim)';
                             }
                             $sheet->setCellValue('A'.$i, $item['nombre']);           
                             $sheet->setCellValue('B'.$i, $item['total']);
@@ -959,7 +1366,7 @@ class ReporteController extends AbstractController
                           }else{
                             if ($item['saldo_ilimitado']) {
                                 $sheet->getStyle('D'.$j)->applyFromArray($bold);
-                                $item['nombre'] .= '*';
+                                $item['nombre'] .= '(ilim)';
                             }
                             $sheet->setCellValue('D'.$j, $item['nombre']);
                             $sheet->setCellValue('E'.$j, $item['total']);

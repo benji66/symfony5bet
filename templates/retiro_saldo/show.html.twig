@@ -5,7 +5,8 @@
 {% block body %}
     <h1>Retiro Saldo</h1>
 
-    <table class="table">
+    <div class="card-body table-responsive p-0">
+      <table class="table table-hover text-nowrap">
         <tbody>
              <tr>
                 <th>Comprobante</th>
@@ -13,7 +14,7 @@
             </tr>
             <tr>
                 <th>Monto</th>
-                <td>{{ retiro_saldo.monto }}</td>
+                <td><i class="fas fa-dollar-sign"></i> {{ retiro_saldo.monto }}</td>
             </tr>
             <tr>
                 <th>Validado por</th>
@@ -38,7 +39,7 @@
        
         </tbody>
     </table>
-
+</div>
     <a href="{{ path('retiro_saldo_index') }}">
 
         <i class="fas fa-arrow-left"></i>

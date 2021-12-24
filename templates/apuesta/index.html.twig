@@ -79,7 +79,7 @@
         <tbody>
         {% for apuestum in apuestas %}
             <tr>                
-                <td>{{ apuestum.monto }}</td>
+                <td><i class="fas fa-dollar-sign"></i> {{ apuestum.monto }}</td>
                 <td>{{ apuestum.correLista ? 'Yes' : 'No' }}</td>
                 <td>{{ apuestum.validado ? 'Yes' : 'No' }}</td>
                 <td>{{ apuestum.validadoBy }}</td>

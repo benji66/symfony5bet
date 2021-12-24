@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Carrera;
 use App\Entity\Cuenta;
+use App\Service\Util;
 use App\Form\CarreraType;
 use App\Repository\CarreraRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,12 +28,20 @@ use Dompdf\Options;
  */
 class CarreraController extends AbstractController
 {
+
+    public function __construct(Util $util){
+
+        $this->util = $util;
+    }
     /**
      * @Route("/", name="carrera_index", methods={"GET"})
      */
     public function index(CarreraRepository $carreraRepository, PaginatorInterface $paginator, Request $request): Response
     {
         
+        //echo $this->util->numeroColor('aa');
+        
+
         //searchForm
         $carrera = new Carrera();
         $form = $this->createForm(CarreraType::class, $carrera);
@@ -493,6 +502,18 @@ class CarreraController extends AbstractController
         }
 
         return $this->redirectToRoute('carrera_index');
+    }
+
+  
+    public function numero_color($array): Response
+    {
+       //return $this->util->numeroColor('aa'); 
+
+        return $this->render('carrera/numero_color.html.twig', [
+            'numeros' => $array,
+           
+        ]);      
+
     }
  
 }

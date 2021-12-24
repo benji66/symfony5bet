@@ -5,12 +5,9 @@
 {% block body %}
     <h1>PerfilBanco</h1>
 
-    <table class="table">
+     <div class="card-body table-responsive p-0">
+      <table class="table table-hover text-nowrap">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ perfil_banco.id }}</td>
-            </tr>
             <tr>
                 <th>Nombre</th>
                 <td>{{ perfil_banco.nombre }}</td>
@@ -25,7 +22,7 @@
             </tr>
         </tbody>
     </table>
-
+</div>
     <a href="{{ path('perfil_banco_index') }}">
 
         <i class="fas fa-arrow-left"></i>
@@ -33,12 +30,6 @@
 
     </a>
 
-    <a href="{{ path('perfil_banco_edit', {'id': perfil_banco.id}) }}">
-        
-         <i class="fas fa-edit"></i>
-        edit
-
-    </a>
 
     {{ include('perfil_banco/_delete_form.html.twig') }}
 {% endblock %}

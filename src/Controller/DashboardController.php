@@ -198,7 +198,7 @@ class DashboardController extends AbstractController
   
         exit;*/
 
-        return $this->render('dashboard/dash1.html.twig', [
+        return $this->render('dashboard/dash2.html.twig', [
             'tarjeta' => $tarjeta,
             'dona' => $grafico_dona,
             'torta' => $grafico_torta,

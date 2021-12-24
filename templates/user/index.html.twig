@@ -14,7 +14,7 @@
 {% for label, messages in app.flashes %}
     {% for message in messages %}
     
-        <div class="alert alert-{{ label }} alert-dismissible">
+        <div id="alert" class="alert alert-{{ label }} alert-dismissible">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                   <!-- <h5><i class="icon fas fa-check"></i> Alert!</h5> -->
                   {{ message }}
@@ -31,10 +31,10 @@
               <table id="example1" class="table table-bordered table-striped">
                  <thead>
                     <tr>              
-                        <th>Email</th>
-                        <th>Nickname</th>
+                        <th>Codigo Cliente</th>
+                        <th>Email</th>                        
                         <th>Activo</th>
-                        <th>Ilimitado</th>
+                        <th>Avalado</th>
                         <th>Roles</th>             
                         <th>actions</th>
                     </tr>
@@ -42,8 +42,8 @@
                     <tbody>
                     {% for perfil in perfils %}
                         <tr>               
-                            <td>{{ perfil.usuario.email }}</td>
                             <td>{{ perfil.nickname }}</td>
+                            <td>{{ perfil.usuario.email }}</td>                            
                             <td>{{ perfil.activo ? 'Si' : 'No' }}</td>
                             <td>{{ perfil.saldoIlimitado ? 'Si' : 'No' }}</td>
                             <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>             
@@ -61,10 +61,10 @@
 
                     <tfoot>
                         <tr>
-                            <th>Email</th>
-                            <th>Nickname</th>
+                            <th>Codigo Cliente</th>
+                            <th>Email</th>                            
                             <th>Activo</th>
-                            <th>Ilimitado</th>
+                            <th>Avalado</th>
                             <th>Roles</th>
                             <th>actions</th>
                         </tr>
@@ -92,6 +92,7 @@
 <script>
   $(function () {
 
+    $('#alert').slideUp(2000);
     $("#example1").DataTable();
 
     $('#example2').DataTable({

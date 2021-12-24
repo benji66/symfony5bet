@@ -7,6 +7,7 @@ use App\Entity\Perfil;
 use App\Entity\AdjuntoPago;
 use App\Entity\ApuestaDetalle;
 use App\Entity\Traspaso;
+use App\Entity\RetiroSaldo;
 use App\Entity\PagoCliente;
 use App\Entity\PagoPersonalSaldo;
 use App\Entity\ApuestaPropuesta;
@@ -28,6 +29,11 @@ use Symfony\Component\Notifier\Bridge\Telegram\Reply\Markup\Button\InlineKeyboar
 use Symfony\Component\Notifier\Bridge\Telegram\Reply\Markup\InlineKeyboardMarkup;
 use Symfony\Component\Notifier\Bridge\Telegram\TelegramOptions;
 use Symfony\Component\Notifier\Message\ChatMessage;
+
+
+//pdf
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 /**
  * Require ROLE_USER for *every* controller method in this class.
@@ -93,24 +99,30 @@ class ProfileController extends AbstractController
             $ext_observacion = null;
             
         foreach ($apuestas as $row) {
+            $time[$i]['status_class'] = '';
+            $time[$i]['monto'] =0;
             $time[$i]['tipo'] = 'apuesta';
             $time[$i]['status'] = $row->getApuesta()->getCarrera()->getStatus();
             $time[$i]['iclass'] = 'fas fa-horse-head bg-yellow';
             $time[$i]['fecha'] = $row->getApuesta()->getCarrera()->getFecha();
-            $time[$i]['mensaje'] = 'Jugó '.$row->getApuesta()->getTipo()->getNombre().' en carrera '.$row->getApuesta()->getCarrera()->getNumeroCarrera().' de Hipódromo: '.$row->getApuesta()->getCarrera()->getHipodromo()->getNombre();
-
+            
             if($row->getCaballos()){
                  $caballos = $row->getCaballos();
+                 $ext_observacion = ' JUGO '; 
             }else{
                 $apuesta_detalle = $this->getDoctrine()->getRepository(ApuestaDetalle::class)->findByApuestaCaballoNotNull($row->getApuesta()->getId());
 
                 $caballos = $apuesta_detalle->getCaballos();
-                $ext_observacion = ' EN CONTRA ';                
+                $ext_observacion = ' PAGO ';                
                 //$apuesta= $row->getApuesta();
             }
 
+            $time[$i]['mensaje'] = $ext_observacion.$row->getApuesta()->getTipo()->getNombre().' en carrera '.$row->getApuesta()->getCarrera()->getNumeroCarrera().' de Hipódromo: '.$row->getApuesta()->getCarrera()->getHipodromo()->getNombre();
 
-            $time[$i]['observacion'] = $ext_observacion.json_encode($caballos).' por '.$row->getApuesta()->getMonto();
+           
+
+
+            $time[$i]['observacion'] = json_encode($caballos).' por '.$row->getApuesta()->getMonto();
 
           
             if($row->getApuesta()->getCarrera()->getStatus()=='PAGADO'){
@@ -120,16 +132,25 @@ class ProfileController extends AbstractController
 
                     if($row->getApuesta()->getGanador()){
                         if($row->getApuesta()->getGanador()->getId()==$user->getPerfil()->getId()){
-                             $time[$i]['status'] = 'GANO '.$row->getApuesta()->getCuenta()->getSaldoGanador();
+                             $time[$i]['monto'] = $row->getApuesta()->getCuenta()->getSaldoGanador();
+
+                             $time[$i]['status'] = ''.$time[$i]['monto'];
                              $time[$i]['iclass'] = 'fas fa-horse-head bg-green';
                              $time[$i]['status_class'] = 'color:green';
                              $tarjeta['gana']++;
 
                         }else{
-                            $time[$i]['status'] = 'PERDIO '.($row->getApuesta()->getCuenta()->getSaldoGanador() + $row->getApuesta()->getCuenta()->getSaldoPerdedor());
+                            $time[$i]['monto'] = $row->getApuesta()->getMonto() - $row->getApuesta()->getCuenta()->getSaldoPerdedor();
+
+                            //$time[$i]['status'] = 'PERDIO '.($time[$i]['monto']);
+                            $time[$i]['status'] = ''.($time[$i]['monto']);
+                            $time[$i]['monto'] = $time[$i]['monto']  * (-1);                            
+                            
                             $time[$i]['iclass'] = 'fas fa-horse-head bg-red';
                             $time[$i]['status_class'] = 'color:red';
                             $tarjeta['pierde']++;
+
+
                         } 
                     }else{
                         $time[$i]['status'] = 'SIN GANADOR';
@@ -158,6 +179,7 @@ class ProfileController extends AbstractController
         $pagos = $this->getDoctrine()->getRepository(AdjuntoPago::class)->findById15Dias($user->getPerfil()->getId());    
         foreach ($pagos as $row) {
             $time[$i]['tipo'] = 'pago';
+            $time[$i]['monto'] =0;
             
             if($row->getValidado()===NULL){
                 $time[$i]['iclass'] = 'fas fa-dollar-sign bg-yellow';               
@@ -169,6 +191,7 @@ class ProfileController extends AbstractController
                    $time[$i]['iclass'] = 'fas fa-dollar-sign bg-green';
                    $time[$i]['status_class'] = 'color:green';
                     $time[$i]['status'] = 'APROBADO';
+                    $time[$i]['monto'] = $row->getMonto();
                 }
                 else{
                    $time[$i]['iclass'] = 'fas fa-dollar-sign bg-red';
@@ -180,7 +203,42 @@ class ProfileController extends AbstractController
       
             
             $time[$i]['fecha'] = $row->getUpdatedAt();
-            $time[$i]['mensaje'] = 'Su pago con el numero de referencia '.$row->getNumeroReferencia().' se encuentra '.$time[$i]['status'];
+            $time[$i]['mensaje'] = 'Su pago para abono de saldo con el numero de referencia '.$row->getNumeroReferencia().' se encuentra '.$time[$i]['status'];
+            $time[$i]['observacion'] = $row->getObservacion();
+            $i++;  
+        }
+
+
+        $retiros = $this->getDoctrine()->getRepository(RetiroSaldo::class)->findById15Dias($user->getPerfil()->getId());    
+        foreach ($retiros as $row) {
+            $time[$i]['tipo'] = 'retiro_saldo';
+            $time[$i]['monto'] = 0;
+            
+            if($row->getValidado()===NULL){
+                $time[$i]['iclass'] = 'fas fa-dollar-sign bg-yellow';               
+                $time[$i]['status'] = 'EN PROCESO';
+                $time[$i]['status_class'] = 'color:blue';
+
+            }else{
+                
+                if($row->getValidado()){
+                   $time[$i]['iclass'] = 'fas fa-dollar-sign bg-green';
+                   $time[$i]['status_class'] = 'color:green';
+                    $time[$i]['status'] = 'APROBADO'; 
+                    $ext_observacion  = ' bajo el numero de referencia '.$row->getNumeroReferencia();
+                    $time[$i]['monto'] = $row->getMonto() * (-1);                  
+                }
+                else{
+                   $time[$i]['iclass'] = 'fas fa-dollar-sign bg-red';
+                   $time[$i]['status_class'] = 'color:red';
+                   $time[$i]['status'] = 'RECHAZADO';
+                }
+            }
+
+
+            
+            $time[$i]['fecha'] = $row->getUpdatedAt();
+            $time[$i]['mensaje'] = 'Su solicitud de Retiro de saldo por '.$row->getMonto().' se encuentra '.$time[$i]['status'].$ext_observacion;
             $time[$i]['observacion'] = $row->getObservacion();
             $i++;  
         }
@@ -188,6 +246,7 @@ class ProfileController extends AbstractController
         $pagos_cliente = $this->getDoctrine()->getRepository(PagoCliente::class)->findById15Dias($user->getPerfil()->getId());    
         foreach ($pagos_cliente as $row) {
             $time[$i]['tipo'] = 'pago_cliente';
+            $time[$i]['monto'] = $row->getMonto();
          
                    $time[$i]['iclass'] = 'fas fa-dollar-sign bg-green';
                    $time[$i]['status_class'] = 'color:green';
@@ -204,7 +263,8 @@ class ProfileController extends AbstractController
 
         $pagos_personal_saldo = $this->getDoctrine()->getRepository(PagoPersonalSaldo::class)->findById15Dias($user->getPerfil()->getId());    
         foreach ($pagos_personal_saldo as $row) {
-            $time[$i]['tipo'] = 'pago_personal';
+            $time[$i]['tipo'] = 'pago_personal_saldo';
+            $time[$i]['monto'] =$row->getMonto();
          
                    $time[$i]['iclass'] = 'fas fa-dollar-sign bg-green';
                    $time[$i]['status_class'] = 'color:green';
@@ -222,14 +282,15 @@ class ProfileController extends AbstractController
                 }
             
             $time[$i]['fecha'] = $row->getUpdatedAt();
-            $time[$i]['mensaje'] = 'Se realizo un movimiento de saldo por '.$row->getMonto(). 'por concepto de '.$row->getConcepto();
+            $time[$i]['mensaje'] = 'Se realizo un movimiento de saldo por '.$row->getMonto(). ' por concepto de '.$row->getConcepto();
             $time[$i]['observacion'] = $row->getObservacion();
             $i++;  
         }                
 
         $traspasos = $this->getDoctrine()->getRepository(Traspaso::class)->findById15Dias($user->getPerfil()->getId());    
         foreach ($traspasos as $row) {
-            $time[$i]['tipo'] = 'traspaso';  
+            $time[$i]['tipo'] = 'traspaso';
+            $time[$i]['monto'] =$row->getMonto();  
        
                 
                 if($row->getDescuento()->getId() != $user->getPerfil()->getId()){
@@ -237,12 +298,14 @@ class ProfileController extends AbstractController
                     $time[$i]['status'] = 'ABONO';
                     $time[$i]['mensaje'] = 'ABONO del usuario '.$row->getDescuento()->getNickname(). ' por '.$row->getMonto();
                     $time[$i]['status_class'] = 'color:green';
+
                 }
                 else{
                    $time[$i]['iclass'] = 'fas fa-dollar-sign bg-red';
                    $time[$i]['status'] = 'DESCUENTO';
                    $time[$i]['status_class'] = 'color:red';
                    $time[$i]['mensaje'] = 'TRASPASO hacia el usuario '.$row->getAbono()->getNickname(). ' por '.$row->getMonto();
+                   $time[$i]['monto'] = $time[$i]['monto'] * (-1);
                 }      
             
             $time[$i]['fecha'] = $row->getUpdatedAt();
@@ -439,6 +502,5 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('profile_show');
        
     }*/        
-
 
 }

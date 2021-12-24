@@ -15,7 +15,8 @@
         </div>
     {% endfor %}
 {% endfor %}
-    <table class="table">
+     <div class="card-body table-responsive p-0">
+      <table class="table table-hover text-nowrap">
         <tbody>
             <tr>
                 <th>Fecha</th>
@@ -27,11 +28,11 @@
             </tr>
             <tr>                
                 <th>Total Pagado</th>
-                <td>{{ carrera.totalPagado }}</td>
-                <th>Total Ganancia</th>
-                <td>{{ carrera.totalGanancia }}</td>
+                <td><i class="fas fa-dollar-sign"></i> {{ carrera.totalPagado }}</td>
+                <th>Total Comision</th>
+                <td><i class="fas fa-dollar-sign"></i> {{ carrera.totalGanancia }}</td>
                 <th>Orden_oficial</th>
-                <td>{{ carrera.ordenOficial ? carrera.ordenOficial|json_encode : '' }}</td>
+                <td>{{ carrera.ordenOficial ? render(controller('App\\Controller\\CarreraController::numero_color', {array: carrera.ordenOficial })) : '' }}</td>
             </tr>
             <tr>
                 <th>Creado por</th>
@@ -44,8 +45,8 @@
       
           
         </tbody>
-    </table>
-
+      </table>
+     </div>
 
 <h1>Apuestas Realizadas</h1>
 
@@ -56,7 +57,7 @@
               <div class="card-header">
                 <h3 class="card-title">
                   <i class="fas fa-text-width"></i>
-                  Ganador: {{ apuesta.Ganador.nickname|default('-') }} [{{ apuesta.Cuenta.SaldoGanador|default('-') }}] 
+                  Ganador: {{ apuesta.Ganador.nickname|default('-') }} [<i class="fas fa-dollar-sign"></i> {{ apuesta.Cuenta.SaldoGanador|default('-') }}] 
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -64,7 +65,10 @@
                 <dl>
                   <dd><a href="{{ path('correccion_new', {'id': apuesta.id}) }}"><i class="fas fa-edit">corregir</i></a></dd>
                   <dt>Monto</dt>
-                  <dd>{{ apuesta.monto }}</dd>
+                  <dd><i class="fas fa-dollar-sign"></i> {{ apuesta.monto }}</dd>
+                  <dt>Comision</dt>
+                  <dd><i class="fas fa-dollar-sign"></i> {{ apuesta.Cuenta.SaldoCasa|default('-') }}</dd>
+
                   <dt>Tipo de Apuesta</dt>
                   <dd>{{ apuesta.Tipo.nombre }}</dd>
                   <dd>
@@ -89,7 +93,13 @@
                                     {% for detalle in apuesta.ApuestaDetalles %}    
                                         <tr>
                                             <td>{{ detalle.Perfil.nickname }}</td>
-                                            <td>{{ detalle.caballos ? detalle.caballos|json_encode : '' }}</td>
+                                            <td>{{ detalle.caballos ? render(controller('App\\Controller\\CarreraController::numero_color', {array: detalle.caballos })) : '' }}</td>
+                                            {%if detalle.Perfil.id == detalle.Apuesta.Cuenta.Ganador.id %}
+                                              <td style="color:green"><i class="fas fa-dollar-sign"></i>{{  detalle.Apuesta.Cuenta.SaldoGanador|default('0') }}</td>
+                                            {%else%}                                            
+                                              <td style="color:red"><i class="fas fa-dollar-sign"></i>-{{ detalle.Apuesta.monto - detalle.Apuesta.Cuenta.SaldoPerdedor|default('0') }}</td> 
+                                            {% endif %}   
+
                                         </tr>   
                                     {% endfor %}
                                     </tbody>
@@ -101,7 +111,7 @@
                                       <tr><td>{{ correccion.observacionSistema }}</td></tr>
                                       <tr><td>{{ correccion.createdBy }}</td></tr>
                                   {% endfor %}  
-                               </table        
+                               </table>        
                           </div>
                           <!-- /.card-body -->
                         </div>

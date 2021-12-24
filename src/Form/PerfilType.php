@@ -19,7 +19,7 @@ class PerfilType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-             ->add('gerencia', EntityType::class, [
+            ->add('gerencia', EntityType::class, [
                     // looks for choices from this entity
                     'class' => Gerencia::class,
 
@@ -43,10 +43,7 @@ class PerfilType extends AbstractType
                     //'ROLE_ADMIN' => 'ROLE_ADMIN',
                     //'ROLE_GERENCIA' => 'ROLE_GERENCIA',
                     //'ROLE_COORDINADOR' => 'ROLE_COORDINADOR',
-                    'ROLE_EMPLEADO' => 'ROLE_EMPLEADO',
-
-
-                   
+                    'ROLE_EMPLEADO' => 'ROLE_EMPLEADO',                   
                 ],
             ])
             ->add('activo')

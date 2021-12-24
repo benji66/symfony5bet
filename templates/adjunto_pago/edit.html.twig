@@ -1,9 +1,9 @@
 {% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
 
-{% block title %}Edit AdjuntoPago{% endblock %}
+{% block title %}Edit Recarga{% endblock %}
 
 {% block body %}
-     <h1>Edit AdjuntoPago</h1>
+     <h1>Edit Recarga</h1>
 
 
 		<div class="row">
@@ -21,7 +21,7 @@
                            <b>Metodo de Pago:</b> {{ adjunto_pago.MetodoPago.nombre }}
                         </div> 
                         <div class="form-group">
-                          <b>Monto:</b> {{ adjunto_pago.monto }}
+                          <b>Monto:</b> <i class="fas fa-dollar-sign"></i> {{ adjunto_pago.monto }}
                         </div> 
                         <div class="form-group">
                           <b>Numero de Referencia:</b> {{ adjunto_pago.NumeroReferencia }}

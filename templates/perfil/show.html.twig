@@ -4,16 +4,19 @@
 
 {% block stylesheets %}
  <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+   <!-- daterange picker -->
+  <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/daterangepicker/daterangepicker.css">
 {% endblock %}
 
 {% block body %}
     <h1>Perfil</h1>
 
-    <table class="table">
+    <div class="card-body table-responsive p-0">
+      <table class="table table-hover text-nowrap">
         <tbody>
             <tr>               
                 
-                <th>Nickname</th>
+                <th>Codigo Cliente</th>
                 <th>Roles</th>                
                 <th>Activo</th>   
                 <th>Saldo</th>
@@ -23,7 +26,15 @@
                 <td>{{ perfil.nickname }}</td>
                 <td>{{ perfil.roles ? perfil.roles|json_encode : '' }}</td>
                 <td>{{ perfil.activo ? 'Yes' : 'No' }}</td> 
-                <td>{{ perfil.saldo }}</td>
+                
+                <td>    
+                    <i class="fas fa-dollar-sign"></i>
+                      {% if  perfil.saldo < 0 %} 
+                        <b style="color:red">{{ perfil.saldo }}</b>
+                      {% else %} 
+                        <b>{{ perfil.saldo }}</b> 
+                      {% endif %}  
+                </td>   
             </tr>
             <tr>                
                 <th>CreatedBy</th>
@@ -44,7 +55,11 @@
                 <th>Telefono</th>
             </tr>
             <tr>                
-                 <td>{{ perfil.id }}</td>  
+                 <td>
+                    <span class="badge badge-pill bg-purple text-dark" style="color:black">
+                        {{ perfil.id }}
+                    </span>
+                </td>  
                 <td>{{ perfil.Usuario.email }}</td>                
                 <td>{{ perfil.Usuario.nombre }} {{ perfil.Usuario.apellido }}</td>
                 <td>{{ perfil.Usuario.telefono }}</td>
@@ -58,7 +73,9 @@
             </tr>
         </tbody>
     </table>
+ </div>
 
+{#
     <h1>Apuestas</h1>
     <div class="card">
             <div class="card-header">
@@ -100,7 +117,7 @@
             <!-- /.card-body -->
           </div>
           <!-- /.card -->
-
+#}
 
     <a href="{{ path('user_index') }}">
         <i class="fas fa-arrow-left"></i>
@@ -112,11 +129,85 @@
         editar
     </a>
 
+     <div class="row">
+        <div class="col-md-6">              
+              <!-- Date range -->
+                <div class="form-group">
+                  <label>Date range:</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" id="reservation">
+                  </div>
+                  <!-- /.input group -->
+                </div>
+        </div>      <!-- /.form group -->
+      </div>
+
+       <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"></h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                 <thead>
+                    <tr>              
+                        <th>Reporte</th>
+                        <th>Rango</th>                            
+                        <th>actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                   
+                        <tr>               
+                            <td>Reporte Dia</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr> 
+
+                        <tr>               
+                            <td>Reporte Jugada</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_jugada"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>      
+                
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <th>Reporte</th>
+                             <th>Rango</th>                          
+                            <th>actions</th>
+                        </tr>
+                    </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>     
+
+
+
+
   
 {% endblock %}
 
 
 {% block javascripts %}
+
+<!-- InputMask -->
+<script src="/bundles/fgimenezadminlte/plugins/moment/moment.min.js"></script>
+<script src="/bundles/fgimenezadminlte/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+<!-- date-range-picker -->
+<script src="/bundles/fgimenezadminlte/plugins/daterangepicker/daterangepicker.js"></script>
 
 <!-- DataTables -->
 <script src="/bundles/fgimenezadminlte/plugins/datatables/jquery.dataTables.js"></script>
@@ -124,9 +215,9 @@
 <script>
   $(function () {
 
-    $("#example1").DataTable();
+    //$("#example1").DataTable();
 
-    $('#example2').DataTable({
+    $('#example1').DataTable({
       "paging": false,
       "lengthChange": false,
       "searching": false,
@@ -134,7 +225,29 @@
       "info": false,
       "autoWidth": false,
     });
-  });
-</script>
 
+      //Date range picker
+    $('#reservation').daterangepicker({      
+      locale: {
+        format: 'YYYY-MM-DD',
+        separator: ' / '
+      }
+    });
+
+  });
+
+
+$("#reservation").change(function() {
+
+  $('#rango').html($(this).val()); 
+
+  var fecha = $(this).val().split(' / ');
+
+  $("#link").attr('href', '{{ path('user_reporte_dia') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]+'&perfil={{ perfil.id }}');
+  $("#link_jugada").attr('href', '{{ path('user_reporte_jugada') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]+'&perfil={{ perfil.id }}');
+
+
+}); 
+
+</script>
 {% endblock %}

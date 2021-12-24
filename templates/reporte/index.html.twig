@@ -97,6 +97,14 @@
                         </tr>
 
                         <tr>               
+                            <td>Abono de saldo</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_abono_saldo"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
+
+                        <tr>               
                             <td>Traspaso</td>
                             <td><div id="rango"></div></td>      
                             <td>
@@ -118,6 +126,32 @@
                             <td><div id="rango"></div></td>      
                             <td>
                                 <a href="#" id="link_total_cliente"><i class="far fa-eye">descargar</i></a>
+                            </td>
+                        </tr>
+
+                        <tr>               
+                            <td>Total Saldo Clientes</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_total_saldo_cliente"><i class="far fa-eye">descargar</i></a>
+                                <a href="#" id="link_total_saldo_cliente_v"><i class="far fa-eye">Ver</i></a>
+                            </td>
+                        </tr>
+
+                        <tr>               
+                            <td>Total Semana Detalle Saldo Clientes</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_total_semana_saldo"><i class="far fa-eye">descargar</i></a>
+                                <a href="#" id="link_total_semana_saldo_v"><i class="far fa-eye">Ver</i></a>
+                            </td>
+                        </tr>
+
+                       <tr>               
+                            <td>Usuarios</td>
+                            <td><div id="rango"></div></td>      
+                            <td>
+                                <a href="#" id="link_usuarios"><i class="far fa-eye">descargar</i></a>
                             </td>
                         </tr>
                 
@@ -189,9 +223,12 @@ $("#reservation").change(function() {
   $("#link_deposito").attr('href', '{{ path('reporte_deposito') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_deposito_saldo").attr('href', '{{ path('reporte_deposito_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_retiro_saldo").attr('href', '{{ path('reporte_retiro_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
+  $("#link_abono_saldo").attr('href', '{{ path('reporte_abono_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_traspaso").attr('href', '{{ path('reporte_traspaso') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_apuesta").attr('href', '{{ path('reporte_apuesta') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
-
+  $("#link_usuarios").attr('href', '{{ path('reporte_usuarios') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);
+  $("#link_total_saldo_cliente").attr('href', '{{ path('gerencia_reporte_usuarios_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);  
+  $("#link_total_semana_saldo").attr('href', '{{ path('gerencia_reporte_semana_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);  
   $("#link_total_cliente").attr('href', '{{ path('reporte_total_cliente') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);   
 
 }); 

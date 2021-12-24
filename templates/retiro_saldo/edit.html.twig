@@ -3,7 +3,7 @@
 {% block title %}Edit RetiroSaldo{% endblock %}
 
 {% block body %}
-     <h1>Edit RetiroSaldo</h1>
+     <h1></h1>
 
 
 		<div class="row">
@@ -21,7 +21,7 @@
                            <b>Cuenta:</b> {{ retiro_saldo.PerfilBanco.nombre }} {{ retiro_saldo.PerfilBanco.descripcion }}
                         </div> 
                         <div class="form-group">
-                          <b>Monto:</b> {{ retiro_saldo.monto }}
+                          <b>Monto:</b> <i class="fas fa-dollar-sign"></i> {{ retiro_saldo.monto }}
                         </div>                   
 
 
@@ -169,7 +169,7 @@
             validation: {
                 allowedExtensions: ['jpeg', 'jpg', 'txt'],
                 itemLimit: 1,
-                sizeLimit: 102400 // 50 kB = 50 * 1024 bytes
+                sizeLimit: 204800 // 50 kB = 50 * 1024 bytes
             },
 
             deleteFile: {

@@ -8,7 +8,7 @@
 
 
 {% block body %}
-    <h1>Pago por Saldo</h1>
+    <h1>Pago Administrativo</h1>
 
     {# read and display all flash messages #}
 {% for label, messages in app.flashes %}
@@ -32,7 +32,7 @@
                  <thead>
                     <tr>              
                         <th>Fecha</th>
-                        <th>Email</th>
+                        <th>Codigo Cliente</th>
                         <th>Monto</th>
                         <th>Concepto</th>
                         <th>accion</th>                        
@@ -44,10 +44,15 @@
                             <td>{{ pago.createdAt ? pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                             <td>
                                 <a href="{{ path('user_show', {'id': pago.perfil.Usuario.id}) }}">
-                                    {{ pago.perfil.usuario.email }}
+                                    {{ pago.perfil.nickname }}
                                  </a>
                             </td>
-                            <td>{{ pago.monto }}</td>
+                            {% if pago.monto > 0 %}  
+                            <td><i class="fas fa-dollar-sign"></i> {{ pago.monto }}</td>
+                            {% else %}                            
+                            <td style="color:red"><i class="fas fa-dollar-sign"></i> {{ pago.monto }}</td>
+                            {% endif %}
+
                             <td>{{ pago.concepto }}</td>
                             <td>
 
@@ -67,7 +72,7 @@
                     <tfoot>
                         <tr>
                             <th>Fecha</th>
-                            <th>Email</th>
+                            <th>Codigo Cliente</th>
                             <th>Monto</th>
                             <th>Concepto</th>
                             <th>accion</th> 

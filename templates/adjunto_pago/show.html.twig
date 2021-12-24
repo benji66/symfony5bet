@@ -1,11 +1,12 @@
 {% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
 
-{% block title %}Abono Saldo{% endblock %}
+{% block title %}Recarga{% endblock %}
 
 {% block body %}
-    <h1>Abono Saldo</h1>
+    <h1>Recarga</h1>
 
-    <table class="table">
+    <div class="card-body table-responsive p-0">
+      <table class="table table-hover text-nowrap">
         <tbody>
              <tr>
                 <th>Comprobante</th>
@@ -13,7 +14,7 @@
             </tr>
             <tr>
                 <th>Monto</th>
-                <td>{{ adjunto_pago.monto }}</td>
+                <td><i class="fas fa-dollar-sign"></i> {{ adjunto_pago.monto }}</td>
             </tr>
             <tr>
                 <th>Validado por</th>
@@ -38,7 +39,7 @@
        
         </tbody>
     </table>
-
+  </div>
     <a href="{{ path('adjunto_pago_index') }}">
 
         <i class="fas fa-arrow-left"></i>

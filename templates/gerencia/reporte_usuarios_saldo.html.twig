@@ -1,0 +1,94 @@
+{% block title %}{{ gerencia.nombre }} - Rango desde {{ rango.desde|date('d-m-Y') }} hasta {{ rango.hasta|date('d-m-Y') }}{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+<style type="text/css">
+.borde-left-top{
+	border-width: 2px 0px 1px 2px;
+	border-color: black;
+	border-style: solid none none solid;
+}
+.borde-left-bottom{
+	border-width: 0px 0px 2px 2px;
+	border-color: black;
+	border-style: none none solid solid;
+}
+.borde-right-top{
+	border-width: 2px 2px 1px 0px;
+	border-color: black;
+	border-style: solid solid dotted none;
+}
+.borde-right-bottom{
+	border-width: 0px 2px 2px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: none solid solid none;
+	background-color: gray;
+}
+
+.borde-middle-bottom{
+	border-width: 0px 0px 2px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: none none solid none;
+}
+
+.borde-middle-top{
+	border-width: 2px 0px 1px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: solid none dotted none;
+}
+</style>
+
+           <div class="card-header">
+              <h2 class="card-title estilo">{{ gerencia.nombre }}</h1></h2>
+              <h4 class="card-title estilo">GANANCIA ${{ ganancia }}</h1></h2>
+              <h4 class="card-title estilo">Desde {{ rango.desde|date('d-m-Y') }} Hasta {{ rango.hasta|date('d-m-Y') }}</h1></h2>
+
+            </div>
+
+     <div class="card-body">              
+               
+   {% set x = 0 %}
+<table id="example2" class="table table-bordered table-hover" >
+				  	
+				  	<thead>
+				        <tr style="background-color:#000; color:#fff ;" align="center">              
+			                <th>CODIGO</th>
+			                <th>NOMBRE DEL CLIENTE</th>
+			                <th>SALDO</th>   
+			                			             
+			            </tr>
+			        </thead>    
+			
+        {% for row in totales %}		  
+			    {% if x==0  %}
+		            {% set st = '' %}
+		            {% set x = 1 %}
+		        {% else %}
+		            {% set st = 'style="background-color:#e5e5e5"' %}
+		            {% set x = 0 %}
+		        {% endif %}
+
+			  	<tr {{ st|raw }}>              
+			         <td align="center" style="border-style: solid; border-width: 1px">{{row.nickname }}</td>
+			         <td align="center" style="border-style: solid; border-width: 1px">{{row.nombre }}</td>
+			           
+		                    <td align="center"  style="border-style: solid; border-width: 1px">
+		                       {% if row.total < 0 %} 
+		                          <span style="color:red">  {{ row.total }} </span>
+		                       {% else %}
+		                            {{ row.total }}
+		                       {% endif %}
+		                    </td>  		               			             
+			    </tr> 			          
+	
+        {% endfor %}
+ </table>       	
+
+    </div>        
+{% endblock %}
+
+	

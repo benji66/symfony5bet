@@ -13,6 +13,8 @@
                 <th>Sueldo</th>
                 <th>Permisos</th>
             </tr>
+
+            {% set total_sueldo = 0 %}
             {% for row in perfils %}
                 {% if row.sueldo > 0 and row.activo==true %}
                     <tr>
@@ -21,7 +23,8 @@
                                 {{ row.nickname }} - {{ row.Usuario.nombre }} {{ row.Usuario.apellido }}
                              </a>   
                         </td>
-                        <td>{{ row.sueldo }}</td>
+                        <td><i class="fas fa-dollar-sign"></i> {{ row.sueldo }}</td>
+                        {% set total_sueldo = row.sueldo + total_sueldo %}
                         <td>{{ row.roles ? row.roles|json_encode : '' }}</td>
                     </tr>
                 {% endif %}
@@ -29,7 +32,12 @@
                 <tr>
                     <td colspan="5">no records found</td>
                 </tr>
-            {% endfor %}       
+            {% endfor %}  
+            <tr>
+                <td><b>Total</b></td> 
+                <td><i class="fas fa-dollar-sign"></i> <b>{{total_sueldo}}</b></td> 
+                <td><b></b></td> 
+            </tr>        
         </tbody>
     </table>
 

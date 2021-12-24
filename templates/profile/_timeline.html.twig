@@ -2,20 +2,119 @@
                     <div class="timeline timeline-inverse">
                  
                       {% set fecha2 = null %} 
+                      {% set apuesta_total = 0 %}
+                      {% set retiro_saldo_total = 0 %}
+                      {% set traspaso_total = 0 %} 
+                      {% set pago_total = 0 %} 
+                      {% set pago_cliente_total = 0 %} 
+                      {% set pago_personal_saldo_total = 0 %}
+                      {% set monto_total = 0 %} 
                       {% for item in times %}
-                       <!-- timeline time label -->
-                      {% set fecha = item.fecha|date('d-m-Y') %} 
-                     
-                      {% if fecha!=fecha2 %}
-                      <div class="time-label">                   
-                        <span class="bg-success">                        
-                           {{fecha}}
-                        </span>
-                      </div>
-                        {% set fecha2 = fecha %}  
-                      {% endif %}
+                      <!-- timeline time label -->
 
-                      
+                      <!-- timeline time label --> 
+
+                        {% set fecha = item.fecha|date('d-m-Y') %} 
+                       
+                        {% if fecha!=fecha2 and  fecha2 != null %}
+                                <div class="card card-primary collapsed-card col-8">
+                                    <div class="card-header">
+                                      <h3 class="card-title">Totales del dia</h3>
+
+                                      <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                        </button>
+                                      </div>
+                                      <!-- /.card-tools -->
+                                    </div>
+                                    <!-- /.card-header -->
+                                       <div class="card-body table-responsive p-0">      
+                                          <table class="table table-bordered table-hover text-nowrap">
+                                              <tbody>
+                                                 <tr>
+                                                  <th>Apuestas:</th>
+                                                  <td>{{apuesta_total}}</td>
+                                                 </tr>
+                                                 <tr>
+                                                  <th>Retiros:</th>
+                                                  <td>{{retiro_saldo_total}}</td>
+                                                 </tr> 
+                                                 <tr>
+                                                  <th>Traspasos:</th>
+                                                  <td>{{traspaso_total}}</td>
+                                                 </tr>
+                                                 <tr>
+                                                  <th>Recargas:</th>
+                                                  <td>{{pago_total}}</td>
+                                                 </tr>
+
+                                                 <tr>
+                                                  <th>Pagos (efectivo o transferencia):</th>
+                                                  <td>{{pago_cliente_total}}</td>
+                                                 </tr>
+                                                 <tr>
+                                                  <th>Abono de saldo por parte de la gerencia:</th>
+                                                  <td>{{ pago_personal_saldo_total }}</td>
+                                                 </tr>
+
+                                                 <tr>
+                                                  <th>Total del dia:</th>
+                                                  <td>{{ monto_total }}</td>
+                                                 </tr>  
+                                              
+                                              </tbody>
+                                          </table>  
+
+                                     </div>
+                                    <!-- /.card-body -->
+                                  </div>
+                                  <!-- /.card -->
+                        {% endif %}
+
+
+                        {% if fecha!=fecha2 %}
+                              {% set apuesta_total = 0 %}
+                              {% set retiro_saldo_total = 0 %}
+                              {% set traspaso_total = 0 %} 
+                              {% set pago_total = 0 %} 
+                              {% set pago_cliente_total = 0 %} 
+                              {% set pago_personal_saldo_total = 0 %} 
+                              {% set monto_total = 0 %}
+                        <div class="time-label">                   
+                          <span class="bg-success">                        
+                             {{fecha}}
+                          </span>
+                        </div>
+                          {% set fecha2 = fecha %}  
+                        {% endif %}
+
+                        {% if item.tipo=='apuesta' %}
+                          {% set apuesta_total = apuesta_total + item.monto %}
+                        {% endif %}
+
+                         {% if item.tipo=='traspaso' %}
+                          {% set traspaso_total = traspaso_total + item.monto %}
+                        {% endif %}
+
+                         {% if item.tipo=='pago' %}
+                          {% set pago_total = pago_total + item.monto %}
+                        {% endif %}
+
+                         {% if item.tipo=='pago_personal_saldo' %}
+                          {% set pago_personal_saldo_total = pago_personal_saldo_total + item.monto %}
+                        {% endif %}
+
+                         {% if item.tipo=='retiro_saldo' %}
+                          {% set retiro_saldo_total = retiro_saldo_total + item.monto %}
+                        {% endif %}
+
+
+
+                         {% if item.tipo=='pago_cliente' %}
+                          {% set pago_cliente_total = pago_cliente_total + item.monto %}
+                        {% endif %}
+                        
+                        {% set monto_total = monto_total + item.monto %}
                       <!-- /.timeline-label -->
                       <!-- timeline item -->
                       <div>
@@ -27,12 +126,70 @@
                           </span>
                           <h3 class="timeline-header">{{ item.mensaje }}</h3>
                           <div class="timeline-body">
-                            {{ item.observacion }}
+                            {{ item.observacion }} {# ------------ {{ apuesta_total }} - {{ item.monto }} #}
                           </div>
                         </div>
                       </div>
+
+
                       {% endfor %}
                       <!-- END timeline item -->
+            
+                        {% if fecha2 != null %}
+                                <div class="card card-primary collapsed-card col-8" >
+                                    <div class="card-header">
+                                      <h3 class="card-title">Totales del dia</h3>
+
+                                      <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                        </button>
+                                      </div>
+                                      <!-- /.card-tools -->
+                                    </div>
+                                    <!-- /.card-header -->
+                                       <div class="card-body table-responsive p-0">      
+                                          <table class="table table-bordered table-hover text-nowrap">
+                                              <tbody>
+                                                  <tr>
+                                                  <th>Apuestas:</th>
+                                                  <td>{{apuesta_total}}</td>
+                                                 </tr>
+                                                 <tr>
+                                                  <th>Retiros:</th>
+                                                  <td>{{retiro_saldo_total}}</td>
+                                                 </tr> 
+                                                 <tr>
+                                                  <th>Traspasos:</th>
+                                                  <td>{{traspaso_total}}</td>
+                                                 </tr>
+                                                 <tr>
+                                                  <th>Recargas:</th>
+                                                  <td>{{pago_total}}</td>
+                                                 </tr>
+
+                                                 <tr>
+                                                  <th>Pagos (efectivo o transferencia):</th>
+                                                  <td>{{pago_cliente_total}}</td>
+                                                 </tr>
+                                                 <tr>
+                                                  <th>Abono de saldo por parte de la gerencia:</th>
+                                                  <td>{{ pago_personal_saldo_total }}</td>
+                                                 </tr>
+
+                                                 <tr>
+                                                  <th>Total del dia:</th>
+                                                  <td>{{ monto_total }}</td>
+                                                 </tr>  
+                                              
+                                              </tbody>
+                                          </table>  
+
+                                     </div>
+                                    <!-- /.card-body -->
+                                  </div>
+                                  <!-- /.card -->
+                        {% endif %}
+
                       <div>
                         <i class="far fa-clock bg-gray"></i>
                       </div>

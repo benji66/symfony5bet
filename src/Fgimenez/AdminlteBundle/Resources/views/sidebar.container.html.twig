@@ -95,32 +95,21 @@
 
                                 
           {% endif %}       
-   
-         {% if is_granted('ROLE_COORDINADOR') %}   
-                 <li class="nav-header">CORREDOR</li>
-                  <li class="nav-item">
-                    <a href="{{ path('carrera_index') }}" class="nav-link">
-                      <i class="nav-icon fas fa-horse"></i>
-                      <p>
-                        Carreras                
-                      </p>
-                    </a>
-                  </li>
-         {% endif %}    
-               
+              
   
 
-       {% if is_granted('ROLE_ADMINISTRATIVO') %}     
-               <li class="nav-item">
+       {% if is_granted('ROLE_ADMINISTRATIVO') %}    
+             
+
+           <li class="nav-header">ADMINISTRACION</li>   
+             <li class="nav-item">
                     <a href="{{ path('reporte_index') }}" class="nav-link">
                       <i class="nav-icon fas fa-table"></i>
                       <p>
                         Reportes              
                       </p>
                     </a>
-                  </li>
-
-           <li class="nav-header">ADMINISTRACION</li>              
+                  </li>           
            <li class="nav-item">
             <a href="{{ path('pago_personal_index') }}" class="nav-link">
               <i class="nav-icon fas fa-funnel-dollar"></i>
@@ -166,18 +155,30 @@
            </li> 
 
         {% endif %}         
-        
+
+   
+         {% if is_granted('ROLE_COORDINADOR') %}   
+                 <li class="nav-header">CORREDOR</li>
+                  <li class="nav-item">
+                    <a href="{{ path('carrera_index') }}" class="nav-link">
+                      <i class="nav-icon fas fa-horse"></i>
+                      <p>
+                        Carreras                
+                      </p>
+                    </a>
+                  </li>
+         {% endif %}            
  
       {% if is_granted('ROLE_USER') and app.user.Perfil %} 
 
       
-             <li class="nav-header">USUARIO</li>
+             <li class="nav-header">CLIENTE</li>
 
              <li class="nav-item">
                 <a href="{{ path('tasca_index') }}" class="nav-link">
                   <i class="nav-icon fas fa-money-check-alt"></i>
                   <p>
-                    Resumen 
+                    Video Resumen 
                   </p>
                 </a>
                </li>         
@@ -198,7 +199,7 @@
             <a href="{{ path('adjunto_pago_index') }}" class="nav-link">
               <i class="nav-icon far fa-money-bill-alt"></i>
               <p>
-                Abono de Saldo
+                Recarga
               </p>
             </a>
            </li>
@@ -207,7 +208,7 @@
             <a href="{{ path('retiro_saldo_index') }}" class="nav-link">
               <i class="nav-icon fas fa-money-bill-alt"></i>
               <p>
-                Retiro de Saldo
+                Retiro
               </p>
             </a>
            </li>

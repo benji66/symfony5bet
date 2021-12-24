@@ -1,6 +1,6 @@
 {% extends '@FgimenezAdminlte/layout.admin.html.twig' %}
 
-{% block title %}Abono de Saldo{% endblock %}
+{% block title %}Recarga{% endblock %}
 
 {% block stylesheets %}
  <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
@@ -8,7 +8,7 @@
 
 
 {% block body %}
-    <h1>Abono de Saldo </h1>
+    <h1>Recarga </h1>
 
 {# read and display all flash messages #}
 {% for label, messages in app.flashes %}
@@ -72,20 +72,22 @@
      <table id="example2" class="table table-bordered table-hover">
         <thead>
             <tr>  
+                <th>Fecha de Carga</th>
                 <th>User</th>
                 <th>Monto</th>
                 <th>Validado</th>
                 <th>Validado por</th>
-                <th>Numero_referencia</th>             
-                <th>Fecha de Carga</th>
+                <th>Numero_referencia</th>         
+                
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for adjunto_pago in adjunto_pagos %}
             <tr>
+                <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ adjunto_pago.Perfil.Usuario.username }}</td>
-                <td>{{ adjunto_pago.monto }}</td>
+                <td><i class="fas fa-dollar-sign"></i> {{ adjunto_pago.monto }}</td>
                 <td>
                     {% if adjunto_pago.validado=='1' %}
                         aprobado
@@ -102,9 +104,8 @@
 
                 </td>
                 <td>{{ adjunto_pago.validadoBy ? adjunto_pago.validadoBy : 'en proceso' }}</td>
-                <td>{{ adjunto_pago.numeroReferencia }}</td>
-              
-                <td>{{ adjunto_pago.createdAt ? adjunto_pago.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ adjunto_pago.numeroReferencia }}</td>              
+                
                 <td>
                     <a href="{{ path('adjunto_pago_show', {'id': adjunto_pago.id}) }}"><i class="far fa-eye">mostrar</i></a>
                     
@@ -122,12 +123,13 @@
 
         <tfoot>
             <tr>
+                <th>Fecha de Carga</th>
                 <th>User</th>
                 <th>Monto</th>
                 <th>Validado</th>
                 <th>Validado por</th>
                 <th>Numero_referencia</th>                
-                <th>Fecha de Carga</th>
+               
                 <th>actions</th>
             </tr>
         </tfoot>
@@ -176,6 +178,7 @@ function buscar(form){
       "lengthChange": false,
       "searching": false,
       "ordering": true,
+      "order" : [[0,"desc"]],
       "info": false,
       "autoWidth": false,
     });

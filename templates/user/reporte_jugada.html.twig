@@ -1,0 +1,240 @@
+{% block title %}{{ user.nickname }} - Rango desde {{ rango.desde|date('d-m-Y') }} hasta {{ rango.hasta|date('d-m-Y') }}{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+<style type="text/css">
+.borde-left-top{
+	border-width: 2px 0px 1px 2px;
+	border-color: black;
+	border-style: solid none none solid;
+}
+.borde-left-bottom{
+	border-width: 0px 0px 2px 2px;
+	border-color: black;
+	border-style: none none solid solid;
+}
+.borde-right-top{
+	border-width: 2px 2px 1px 0px;
+	border-color: black;
+	border-style: solid solid dotted none;
+}
+.borde-right-bottom{
+	border-width: 0px 2px 2px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: none solid solid none;
+	background-color: gray;
+}
+
+.borde-middle-bottom{
+	border-width: 0px 0px 2px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: none none solid none;
+}
+
+.borde-middle-top{
+	border-width: 2px 0px 1px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: solid none dotted none;
+}
+</style>
+
+           <div class="card-header">
+              <h3 class="card-title estilo">{{ user.nickname }}</h1></h3>
+            </div>
+
+     <div class="card-body">
+              
+               
+{% set total_final_dia = 0 %}
+{% set total_final_dia_gana = 0 %}
+{% set total_final_dia_pierde = 0 %}
+ 
+        {% set x = 0 %}
+<table id="example2" class="table table-bordered table-hover" width="100%">
+	
+			
+        {% for rows in filas %}		  
+			   			          
+			      
+			            <tr style="background-color:#000; color:#fff ;">              
+			                <th>FECHA</th>
+			                <th>JORNADA</th>
+			                <th>#C</th>   
+			                <th>JUGADA</th>   
+			                <th>APUESTA</th>
+			                <th>Cab#</th> 
+			                <th>MONTO</th> 
+			                <th>GANA</th>
+			                <th>PIERDE</th>			             
+			            </tr>
+			   
+			        <tbody>        	
+       
+        	{% set fecha = '' %}
+        	{% for row in rows %}
+        		{% set fecha = row.fecha %}
+
+		        {% if x==0  %}
+		            {% set st = '' %}
+		            {% set x = 1 %}
+		        {% else %}
+		            {% set st = 'style="background-color:#e5e5e5"' %}
+		            {% set x = 0 %}
+		        {% endif %}
+		        
+		            <tr {{ st|raw }}>             
+		                    <td align="center">{{row.fecha }} </td>
+		                    <td align="center">{{row.hipodromo }}</td> 
+		                    <td align="center">{{row.numero_carrera }}</td> 
+		                    <td align="center">{{row.jugada }}</td>
+		                    <td align="center">{{row.apuesta }}</td>
+		                    <td align="center">{{row.caballo }}</td> 
+		                    <td align="center">{{row.apuesta_monto }}</td> 
+
+		                    <td align="center">{{row.apuesta_gana }}</td>             
+		                    
+		                    <td align="center">
+		                       {% if row.apuesta_pierde < 0 %} 
+		                          <span style="color:red">  {{ row.apuesta_pierde }} </span>
+		                       {% else %}
+		                            {{ row.apuesta_pierde }}
+		                       {% endif %}
+		                    </td>               
+		            </tr>
+		        {% else %}
+		            <tr>
+		                <td colspan="5" align="center">no records found</td>
+		            </tr>
+        	{% endfor %}
+
+			        </tbody>
+
+			      
+
+					{% set total_dia = 0 %}	
+					{% set total_dia_gana = 0 %}
+					{% set total_dia_pierde = 0 %}	
+
+					{% for tot in totales[fecha] %}
+		 					<tr >            
+				                    <td align="center" colspan="5"></td>
+				                    <td colspan="2" align="right"  class="borde-left-top" > </td>
+				                 
+
+				                    <td   align="center" class="borde-middle-top"><b>{{tot.apuesta_gana }}</b></td>             
+				                    
+				                    <td  align="center" class="borde-right-top">
+				                       {% if tot.apuesta_pierde < 0 %} 
+				                          <span style="color:red"><b>  {{ tot.apuesta_pierde }} </b></span>
+				                       {% else %}
+				                            {{ tot.apuesta_pierde }}
+				                       {% endif %}
+				                    </td>               
+				            </tr>
+				            <tr>            
+				                    <td align="center" colspan="5"></td>
+				                    <td   colspan="2" align="right" class="borde-left-bottom"><b>Total Jornada {{tot.hipodromo }}</b></td>
+				                 
+
+				                    <td align="center" class="borde-middle-bottom"></td>             
+				                    
+				                    <td align="center" class="borde-right-bottom">
+				                       {% set total_jornada = tot.apuesta_gana + tot.apuesta_pierde %}	
+				                       {% if total_jornada < 0 %} 
+				                          <span style="color:red"> <b> {{ total_jornada }} </b></span>
+				                       {% else %}
+				                           <b> {{ total_jornada }}</b>
+				                       {% endif %}
+				                    </td>               
+				            </tr>
+				            {% set total_dia_gana = total_dia_gana + tot.apuesta_gana %}
+				            {% set total_dia_pierde = total_dia_pierde + tot.apuesta_pierde %}	
+				    {% endfor %} 
+				    	  <tr>            
+				                    <td align="center" colspan="5"></td>
+				                    <td colspan="2" align="right"   class="borde-left-top"> </td>
+				                 
+
+				                    <td align="center"  class="borde-middle-top"><b>{{total_dia_gana }}</b></td>             
+				                    
+				                    <td align="center"  class="borde-right-top">
+				                       {% if total_dia_pierde < 0 %} 
+				                          <span style="color:red"><b>  {{ total_dia_pierde }} </b></span>
+				                       {% else %}
+				                           {{ total_dia_pierde }}
+				                       {% endif %}
+				                    </td>               
+				            </tr>
+				            <tr>            
+				                    <td align="center" colspan="5"></td>
+				                    <td colspan="2" align="right"   class="borde-left-bottom"><b>Total del Dia</b></td>
+				                 
+
+				                    <td align="center" class="borde-middle-bottom"></td>             
+				                    
+				                    <td align="center" class="borde-right-bottom">
+				                       {% set total_dia = total_dia_gana + total_dia_pierde %}
+				                       
+				                       {% set total_final_dia = total_final_dia_gana + total_final_dia_pierde %}
+
+				                       	{% set total_final_dia_gana = total_final_dia_gana + total_dia_gana %}
+				                       	{% set total_final_dia_pierde = total_final_dia_pierde + total_dia_pierde %}
+				                       
+				                       
+				                       {% if total_dia < 0 %} 
+				                          <span style="color:red"> <b> {{ total_dia }} </b></span>
+				                       {% else %}
+				                           <b> {{ total_dia }}</b>
+				                       {% endif %}
+				                    </td>               
+				            </tr> 		         		
+				            <tr><td>-</td></tr>
+			       	
+    
+        {% endfor %}
+					
+				
+        					<tr>            
+				                    <td align="center" colspan="5"></td>
+				                    <td colspan="2" align="right"  class="borde-left-top" > </td>
+				                 
+
+				                    <td align="center"   class="borde-middle-top"><b>{{ total_final_dia_gana }}</b></td>             
+				                    
+				                    <td align="center"   class="borde-right-top">
+				                       {% if total_final_dia_pierde < 0 %} 
+				                          <span style="color:red"><b>  {{ total_final_dia_pierde }} </b></span>
+				                       {% else %}
+				                            {{ total_final_dia_pierde }}
+				                       {% endif %}
+				                    </td>               
+				            </tr>
+				            <tr>            
+				                    <td align="center" colspan="5"></td>
+				                    <td colspan="2" align="right" class="borde-left-bottom"><b>Total cliente</b></td>
+				                 
+
+				                    <td align="center" class="borde-middle-bottom"></td>             
+				                    
+				                    <td align="center"  class="borde-right-bottom">
+				                       {% set total_final_dia = total_final_dia_gana + total_final_dia_pierde %}
+				                       {% if total_final_dia < 0 %} 
+				                          <span style="color:red"> <b> {{ total_final_dia }} </b></span>
+				                       {% else %}
+				                           <b> {{ total_final_dia }}</b>
+				                       {% endif %}
+				                    </td>               
+				            </tr>
+				          
+
+				    	       
+
+  </table>   
+    </div>        
+{% endblock %}
+
+	
