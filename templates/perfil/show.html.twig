@@ -169,6 +169,8 @@
                             <td><div id="rango"></div></td>      
                             <td>
                                 <a href="#" id="link"><i class="far fa-eye">descargar</i></a>
+                                <a href="#" id="link_v" target="_blank"><i class="far fa-eye">Ver</i></a>
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal" onclick="$('#hidModal').val($('#link_v').attr('href'))">Modal</button>
                             </td>
                         </tr> 
 
@@ -177,6 +179,8 @@
                             <td><div id="rango"></div></td>      
                             <td>
                                 <a href="#" id="link_jugada"><i class="far fa-eye">descargar</i></a>
+                                <a href="#" id="link_jugada_v" target="_blank"><i class="far fa-eye">Ver</i></a>
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal" onclick="$('#hidModal').val($('#link_jugada_v').attr('href'))">Modal</button>
                             </td>
                         </tr>      
                 
@@ -195,7 +199,30 @@
           </div>     
 
 
+<input type="hidden" id="hidModal">
 
+ <div class="bs-example">
+    <!-- Button HTML (to Trigger Modal) -->   
+    
+    <!-- Modal HTML -->
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-xl" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content will be loaded here from "remote.php" file -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!--<button type="button" class="btn btn-primary">OK, Got it!</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
   
 {% endblock %}
@@ -247,7 +274,20 @@ $("#reservation").change(function() {
   $("#link_jugada").attr('href', '{{ path('user_reporte_jugada') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]+'&perfil={{ perfil.id }}');
 
 
+
+  $("#link_v").attr('href', $("#link").attr('href')+'&vista=1');
+   $("#link_jugada_v").attr('href', $("#link_jugada").attr('href')+'&vista=1');
+
+
+
 }); 
+
+  $("#myModal").on("show.bs.modal", function(event){
+  
+        // Place the returned HTML into the selected element
+        $(this).find(".modal-body").html('');
+        $(this).find(".modal-body").load($("#hidModal").val());
+    });
 
 </script>
 {% endblock %}

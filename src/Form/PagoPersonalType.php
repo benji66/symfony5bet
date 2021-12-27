@@ -71,7 +71,9 @@ class PagoPersonalType extends AbstractType
             ->add('monto')
             ->add('numero_referencia')
           
-            ->add('observacion')            
+             ->add('observacion',null, [
+                'label'=>'Razon'
+            ])            
         ;
     }
 

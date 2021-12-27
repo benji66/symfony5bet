@@ -63,14 +63,14 @@
               <!-- /.card-header -->
               <div class="card-body">
                 <dl>
-                  <dd><a href="{{ path('correccion_new', {'id': apuesta.id}) }}"><i class="fas fa-edit">corregir</i></a></dd>
+                  
                   <dt>Monto</dt>
                   <dd><i class="fas fa-dollar-sign"></i> {{ apuesta.monto }}</dd>
-                  <dt>Comision</dt>
-                  <dd><i class="fas fa-dollar-sign"></i> {{ apuesta.Cuenta.SaldoCasa|default('-') }}</dd>
-
                   <dt>Tipo de Apuesta</dt>
                   <dd>{{ apuesta.Tipo.nombre }}</dd>
+                  <dt>Comision</dt>
+                  <dd><i class="fas fa-dollar-sign"></i> {{ apuesta.Cuenta.SaldoCasa|default('-') }}</dd>
+                  <dd><a href="{{ path('correccion_new', {'id': apuesta.id}) }}"><i class="fas fa-edit">corregir</i></a></dd>
                   <dd>
                         <div class="card card-primary collapsed-card">
                           <div class="card-header">

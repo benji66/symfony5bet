@@ -124,9 +124,9 @@
                           <span class="time" style=" {{ item.status_class ? item.status_class : '' }}">
                               {{ item.status ? item.status : '-' }}
                           </span>
-                          <h3 class="timeline-header">{{ item.mensaje }}</h3>
+                          <h3 class="timeline-header">{{ item.mensaje|raw }}</h3>
                           <div class="timeline-body">
-                            {{ item.observacion }} {# ------------ {{ apuesta_total }} - {{ item.monto }} #}
+                            {{ item.observacion|raw }} {# ------------ {{ apuesta_total }} - {{ item.monto }} #}
                           </div>
                         </div>
                       </div>

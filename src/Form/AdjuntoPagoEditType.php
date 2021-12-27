@@ -25,7 +25,9 @@ class AdjuntoPagoEditType extends AbstractType
                     'RECHAZADO' => '0',                   
                 ],
             ])   
-             ->add('observacion')         
+              ->add('observacion',null, [
+                'label'=>'Razon'
+            ])         
             
         ;
     }

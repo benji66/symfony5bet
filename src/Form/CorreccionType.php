@@ -13,7 +13,9 @@ class CorreccionType extends AbstractType
     {
         $builder
            
-            ->add('observacion')
+             ->add('observacion',null, [
+                'label'=>'Razon'
+            ])
 
         ;
     }

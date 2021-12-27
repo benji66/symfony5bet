@@ -135,6 +135,7 @@
                             <td>
                                 <a href="#" id="link_total_saldo_cliente"><i class="far fa-eye">descargar</i></a>
                                 <a href="#" id="link_total_saldo_cliente_v"><i class="far fa-eye">Ver</i></a>
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal" onclick="$('#hidModal').val($('#link_total_saldo_cliente_v').attr('href'))">Modal</button>
                             </td>
                         </tr>
 
@@ -142,8 +143,9 @@
                             <td>Total Semana Detalle Saldo Clientes</td>
                             <td><div id="rango"></div></td>      
                             <td>
-                                <a href="#" id="link_total_semana_saldo"><i class="far fa-eye">descargar</i></a>
-                                <a href="#" id="link_total_semana_saldo_v"><i class="far fa-eye">Ver</i></a>
+                                <a href="#" id="link_total_semana_saldo"><i class="far fa-file">descargar</i></a>
+                                <a href="#" id="link_total_semana_saldo_v" target="_blank"><i class="far fa-eye">Ver</i></a>
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal" onclick="$('#hidModal').val($('#link_total_semana_saldo_v').attr('href'))">Modal</button>
                             </td>
                         </tr>
 
@@ -171,6 +173,31 @@
           <!-- /.card -->    
     </div>
  </div>
+<input type="hidden" id="hidModal">
+
+ <div class="bs-example">
+    <!-- Button HTML (to Trigger Modal) -->
+   
+    
+    <!-- Modal HTML -->
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-xl" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content will be loaded here from "remote.php" file -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!--<button type="button" class="btn btn-primary">OK, Got it!</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
 
 
@@ -228,12 +255,20 @@ $("#reservation").change(function() {
   $("#link_apuesta").attr('href', '{{ path('reporte_apuesta') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]); 
   $("#link_usuarios").attr('href', '{{ path('reporte_usuarios') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);
   $("#link_total_saldo_cliente").attr('href', '{{ path('gerencia_reporte_usuarios_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);  
-  $("#link_total_semana_saldo").attr('href', '{{ path('gerencia_reporte_semana_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);  
+  $("#link_total_semana_saldo").attr('href', '{{ path('gerencia_reporte_semana_saldo') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);
+
+  $("#link_total_saldo_cliente_v").attr('href', $("#link_total_saldo_cliente").attr('href')+'&vista=1');
+   $("#link_total_semana_saldo_v").attr('href', $("#link_total_semana_saldo").attr('href')+'&vista=1');
+
   $("#link_total_cliente").attr('href', '{{ path('reporte_total_cliente') }}'+'?fecha1='+fecha[0]+'&fecha2='+fecha[1]);   
 
 }); 
 
-
+  $("#myModal").on("show.bs.modal", function(event){
+      $(this).find(".modal-body").html('');
+        // Place the returned HTML into the selected element
+        $(this).find(".modal-body").load($("#hidModal").val());
+    });
 </script>
 
 {% endblock %}

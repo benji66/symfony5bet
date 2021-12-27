@@ -85,7 +85,9 @@ class PagoPersonalAsignacionType extends AbstractType
                 ],
             ])
             
-            ->add('observacion')            
+             ->add('observacion',null, [
+                'label'=>'Razon'
+            ])            
         ;
     }
 

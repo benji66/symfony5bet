@@ -45,7 +45,9 @@ class AdjuntoPagoUserType extends AbstractType
                     'RECHAZADO' => 'false',                   
                 ],
             ])  */ 
-            // ->add('observacion')         
+            /*  ->add('observacion',null, [
+                'label'=>'Razon'
+            ])*/         
             
         ;
     }

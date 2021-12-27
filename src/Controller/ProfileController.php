@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Util;
 use App\Entity\User;
 use App\Entity\Perfil;
 use App\Entity\AdjuntoPago;
@@ -44,6 +45,10 @@ use Dompdf\Options;
 class ProfileController extends AbstractController
 {
 
+    public function __construct(Util $util){
+
+        $this->util = $util;
+    }
     /**
      * @Route("/", name="profile_show", methods={"GET","POST"})
      */
@@ -107,34 +112,38 @@ class ProfileController extends AbstractController
             $time[$i]['fecha'] = $row->getApuesta()->getCarrera()->getFecha();
             
             if($row->getCaballos()){
-                 $caballos = $row->getCaballos();
+                 $caballos = $this->util->numeroColor($row->getCaballos());
                  $ext_observacion = ' JUGO '; 
             }else{
                 $apuesta_detalle = $this->getDoctrine()->getRepository(ApuestaDetalle::class)->findByApuestaCaballoNotNull($row->getApuesta()->getId());
 
-                $caballos = $apuesta_detalle->getCaballos();
+                $caballos = $this->util->numeroColor($apuesta_detalle->getCaballos());
                 $ext_observacion = ' PAGO ';                
                 //$apuesta= $row->getApuesta();
             }
 
-            $time[$i]['mensaje'] = $ext_observacion.$row->getApuesta()->getTipo()->getNombre().' en carrera '.$row->getApuesta()->getCarrera()->getNumeroCarrera().' de Hipódromo: '.$row->getApuesta()->getCarrera()->getHipodromo()->getNombre();
+            $time[$i]['mensaje'] = $row->getApuesta()->getCarrera()->getHipodromo()->getNombre().' en carrera '.$row->getApuesta()->getCarrera()->getNumeroCarrera(). $ext_observacion.' '.$row->getApuesta()->getTipo()->getNombre().' de  '.$caballos.' por '.$row->getApuesta()->getMonto();
 
            
 
 
-            $time[$i]['observacion'] = json_encode($caballos).' por '.$row->getApuesta()->getMonto();
+            $time[$i]['observacion'] = '';
 
           
             if($row->getApuesta()->getCarrera()->getStatus()=='PAGADO'){
-                   $time[$i]['observacion'] .= ' - Orden oficial:'.json_encode($row->getApuesta()->getCarrera()->getOrdenOficial());
+
+                     
+                    $time[$i]['observacion'] .= ' Orden oficial: '.$this->util->numeroColor($row->getApuesta()->getCarrera()->getOrdenOficial());
                     $time[$i]['iclass'] = 'fas fa-horse-head bg-blue';
                     $time[$i]['status_class'] = 'color:blue';
 
                     if($row->getApuesta()->getGanador()){
-                        if($row->getApuesta()->getGanador()->getId()==$user->getPerfil()->getId()){
+                        if($row->getApuesta()->getCuenta()->getGanador()->getId()==$user->getPerfil()->getId()){
                              $time[$i]['monto'] = $row->getApuesta()->getCuenta()->getSaldoGanador();
 
                              $time[$i]['status'] = ''.$time[$i]['monto'];
+
+
                              $time[$i]['iclass'] = 'fas fa-horse-head bg-green';
                              $time[$i]['status_class'] = 'color:green';
                              $tarjeta['gana']++;
@@ -143,7 +152,7 @@ class ProfileController extends AbstractController
                             $time[$i]['monto'] = $row->getApuesta()->getMonto() - $row->getApuesta()->getCuenta()->getSaldoPerdedor();
 
                             //$time[$i]['status'] = 'PERDIO '.($time[$i]['monto']);
-                            $time[$i]['status'] = ''.($time[$i]['monto']);
+                            $time[$i]['status'] = ''.($time[$i]['monto']) * (-1);
                             $time[$i]['monto'] = $time[$i]['monto']  * (-1);                            
                             
                             $time[$i]['iclass'] = 'fas fa-horse-head bg-red';

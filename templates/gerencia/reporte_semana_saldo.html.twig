@@ -42,13 +42,15 @@
 }
 </style>
 
-           <div class="card-header">
-              <h2 class="card-title estilo">{{ gerencia.nombre }}</h1></h2>
-              <h4 class="card-title estilo">Desde {{ rango.desde|date('d-m-Y') }} Hasta {{ rango.hasta|date('d-m-Y') }}</h1></h2>
+       
 
-            </div>
+     <div class="card-body">      
 
-     <div class="card-body">              
+         <div class="card-header">
+              <h2 class="card-title">{{ gerencia.nombre }}</h2>
+              <h4 class="card-title"> --Desde {{ rango.desde|date('d-m-Y') }} Hasta {{ rango.hasta|date('d-m-Y') }}</h4>
+
+            </div>        
                
    {% set x = 0 %}
 <table id="example2" class="table table-bordered table-hover" >

@@ -55,7 +55,9 @@ class RetiroSaldoEditType extends AbstractType
                 ],
             ])   
             ->add('numero_referencia')  
-            ->add('observacion')         
+             ->add('observacion',null, [
+                'label'=>'Razon'
+            ])         
             
         ;
     }

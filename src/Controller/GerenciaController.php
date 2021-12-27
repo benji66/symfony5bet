@@ -371,7 +371,7 @@ class GerenciaController extends AbstractController
             $week_first =  date('Y-m-d', strtotime($year."W".$week_number.(1) ));
             $week_last =  date('Y-m-d', strtotime($year."W".$week_number.(7) ));
 
-            $rango = ['desde'=>$week_first, 'hasta'=>$week_first]; 
+            $rango = ['desde'=>$week_first, 'hasta'=>$week_last]; 
            // echo $week_first.' ------ '.$week_last;
            //exit;             
             $allRowsQuery = $allRowsQuery
@@ -496,15 +496,16 @@ class GerenciaController extends AbstractController
 
     exit;*/
 
-
-    /*   return $this->render('gerencia/reporte_semana_saldo.html.twig', [
-             
+    if($request->query->get("vista")){ 
+       return $this->render('gerencia/reporte_semana_saldo.html.twig', [             
              'gerencia' => $gerencia_logueada,
              'comision' => $matriz_com, 
              'totales' => $matriz_xls,
              'rango'=>$rango         
         ]);
-    */ 
+    }
+
+     
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         

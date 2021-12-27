@@ -53,7 +53,9 @@ class PagoPersonalSaldoType extends AbstractType
              ])
 
             ->add('monto')          
-            ->add('observacion')            
+             ->add('observacion',null, [
+                'label'=>'Razon'
+            ])            
         ;
     }
 

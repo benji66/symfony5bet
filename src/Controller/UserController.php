@@ -209,9 +209,13 @@ class UserController extends AbstractController
     public function reporte_dia(Request $request): Response
     {           
  
-        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
+ 
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'User tried to access a page without having ROLE USER'); 
         
-        $user = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("perfil"));     
+        if($request->get("perfil"))
+          $user = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("perfil"));
+        else       
+          $user = $this->getUser()->getPerfil();   
         
         $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
         $gerencia = $user->getGerencia()->getId();
@@ -240,7 +244,7 @@ class UserController extends AbstractController
             $fecha2 = $request->query->get("fecha2"); 
 
             $rango = ['desde'=>$fecha1, 'hasta'=>$fecha2]; 
-            $perfil = $request->query->get("perfil"); 
+            $perfil = $user->getId(); 
                         
             $allRowsQuery = $allRowsQuery
             ->innerJoin('a.carrera','c')
@@ -446,7 +450,8 @@ class UserController extends AbstractController
 
         exit;
 */
-/*
+
+ if($request->query->get("vista")){ 
          return $this->render('user/pdf.html.twig', [
              'filas' => $filas,
              'columnas' => $columnas,
@@ -455,7 +460,7 @@ class UserController extends AbstractController
              'total_semana' => $total_semana
           
         ]);
- */     
+  }    
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         
@@ -499,10 +504,13 @@ class UserController extends AbstractController
     public function reporte_jugada(Request $request): Response
     {           
  
-        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'User tried to access a page without having ROLE USER'); 
         
-        $user = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("perfil"));     
-        
+        if($request->get("perfil"))
+          $user = $this->getDoctrine()->getRepository(Perfil::class)->find($request->get("perfil"));
+        else       
+          $user = $this->getUser()->getPerfil();
+
         $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
         $gerencia = $user->getGerencia()->getId();
 
@@ -530,7 +538,7 @@ class UserController extends AbstractController
             $fecha2 = $request->query->get("fecha2"); 
 
             $rango = ['desde'=>$fecha1, 'hasta'=>$fecha2]; 
-            $perfil = $request->query->get("perfil"); 
+            $perfil = $user->getId(); 
                         
             $allRowsQuery = $allRowsQuery
             ->innerJoin('a.carrera','c')
@@ -550,7 +558,7 @@ class UserController extends AbstractController
 
         // Find all the data, filter your query as you need
         $allRowsQuery = $allRowsQuery->getQuery()->getResult();
-        $matriz = array();
+        $matriz = null;
         $matriz_total = array();
         foreach ($allRowsQuery as $row){          
   
@@ -688,8 +696,8 @@ class UserController extends AbstractController
 
         exit;
 */
-
-  /*       return $this->render('user/reporte_jugada.html.twig', [
+if($request->query->get("vista")){ 
+        return $this->render('user/reporte_jugada.html.twig', [
             'filas' => $mat,          
              'user' => $user,
              'totales' => $matriz_total,
@@ -697,7 +705,7 @@ class UserController extends AbstractController
             
           
         ]);
-    */  
+    }  
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         
