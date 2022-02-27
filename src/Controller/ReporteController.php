@@ -11,6 +11,7 @@ use App\Entity\AdjuntoPago;
 use App\Entity\Cuenta;
 use App\Entity\Perfil;
 use App\Entity\Traspaso;
+use App\Entity\PagoCliente;
 use App\Entity\PagoPersonal;
 use App\Entity\PagoPersonalSaldo;
 use App\Entity\RetiroSaldo;
@@ -268,7 +269,11 @@ class ReporteController extends AbstractController
         //echo $request->query->get("fecha1");
         //exit;
 
-        $repository = $this->getDoctrine()->getRepository(PagoPersonal::class);            
+        $repository = $this->getDoctrine()->getRepository(PagoPersonal::class);
+
+        if ($request->query->get("pago_cliente")) {
+            $repository = $this->getDoctrine()->getRepository(PagoCliente::class); 
+        }            
         
         $user = $this->getUser();
 
@@ -329,7 +334,7 @@ class ReporteController extends AbstractController
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());           
                 
                 if($row->getPerfil()->getSaldoIlimitado()){
-                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                   $sheet->setCellValue('B'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('B'.$i, 'pozo');
                 }
@@ -357,7 +362,7 @@ class ReporteController extends AbstractController
                      $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
 
         $SUMRANGE = 'E3:E'.$i;
-        $sheet->setCellValue('A'.($i+5) , "TOTAL SALDO ACUMULADO");
+        $sheet->setCellValue('A'.($i+5) , "TOTAL");
         $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
         $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
         $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");        
@@ -449,7 +454,7 @@ class ReporteController extends AbstractController
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());
                 
                 if($row->getPerfil()->getSaldoIlimitado()){
-                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                   $sheet->setCellValue('B'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('B'.$i, 'pozo');
                 }
@@ -570,7 +575,7 @@ class ReporteController extends AbstractController
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());   
 
                 if($row->getPerfil()->getSaldoIlimitado()){
-                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                   $sheet->setCellValue('B'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('B'.$i, 'pozo');
                 }        
@@ -605,7 +610,7 @@ class ReporteController extends AbstractController
                      $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
 
         $SUMRANGE = 'D3:D'.$i;
-        $sheet->setCellValue('A'.($i+5) , "TOTAL SALDO ACUMULADO");
+        $sheet->setCellValue('A'.($i+5) , "TOTAL");
         $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
         $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
         $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");          
@@ -699,7 +704,7 @@ class ReporteController extends AbstractController
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());   
 
                 if($row->getPerfil()->getSaldoIlimitado()){
-                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                   $sheet->setCellValue('B'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('B'.$i, 'pozo');
                 }        
@@ -840,7 +845,7 @@ class ReporteController extends AbstractController
 
 
                 if($row->getSaldoIlimitado()){
-                   $sheet->setCellValue('C'.$i, 'ilimitado');     
+                   $sheet->setCellValue('C'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('C'.$i, 'pozo');
                 }
@@ -886,7 +891,7 @@ class ReporteController extends AbstractController
                      $sheet->getStyle('D'.($i+5))->applyFromArray($bold);
 
         $SUMRANGE = 'B3:B'.$i;
-        $sheet->setCellValue('A'.($i+5) , "TOTAL SALDO ACUMULADO");
+        $sheet->setCellValue('A'.($i+5) , "TOTAL");
         $sheet->setCellValue('B'.($i+5) , "=SUBTOTAL(109,$SUMRANGE)");
         $sheet->setCellValue('C'.($i+5) , "PROMEDIO");
         $sheet->setCellValue('D'.($i+5) , "=ROUND(SUBTOTAL(101,$SUMRANGE),2)");  
@@ -977,14 +982,14 @@ class ReporteController extends AbstractController
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());                 
                 $sheet->setCellValue('B'.$i, $row->getMonto());
                 if($row->getAbono()->getSaldoIlimitado()){
-                   $sheet->setCellValue('C'.$i, 'ilimitado');     
+                   $sheet->setCellValue('C'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('C'.$i, 'pozo');
                 }   
                 $sheet->setCellValue('D'.$i, $row->getAbono()->getNickname());
 
                 if($row->getDescuento()->getSaldoIlimitado()){
-                   $sheet->setCellValue('E'.$i, 'ilimitado');     
+                   $sheet->setCellValue('E'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('E'.$i, 'pozo');
                 } 
@@ -1130,7 +1135,7 @@ class ReporteController extends AbstractController
                 $sheet->setCellValue('G'.$i, $row->getGanador()->getUsuario()->getNombre());
 
                 if($row->getGanador()->getSaldoIlimitado()){
-                   $sheet->setCellValue('H'.$i, 'ilimitado');     
+                   $sheet->setCellValue('H'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('H'.$i, 'pozo');
                 }
@@ -1143,7 +1148,7 @@ class ReporteController extends AbstractController
                     $sheet->setCellValue('L'.$i, $row->getCuenta()->getPerdedor()->getUsuario()->getNombre());
 
                     if($row->getCuenta()->getPerdedor()->getSaldoIlimitado()){
-                       $sheet->setCellValue('M'.$i, 'ilimitado');     
+                       $sheet->setCellValue('M'.$i, 'avalado');     
                     }else{
                        $sheet->setCellValue('M'.$i, 'pozo');
                     }
@@ -1379,8 +1384,8 @@ class ReporteController extends AbstractController
                
 
                     $sheet->getStyle('A1:E1')->applyFromArray($bold);
-                     $sheet->getStyle('A'.($x+4).':E'.($x+4))->applyFromArray($bold);
-                     $sheet->getStyle('A'.($x+2).':E'.($x+2))->applyFromArray($bold);
+                    $sheet->getStyle('A'.($x+4).':E'.($x+4))->applyFromArray($bold);
+                    $sheet->getStyle('A'.($x+2).':E'.($x+2))->applyFromArray($bold);
 
                     $sheet->setCellValue('D'.($x+4), 'GANANCIA');
                     $sheet->setCellValue('E'.($x+4), $total_casa); 
@@ -1400,8 +1405,7 @@ class ReporteController extends AbstractController
                     
                     
                }//if total_casa - por las hojas en blanco cuando no hay registros en hipodromo  
-              
-                     
+                    
             }         
 
        // exit;
@@ -1417,10 +1421,7 @@ class ReporteController extends AbstractController
         // Create the excel file in the tmp directory of the system
         $writer->save($temp_file);       
         // Return the excel file as an attachment
-        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);        
-
-
-
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE); 
     }
 
 

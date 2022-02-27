@@ -43,7 +43,7 @@ class PagoPersonal
     private $perfil;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $monto;
 
@@ -90,12 +90,12 @@ class PagoPersonal
         return $this;
     }
 
-    public function getMonto(): ?int
+    public function getMonto(): ?float
     {
         return $this->monto;
     }
 
-    public function setMonto(int $monto): self
+    public function setMonto(float $monto): self
     {
         $this->monto = $monto;
 
@@ -162,3 +162,11 @@ class PagoPersonal
         return $this;
     }    
 }
+
+
+/*
+     ALTER TABLE pago_cliente CHANGE monto monto DOUBLE PRECISION NOT NULL;
+     ALTER TABLE pago_personal CHANGE monto monto DOUBLE PRECISION NOT NULL;
+     ALTER TABLE pago_personal_saldo CHANGE monto monto DOUBLE PRECISION NOT NUL
+L;
+*/

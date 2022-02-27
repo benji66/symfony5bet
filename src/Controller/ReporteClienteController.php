@@ -398,7 +398,7 @@ class ReporteClienteController extends AbstractController
                 $sheet->setCellValue('A'.$i, $row->getCreatedAt());   
 
                 if($row->getPerfil()->getSaldoIlimitado()){
-                   $sheet->setCellValue('B'.$i, 'ilimitado');     
+                   $sheet->setCellValue('B'.$i, 'avalado');     
                 }else{
                    $sheet->setCellValue('B'.$i, 'pozo');
                 }        

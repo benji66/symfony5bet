@@ -94,12 +94,12 @@ class Carrera
     private $pagado_by;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $total_pagado;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $total_ganancia;
 
@@ -261,24 +261,26 @@ class Carrera
         return $this;
     }
 
-    public function getTotalPagado(): ?int
+    public function getTotalPagado(): ?float
     {
-        return round($this->total_pagado,2,PHP_ROUND_HALF_DOWN);
+        //return round($this->total_pagado,2,PHP_ROUND_HALF_DOWN);
+        return $this->total_pagado;
     }
 
-    public function setTotalPagado(?int $total_pagado): self
+    public function setTotalPagado(?float $total_pagado): self
     {
         $this->total_pagado = round($total_pagado,2,PHP_ROUND_HALF_DOWN);
 
         return $this;
     }
 
-    public function getTotalGanancia(): ?int
+    public function getTotalGanancia(): ?float
     {
-        return round($this->total_ganancia,2,PHP_ROUND_HALF_DOWN);
+        //return round($this->total_ganancia,2,PHP_ROUND_HALF_DOWN);
+        return $this->total_ganancia;
     }
 
-    public function setTotalGanancia(?int $total_ganancia): self
+    public function setTotalGanancia(?float $total_ganancia): self
     {
         $this->total_ganancia = round($total_ganancia,2,PHP_ROUND_HALF_DOWN);
 

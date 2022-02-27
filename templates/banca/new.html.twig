@@ -19,7 +19,7 @@
 
        <div class="row">
           <!-- left column -->
-          <div class="col-md-6">
+          <div class="col-md-3">
             <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
@@ -44,84 +44,85 @@
             <a href="{{ path('carrera_cerrar', {'id': carrera.id}) }}"><i class="fas fa-edit">cerrar carrera</i></a>
 		  </div>
 
-      <div class="col-md-6">
-          
+      <div class="col-md-9">
+          <h1>Jugada sin confirmar</h1>
+        <table id="example2" class="table table-bordered table-hover">
+          <thead>
+              <tr>
+                  <th>Cliente</th>
+                  <th>Juega</th>
+                  <th>Da</th>                
+                  <th>actions</th>
+              </tr>
+          </thead>
+          <tbody>
+           {% set total_juega = 0 %}
+           {% set total_da = 0 %}
+
+          {% for banca in bancas %}
+              <tr>                
+                  <td>{{ banca.Cliente.nickname }}</td>
+                  
+                  {% if banca.juega == '1' %}
+                      {% set total_juega = total_juega + banca.monto %}  
+                      <td><i class="fas fa-dollar-sign"></i> {{ banca.monto }}</td>
+                      <td></td>
+                   {% else %}
+                        {% set total_da = total_da + banca.monto %}
+                        <td></td>
+                        <td><i class="fas fa-dollar-sign"></i> {{ banca.monto }}</td>                      
+                   {% endif %}                  
+                    
+                  <td>                    
+                        {{ include('banca/_delete_form.html.twig') }}                
+                  </td>
+              </tr>
+          {% else %}
+              <tr>
+                  <td colspan="6">no records found</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+
+          <tfoot>
+             {% if total_juega != total_da %}
+              <tr>
+                  <th></th>
+                  <th style="color:red"><i class="fas fa-dollar-sign"></i> {{ total_juega }}</th>
+                  <th style="color:red"><i class="fas fa-dollar-sign"></i> {{ total_da }}</th>
+                  <th></th>
+              </tr>
+                {% if total_juega > total_da %} 
+                   <tr>
+                      <td colspan="4" align="center" style="color:red">Existe una diferencia de <b><i class="fas fa-dollar-sign"></i>{{total_juega - total_da}}</b> en el que DA</td>
+                  </tr>
+                {% else %}
+                  <tr>
+                      <td colspan="4" align="center" style="color:red">Existe una diferencia de <b><i class="fas fa-dollar-sign"></i>{{total_da - total_juega}}</b> en el que JUEGA </td>
+                  </tr>
+                {% endif %} 
+
+              {% else %}
+                  {% if total_juega != 0 %}
+                  <tr>
+                      <td colspan="4" align="center" style="color:green"><b>Totales Completos</b></td>
+                  </tr>
+                
+                 <tr>
+                  <td colspan="4" align="center">
+                        <div class="card-body">
+                          {{ include('banca/_form_confirmar.html.twig') }}
+                        </div>
+                  </td>
+                 </tr>
+                 {% endif %} 
+              {% endif %}  
+          </tfoot>
+      </table>
+     
       </div> 
 		</div>
 
-     <h1>Jugada sin confirmar</h1>
-        <table id="example2" class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Cliente</th>
-                <th>Juega</th>
-                <th>Da</th>                
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-         {% set total_juega = 0 %}
-         {% set total_da = 0 %}
-
-        {% for banca in bancas %}
-            <tr>                
-                <td>{{ banca.Cliente.nickname }}</td>
-                
-                {% if banca.juega == '1' %}
-                    {% set total_juega = total_juega + banca.monto %}  
-                    <td><i class="fas fa-dollar-sign"></i> {{ banca.monto }}</td>
-                    <td></td>
-                 {% else %}
-                      {% set total_da = total_da + banca.monto %}
-                      <td></td>
-                      <td><i class="fas fa-dollar-sign"></i> {{ banca.monto }}</td>                      
-                 {% endif %}                  
-                  
-                <td>                    
-                      {{ include('banca/_delete_form.html.twig') }}                
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-
-        <tfoot>
-           {% if total_juega != total_da %}
-            <tr>
-                <th></th>
-                <th style="color:red"><i class="fas fa-dollar-sign"></i> {{ total_juega }}</th>
-                <th style="color:red"><i class="fas fa-dollar-sign"></i> {{ total_da }}</th>
-                <th></th>
-            </tr>
-              {% if total_juega > total_da %} 
-                 <tr>
-                    <td colspan="4" align="center" style="color:red">Existe una diferencia de <b><i class="fas fa-dollar-sign"></i>{{total_juega - total_da}}</b> en el que DA</td>
-                </tr>
-              {% else %}
-                <tr>
-                    <td colspan="4" align="center" style="color:red">Existe una diferencia de <b><i class="fas fa-dollar-sign"></i>{{total_da - total_juega}}</b> en el que JUEGA </td>
-                </tr>
-              {% endif %} 
-
-            {% else %}
-
-                <tr>
-                    <td colspan="4" align="center" style="color:green"><b>Totales Completos</b></td>
-                </tr>
-              
-               <tr>
-                <td colspan="4" align="center">
-                      <div class="card-body">
-                        {{ include('banca/_form_confirmar.html.twig') }}
-                      </div>
-                </td>
-               </tr>
-            {% endif %}  
-        </tfoot>
-    </table>
 
 {% endblock %}
 

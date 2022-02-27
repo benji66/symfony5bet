@@ -43,6 +43,8 @@
 </style>
 
            <div class="card-header">
+              <h2>Reporte de Jugadas de clientes</h2>
+			  <h4>Desde {{ rango.desde|date('d-m-Y') }} Hasta {{ rango.hasta|date('d-m-Y') }}</h4>
               <h3 class="card-title estilo">{{ user.nickname }}</h1></h3>
             </div>
 
@@ -54,6 +56,7 @@
 {% set total_final_dia_pierde = 0 %}
  
         {% set x = 0 %}
+
 <table id="example2" class="table table-bordered table-hover" width="100%">
 	
 			

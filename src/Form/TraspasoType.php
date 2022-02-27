@@ -37,7 +37,7 @@ class TraspasoType extends AbstractType
                         return $er->createQueryBuilder('a')
                                 ->innerJoin('a.usuario','u')
                                 ->andWhere('a.gerencia = :gerencia')
-                                ->andWhere('a.saldo > 0')
+                                //->andWhere('a.saldo > 0')
                                 ->orderBy('u.email')
                                 ->setParameter('gerencia', $gerencia_id);
                     },

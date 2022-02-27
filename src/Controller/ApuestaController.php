@@ -118,8 +118,9 @@ class ApuestaController extends AbstractController
             $faltaSaldo=false;
             foreach ($perfiles as $row ) {                
                  $perfil = $this->getDoctrine()->getRepository(Perfil::class)->find($row['perfil_id']);
+                 $saldoLimite = $perfil->getSaldo() - $banca->getMonto();
 
-                 if(($perfil->getSaldo() >= $apuestum->getMonto()) || ($perfil->getSaldoIlimitado())){
+                 if(($perfil->getSaldo() >= $apuestum->getMonto()) || ($perfil->getSaldoIlimitado()==TRUE && $saldoLimite > $perfil->getLimite())){
                       $perfil->setSaldo($perfil->getSaldo() -  $apuestum->getMonto());
                       
                       $apuesta_detalle = new ApuestaDetalle();

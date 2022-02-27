@@ -281,7 +281,8 @@ class Gerencia
 
     public function getSaldoAcumulado(): ?float
     {
-        return round($this->saldo_acumulado,2,PHP_ROUND_HALF_DOWN);
+        //return round($this->saldo_acumulado,2,PHP_ROUND_HALF_DOWN);
+        return $this->saldo_acumulado;
     }
 
     public function setSaldoAcumulado(?float $saldo_acumulado): self

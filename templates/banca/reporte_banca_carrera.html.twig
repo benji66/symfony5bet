@@ -1,0 +1,129 @@
+{% block title %}{{ carrera.Gerencia.nombre }}{% endblock %}
+
+{% block stylesheets %}
+ <link rel="stylesheet" href="/bundles/fgimenezadminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+{% endblock %}
+
+
+{% block body %}
+<style type="text/css">
+.borde-left-top{
+	border-width: 2px 0px 1px 2px;
+	border-color: black;
+	border-style: solid none none solid;
+}
+.borde-left-bottom{
+	border-width: 0px 0px 2px 2px;
+	border-color: black;
+	border-style: none none solid solid;
+}
+.borde-right-top{
+	border-width: 2px 2px 1px 0px;
+	border-color: black;
+	border-style: solid solid dotted none;
+}
+.borde-right-bottom{
+	border-width: 0px 2px 2px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: none solid solid none;
+	background-color: gray;
+}
+
+.borde-middle-bottom{
+	border-width: 0px 0px 2px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: none none solid none;
+}
+
+.borde-middle-top{
+	border-width: 2px 0px 1px 0px; /* top right bottom left */
+	border-color: black;
+	border-style: solid none dotted none;
+}
+</style>
+
+       
+              
+
+
+    
+
+     <div class="card-body">              
+        <table>   
+            <tr><td><h2>Reporte Banca</h2></td></tr> 
+            <tr><td><h4>Carrera {{ carrera.numeroCarrera }} en {{ carrera.Hipodromo.nombre }}</h4></td></tr>
+     	  	<tr><td><h5>Fecha: {{ carrera.fecha|date('Y-m-d') }}</h5></td></tr>
+            <tr><td><h5>Total Comision: {{ carrera.totalGanancia }}</h5></td></tr>
+            <tr><td><h5>Total Pagado: {{ carrera.totalPagado }}</h5></td></tr>
+        </table>      	              
+   {% set x = 0 %}
+<table id="example2" class="table table-bordered table-hover" >
+	{% for row in filas %}			  	
+				  		
+				  		<tr><td colspan="4"><h3>{{ row.apuesta }}{{ row.caballo }}</h3></td><tr>
+				        
+				        <tr style="background-color:#000; color:#fff ;" align="center">              
+			                <th>CODIGO</th>
+			                <th>JUGO</th>
+			                <th>CODIGO</th>
+			                <th>PAGO</th> 		                			             
+			            </tr>
+			          
+			
+        {% for banca in row.banca.jugo %}		  
+			    {% if x==0  %}
+		            {% set st = '' %}
+		            {% set x = 1 %}
+		        {% else %}
+		            {% set st = 'style="background-color:#e5e5e5"' %}
+		            {% set x = 0 %}
+		        {% endif %}
+
+			  	<tr {{ st|raw }}>              
+			         <td align="center" style="border-style: solid; border-width: 1px">{{banca.cliente }}</td>			       
+			           
+		                    <td align="center"  style="border-style: solid; border-width: 1px">
+		                       {% if banca.ganancia < 0 %} 
+		                          <span style="color:red">  {{ banca.ganancia }} </span>
+		                       {% else %}
+		                            {{ banca.ganancia }}
+		                       {% endif %}
+		                    </td>
+		                    <td></td>
+		                    <td></td>  		               			             
+			    </tr> 			          
+	
+        {% endfor %}
+
+         {% for banca in row.banca.pago %}		  
+			    {% if x==0  %}
+		            {% set st = '' %}
+		            {% set x = 1 %}
+		        {% else %}
+		            {% set st = 'style="background-color:#e5e5e5"' %}
+		            {% set x = 0 %}
+		        {% endif %}
+
+			  	<tr {{ st|raw }}>
+						  	<td></td>
+		                    <td></td>              
+			        		 <td align="center" style="border-style: solid; border-width: 1px">{{banca.cliente }}</td>			       
+			           
+		                    <td align="center"  style="border-style: solid; border-width: 1px">
+		                       {% if banca.ganancia < 0 %} 
+		                          <span style="color:red">  {{ banca.ganancia }} </span>
+		                       {% else %}
+		                            {{ banca.ganancia }}
+		                       {% endif %}
+		                    </td>
+		                      		               			             
+			    </tr> 			          
+	
+        {% endfor %}
+
+        <tr><td colspan="4"><h5>Comision:{{ row.total_comision }}</h5></td><tr>
+     {% endfor %}   
+ </table>       	
+
+    </div>        
+{% endblock %}

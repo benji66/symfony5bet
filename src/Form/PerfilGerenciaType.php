@@ -38,8 +38,10 @@ class PerfilGerenciaType extends AbstractType
                 ],
             ])            
             ->add('saldo_ilimitado')
+            ->add('limite')
             ->add('activo')
             ->add('sueldo')
+
         ;
     }
 

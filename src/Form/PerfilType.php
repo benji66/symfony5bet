@@ -48,6 +48,7 @@ class PerfilType extends AbstractType
             ])
             ->add('activo')
             ->add('saldo_ilimitado')
+            ->add('limite')
         ;
     }
 

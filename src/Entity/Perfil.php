@@ -192,8 +192,11 @@ class Perfil
      */
     private $traspaso_abonos;
 
-
-
+    /**
+     * @Gedmo\Versioned
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $limite;  
 
      
 
@@ -276,7 +279,8 @@ class Perfil
 
     public function getSaldo(): ?float
     {
-        return  round($this->saldo,2,PHP_ROUND_HALF_DOWN);
+        //return  round($this->saldo,2,PHP_ROUND_HALF_DOWN);
+        return $this->saldo;
     }
 
     public function setSaldo(?float $saldo): self
@@ -740,9 +744,17 @@ class Perfil
     }
 
 
+    public function getLimite(): ?int
+    {
+        return $this->limite;
+    }
 
+    public function setLimite(?int $limite): self
+    {
+        $this->limite = $limite;
 
- 
+        return $this;
+    } 
 
  
 }

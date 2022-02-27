@@ -43,7 +43,7 @@ class PagoCliente
     private $perfil;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $monto;
 
@@ -90,12 +90,12 @@ class PagoCliente
         return $this;
     }
 
-    public function getMonto(): ?int
+    public function getMonto(): ?float
     {
         return $this->monto;
     }
 
-    public function setMonto(int $monto): self
+    public function setMonto(float $monto): self
     {
         $this->monto = $monto;
 

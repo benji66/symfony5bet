@@ -42,7 +42,7 @@ class BancaController extends AbstractController
     public function new(Request $request, Carrera $carrera): Response
     {
 
-    	   $perfil_logueado = $this->getUser()->getPerfil();
+           $perfil_logueado = $this->getUser()->getPerfil();
           $gerencia_logueada = $perfil_logueado->getGerencia()->getId();
           $gerencia = $carrera->getGerencia()->getId();          
 
@@ -109,15 +109,15 @@ class BancaController extends AbstractController
                     $error=true;
                 }
 
-
+                 $saldoLimite = $banca->getCliente()->getSaldo() - $banca->getMonto();
                  
-                 if(($banca->getCliente()->getSaldo() >= $banca->getMonto()) || ($banca->getCliente()->getSaldoIlimitado())){
+                 if(($banca->getCliente()->getSaldo() >= $banca->getMonto()) || ($banca->getCliente()->getSaldoIlimitado()==TRUE && $saldoLimite > $banca->getCliente()->getLimite())){
                       $banca->getCliente()->setSaldo($banca->getCliente()->getSaldo() -  $banca->getMonto());                
                    
                  }else{                    
                      $this->addFlash(
                         'danger',
-                        $banca->getCliente()->getNickname().' no posee saldo suficiente ('.$banca->getCliente()->getSaldo().')'
+                        $banca->getCliente()->getNickname().' no posee saldo suficiente ('.$banca->getCliente()->getSaldo().') limite: ('.$banca->getCliente()->getLimite().')'
                         );
                       $error=true;
                  }                 
@@ -141,7 +141,7 @@ class BancaController extends AbstractController
 
       $formConfirmar = $this->createForm(BancaConfirmarType::class, array('message'=>''));
 
-    	return $this->render('banca/new.html.twig', [
+        return $this->render('banca/new.html.twig', [
             'controller_name' => 'BancaController NEW',
             'form' => $form->createView(),
             'form_confirmar' => $formConfirmar->createView(),
@@ -331,7 +331,7 @@ class BancaController extends AbstractController
                 
          
                 $banca->getCarrera()->addApuesta($apuesta_entity);
-                 //solo esta actualizando da
+              
                 
                 $entityManager->persist($banca);        
                  
@@ -357,4 +357,258 @@ class BancaController extends AbstractController
     }     
 
 
+
+    /**
+     * @Route("/reporte/carrera/{id}", name="reporte_banca_carrera", methods={"GET"}, requirements={"id":"\d+"})
+     */
+    public function reporte_banca_carrera(Carrera $carrera, Request $request): Response
+    {           
+ 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO'); 
+        
+   
+        $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
+        $gerencia = $carrera->getGerencia()->getId();
+
+        if($gerencia_logueada != $gerencia){
+            $this->addFlash(
+            'danger',
+            'Acceso no autorizado'
+            );
+            return $this->redirectToRoute('carrera_index');
+        }  
+
+
+
+        $repository = $this->getDoctrine()->getRepository(Apuesta::class); 
+
+
+        $allRowsQuery = $repository->createQueryBuilder('a');         
+
+        //example filter code, you must uncomment and modify  
+             
+                        
+            $allRowsQuery = $allRowsQuery
+            ->innerJoin('a.carrera','c')
+            ->innerJoin('a.apuestaDetalles','apd') 
+            
+            ->andWhere('a.carrera = :carrera')
+            
+            //->orderBy('c.fecha', 'ASC')
+            ->setParameter('carrera', $carrera->getId());
+
+
+        // Find all the data, filter your query as you need
+        $allRowsQuery = $allRowsQuery->getQuery()->getResult();
+        $matriz = null;
+        $matriz_total = array();
+        foreach ($allRowsQuery as $row){          
+  
+             $apuesta_detalle = $this->getDoctrine()->getRepository(ApuestaDetalle::class)->findByApuestaCaballoNotNull($row->getId());
+             $caballos = $apuesta_detalle->getCaballos();
+
+           $str_cab = null;
+            foreach ($caballos as $value) {
+                $str_cab .= $value.' ';
+            }
+
+          $fec =  $row->getCarrera()->getFecha()->format('Y-m-d');
+          $hip =  $row->getCarrera()->getHipodromo()->getId();
+          $num =  $row->getCarrera()->getNumeroCarrera();
+          $tip = $row->getTipo()->getNombre();
+
+
+/*
+             if($apuesta_detalle->getPerfil()->getId() == $perfil){
+                $matriz[$fec][$hip][$num][$tip][$str_cab]['jugada'] = 'JUGO';
+             }else{
+                $matriz[$fec][$hip][$num][$tip][$str_cab]['jugada'] = 'PAGO';
+             }
+         */
+
+            $matriz[$fec][$hip][$num][$tip][$str_cab]['fecha'] = $fec;
+
+            $matriz[$fec][$hip][$num][$tip][$str_cab]['hipodromo'] = $row->getCarrera()->getHipodromo()->getNombre();
+            $matriz[$fec][$hip][$num][$tip][$str_cab]['hipodromo_id'] = $row->getCarrera()->getHipodromo()->getId();
+
+            $matriz[$fec][$hip][$num][$tip][$str_cab]['numero_carrera'] = $row->getCarrera()->getNumeroCarrera();       
+
+            $matriz[$fec][$hip][$num][$tip][$str_cab]['apuesta'] = $row->getTipo()->getNombre();         
+            $matriz[$fec][$hip][$num][$tip][$str_cab]['caballo'] = $str_cab; 
+
+            if(!isset($matriz[$fec][$hip][$num][$tip][$str_cab]['total_comision'])){
+                $matriz[$fec][$hip][$num][$tip][$str_cab]['total_comision'] = 0;
+            }
+
+           foreach ( $row->getApuestaDetalles() as $banca) {
+             
+                        $id_cliente = $banca->getPerfil()->getId();              
+
+                        if($banca->getCaballos()!=NULL){ //JUEGA
+                            $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['jugada'] = 'JUGO';
+                            $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['cliente'] = $banca->getPerfil()->getNickname();
+                            
+                            if(!isset($matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['monto'])){ 
+                                    $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['monto']=0;
+                            }
+                            $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['monto'] += $row->getMonto();
+
+                             if($row->getCuenta()){                       
+
+                                if($row->getCuenta()->getGanador()->getId()==$id_cliente){
+                                    
+                                    if(!isset($matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['ganancia'])){
+
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['ganancia'] = 0;
+
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['comision'] = 0;
+                                    }
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['ganancia'] += $row->getCuenta()->getSaldoGanador();
+
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['comision'] += $row->getCuenta()->getSaldoCasa();
+
+                                         $matriz[$fec][$hip][$num][$tip][$str_cab]['total_comision'] += $row->getCuenta()->getSaldoCasa();                                
+                                    
+                                }
+
+                                 if($row->getCuenta()->getPerdedor()->getId()==$id_cliente){
+                                    
+                                    if(!isset($matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['ganancia'])){
+
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['ganancia'] = 0;
+                                    }
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['jugo'][$id_cliente]['ganancia'] += ($row->getMonto() - $row->getCuenta()->getSaldoPerdedor()) * (-1);                           
+                                }
+                            } 
+                        }else{
+                            $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['jugada'] = 'PAGO';
+                            $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['cliente'] = $banca->getPerfil()->getNickname();
+                             if(!isset($matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['monto'])){ 
+                                    $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['monto']=0;
+                            }
+                            $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['monto'] += $row->getMonto();
+
+                            if($row->getCuenta()){                       
+
+                                if($row->getCuenta()->getGanador()->getId()==$id_cliente){
+                                    
+                                    if(!isset($matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['ganancia'])){
+
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['ganancia'] = 0;
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['comision'] = 0;
+                                    }
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['ganancia'] += $row->getCuenta()->getSaldoGanador();
+
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['comision'] += $row->getCuenta()->getSaldoCasa();
+
+                                         $matriz[$fec][$hip][$num][$tip][$str_cab]['total_comision'] += $row->getCuenta()->getSaldoCasa();                                
+                                    
+                                }
+
+                                 if($row->getCuenta()->getPerdedor()->getId()==$id_cliente){
+                                    
+                                    if(!isset($matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['ganancia'])){
+
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['ganancia'] = 0;
+                                    }
+                                        $matriz[$fec][$hip][$num][$tip][$str_cab]['banca']['pago'][$id_cliente]['ganancia'] += ($row->getMonto() - $row->getCuenta()->getSaldoPerdedor()) * (-1);                           
+                                }
+                            } 
+                        }
+
+           }//endforeach
+
+        }
+
+
+/*
+       echo "<pre>";
+
+          print_r($matriz);
+
+        echo "</pre>";
+
+        exit;
+*/
+
+      if(!isset($matriz)){
+         $this->addFlash(
+             'danger',
+             'No hay registros'
+            );
+            
+            return $this->redirectToRoute('user_index');
+            
+      }     
+
+      $mat = null;
+      foreach ($matriz as $valuea) {
+         foreach ($valuea as $valueb) {
+            foreach ($valueb as $valuec) {
+                foreach ($valuec as $keyc => $valued) {
+                    foreach ($valued as $keyd => $valuee) {
+  /*             
+                    echo "<pre>";
+                        print_r($valuec);
+                     echo "</pre>";
+*/
+                         //$mat[] = $valuec;
+                        $mat[$keyc.$keyd] = $valuee;
+                    }
+                }  
+            }
+           
+         }
+      }
+      
+
+
+  /*
+        echo "<pre>";
+          print_r($mat);
+          //print_r($matriz);          
+        echo "</pre>";
+
+        exit;
+*/
+if($request->query->get("vista")){ 
+        return $this->render('banca/reporte_banca_carrera.html.twig', [
+            'filas' => $mat,           
+            'carrera' => $carrera,          
+        ]);
+    }  
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        
+        // Instantiate Dompdf with our options
+        $dompdf = new Dompdf($pdfOptions);
+
+        // Retrieve the HTML generated in our twig file
+        //$html = $this->renderView($vista, $registros);
+
+        $html = $this->renderView('banca/reporte_banca_carrera.html.twig', [
+             'filas' => $mat,          
+             'user' => $user,
+             'totales' => $matriz_total,
+             'rango'=>$rango
+        ]);
+    
+
+        // Load HTML to Dompdf
+        $dompdf->loadHtml($html);
+        
+        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+        $dompdf->setPaper('A4', 'landscape'); //portrait
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser (force download)
+        $dompdf->stream("rpt1.pdf", [
+            "Attachment" => true
+        ]);             
+
+        echo 'lanffza';
+        exit;
+    }                                        
 }

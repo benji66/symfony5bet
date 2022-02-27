@@ -473,7 +473,8 @@ class CarreraController extends AbstractController
 
                 //echo '*************************************<br/>';
             }
-             
+            // echo $totalPagado.'-----'.$totalGanancia;
+            // exit();
            $carrera->setTotalPagado($totalPagado);
            $carrera->setTotalGanancia($totalGanancia);
            $entityManager->flush();

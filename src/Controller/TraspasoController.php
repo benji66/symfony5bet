@@ -42,16 +42,17 @@ class TraspasoController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 //
+            $saldoLimite = $traspaso->getDescuento()->getSaldo() - $traspaso->getMonto();
 
-            if(($traspaso->getDescuento()->getSaldo() < $traspaso->getMonto()) && (!$traspaso->getDescuento()->getSaldoIlimitado() || !count($traspaso->getDescuento()->getRoles()) > 1) ) {
+            if( (($traspaso->getDescuento()->getSaldo() < $traspaso->getMonto()) && (!$traspaso->getDescuento()->getSaldoIlimitado() || !count($traspaso->getDescuento()->getRoles()) > 1)) || ($traspaso->getDescuento()->getSaldoIlimitado()==TRUE && $saldoLimite < $traspaso->getDescuento()->getLimite()) ) {
                 $this->addFlash(
                 'danger',
-                'Su saldo es inferior al monto que desea traspasar'
+                'Puede traspasar un maximo de: '. (($traspaso->getDescuento()->getLimite() * (-1)) + $traspaso->getDescuento()->getSaldo()) 
                 );
                 return $this->redirectToRoute('traspaso_new');
-            }          
-                          
-                   
+            }  
+
+ 
             $traspaso->getDescuento()->setSaldo($traspaso->getDescuento()->getSaldo() - $traspaso->getMonto());            
             $traspaso->getAbono()->setSaldo($traspaso->getAbono()->getSaldo() + $traspaso->getMonto());
             $traspaso->setGerencia($user->getPerfil()->getGerencia());        

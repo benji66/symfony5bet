@@ -44,7 +44,7 @@
             <tr {{ st|raw }}>               
                 <td><b>#{{ row.numero }}</b></td>       
                {% for carrera in row.carreras %}
-                    <td align="center">
+                    <td align="right">
                        {% if carrera.total_carrera <0 %} 
                           <span style="color:red"> $ {{carrera.total_carrera }} </span>
                        {% else %}

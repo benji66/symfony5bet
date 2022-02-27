@@ -99,7 +99,8 @@ class Cuenta
 
     public function getSaldoCasa(): ?float
     {
-        return round($this->saldo_casa,2,PHP_ROUND_HALF_DOWN);
+        //return round($this->saldo_casa,2,PHP_ROUND_HALF_DOWN);
+        return $this->saldo_casa;
     }
 
     public function setSaldoCasa(float $saldo_casa): self
@@ -124,7 +125,8 @@ class Cuenta
 
     public function getSaldoGanador(): ?float
     {
-        return round($this->saldo_ganador,2,PHP_ROUND_HALF_DOWN);
+        //return round($this->saldo_ganador,2,PHP_ROUND_HALF_DOWN);
+        return $this->saldo_ganador;
     }
 
     public function setSaldoGanador(float $saldo_ganador): self
@@ -149,7 +151,8 @@ class Cuenta
 
     public function getSaldoPerdedor(): ?float
     {
-        return round($this->saldo_perdedor,2,PHP_ROUND_HALF_DOWN);
+        //return round($this->saldo_perdedor,2,PHP_ROUND_HALF_DOWN);
+        return $this->saldo_perdedor;
     }
 
     public function setSaldoPerdedor(?float $saldo_perdedor): self

@@ -289,14 +289,14 @@ class GerenciaController extends AbstractController
 
         exit;
 */
-
-     /*    return $this->render('gerencia/reporte_usuarios_saldo.html.twig', [
+if($request->query->get("vista")){ 
+         return $this->render('gerencia/reporte_usuarios_saldo.html.twig', [
             'ganancia' => $total_ganancia,       
              'gerencia' => $gerencia_logueada,
              'totales' => $matriz_xls,
              'rango'=>$rango         
         ]);
-      */
+ }     
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         

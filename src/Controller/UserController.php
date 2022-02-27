@@ -27,7 +27,7 @@ use Dompdf\Options;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * @IsGranted("ROLE_ADMINISTRATIVO")
+ * @IsGranted("ROLE_USER")
  * @Route("/user")
  */
 class UserController extends AbstractController
@@ -60,6 +60,8 @@ class UserController extends AbstractController
      */
     public function new(Request $request,  UserPasswordEncoderInterface $passwordEncoder): Response
     {        
+
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO');
 
         $user = new User();
         $user_logueado = $this->getUser();
@@ -116,6 +118,8 @@ class UserController extends AbstractController
     public function show(User $user): Response
     {
 
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO');
+
         $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
         $gerencia = $user->getPerfil()->getGerencia()->getId();
 
@@ -137,6 +141,8 @@ class UserController extends AbstractController
     public function edit(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder): Response
     {
       
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO');
+
         $gerencia_logueada = $this->getUser()->getPerfil()->getGerencia()->getId();
         $gerencia = $user->getPerfil()->getGerencia()->getId();
 
@@ -189,6 +195,8 @@ class UserController extends AbstractController
      */
     public function delete(Request $request, User $user): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATIVO', null, 'User tried to access a page without having ROLE ADMINISTRATIVO');
+
         /*if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($user);
